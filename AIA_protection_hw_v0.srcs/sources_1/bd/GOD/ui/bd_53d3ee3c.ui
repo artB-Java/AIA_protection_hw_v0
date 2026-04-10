@@ -1,0 +1,55 @@
+{
+   "ActiveEmotionalView":"Default View",
+   "Default View_ScaleFactor":"1.84046",
+   "Default View_TopLeft":"634,14",
+   "ExpandedHierarchyInLayout":"",
+   "guistr":"# # String gsaved with Nlview 7.8.0 2024-04-26 e1825d835c VDI=44 GEI=38 GUI=JA:21.0
+#  -string -flagsOSRD
+preplace port o_write -pg 1 -lvl 4 -x 1180 -y 960 -defaultsOSRD
+preplace port o_address -pg 1 -lvl 4 -x 1180 -y 400 -defaultsOSRD
+preplace port o_write_data -pg 1 -lvl 4 -x 1180 -y 1100 -defaultsOSRD
+preplace port o_read -pg 1 -lvl 4 -x 1180 -y 820 -defaultsOSRD
+preplace port i_readdata -pg 1 -lvl 4 -x 1180 -y 540 -defaultsOSRD
+preplace port DDR -pg 1 -lvl 4 -x 1180 -y 60 -defaultsOSRD
+preplace port FIXED_IO -pg 1 -lvl 4 -x 1180 -y 80 -defaultsOSRD
+preplace port i2c0 -pg 1 -lvl 4 -x 1180 -y 660 -defaultsOSRD
+preplace port port-id_Clk -pg 1 -lvl 0 -x 0 -y 590 -defaultsOSRD
+preplace port port-id_reset_rtl_0 -pg 1 -lvl 0 -x 0 -y 670 -defaultsOSRD
+preplace inst rst_Clk_100M -pg 1 -lvl 1 -x 190 -y 690 -defaultsOSRD
+preplace inst write -pg 1 -lvl 3 -x 930 -y 960 -defaultsOSRD
+preplace inst address -pg 1 -lvl 3 -x 930 -y 400 -defaultsOSRD
+preplace inst writedata -pg 1 -lvl 3 -x 930 -y 1100 -defaultsOSRD
+preplace inst read -pg 1 -lvl 3 -x 930 -y 820 -defaultsOSRD
+preplace inst readdata -pg 1 -lvl 3 -x 930 -y 540 -defaultsOSRD
+preplace inst processing_system7_0 -pg 1 -lvl 3 -x 930 -y 160 -defaultsOSRD
+preplace inst axi_smc -pg 1 -lvl 2 -x 510 -y 610 -defaultsOSRD
+preplace inst axi_iic_0 -pg 1 -lvl 3 -x 930 -y 680 -defaultsOSRD
+preplace netloc microblaze_0_Clk 1 0 3 20 590 360 720 670
+preplace netloc reset_rtl_0_1 1 0 1 NJ 670
+preplace netloc rst_Clk_100M_peripheral_aresetn 1 1 2 370 730 680
+preplace netloc address_GPIO 1 3 1 NJ 400
+preplace netloc axi_smc_M00_AXI 1 2 1 650 380n
+preplace netloc axi_smc_M01_AXI 1 2 1 700 580n
+preplace netloc axi_smc_M02_AXI 1 2 1 690 520n
+preplace netloc axi_smc_M03_AXI 1 2 1 660 620n
+preplace netloc axi_smc_M04_AXI 1 2 1 650 640n
+preplace netloc processing_system7_0_DDR 1 3 1 NJ 60
+preplace netloc processing_system7_0_FIXED_IO 1 3 1 NJ 80
+preplace netloc processing_system7_0_M_AXI_GP0 1 1 3 370 320 NJ 320 1160
+preplace netloc read_GPIO 1 3 1 NJ 820
+preplace netloc readdata_GPIO 1 3 1 NJ 540
+preplace netloc write_GPIO 1 3 1 NJ 960
+preplace netloc writedata_GPIO 1 3 1 NJ 1100
+preplace netloc axi_iic_0_IIC 1 3 1 NJ 660
+preplace netloc axi_smc_M05_AXI 1 2 1 N 660
+levelinfo -pg 1 0 190 510 930 1180
+pagesize -pg 1 -db -bbox -sgen -120 0 1320 1180
+"
+}
+{
+   "da_axi4_cnt":"22",
+   "da_board_cnt":"9",
+   "da_clkrst_cnt":"2",
+   "da_mb_cnt":"1",
+   "da_ps7_cnt":"3"
+}

@@ -1,0 +1,78 @@
+#########################################################################################
+## Vivado 2025.1 Otimizado (Unificado: iDoka + Padrão)
+#########################################################################################
+
+# --- Logs, Journals e Relatórios ---
+*.log
+*.jou
+*.rpt
+*.vdi
+*.str
+vivado*.str
+vivado*.ini
+vivado_pid*.str
+hs_err_pid*
+webtalk.*
+
+# --- Arquivos de Fluxo de Compilação (Simulação/Sintese/Place&Route) ---
+.Xil/
+.cache/
+*.cache
+*.sim
+*.runs
+*.hw
+*.ip_user_files/
+*.gen/
+fsm_encoding.os
+tab_*/
+xelab.*
+xsim.*
+xvlog.*
+xvhdl.*
+
+# --- Bitstreams e Arquivos de Programação ---
+*.bit
+*.bin
+*.mcs
+*.svf
+*.image
+*.prm
+
+# --- Checkpoints e Netlists (Geralmente não rastreados) ---
+*.dcp
+*.dcp_
+*.edf
+*.edif
+*.vn
+*.vm
+*.sdf
+
+# --- Arquivos de Simulação e Dump de Sinais ---
+*.vcd
+*.saif
+*.tcf
+*.wdb
+*.mem
+*.mif
+
+# --- Binários de Software (SDK/Vitis/HLS) ---
+*.elf
+*.a
+*.sa
+*.so
+*.lib
+*.o
+*.obj
+
+# --- Arquivos Temporários e Backups ---
+*.bak
+*.backup.*
+*~
+.Xil/
+unisims/
+
+# --- Configurações Locais de Usuário ---
+.Xil/
+*.jou
+*.log
+.srcs/utils_1/
