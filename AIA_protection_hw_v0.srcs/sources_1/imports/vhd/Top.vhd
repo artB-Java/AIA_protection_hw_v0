@@ -1858,6 +1858,7 @@ signal s_trip_46_stg1     : std_logic;
     signal s_in_Port_095 : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
     signal s_in_Port_096 : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
     signal s_in_Port_097 : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
+
     
     alias REG_SEQ0_ABS   : std_logic_vector(31 downto 0) is s_in_Port_089(31 downto 0);
     alias REG_SEQ0_PHASE : std_logic_vector(15 downto 0) is s_in_Port_090(15 downto 0);
@@ -1997,10 +1998,46 @@ signal s_trip_46_stg1     : std_logic;
 	alias REG_C_59_STG2_PEAK_U12     : std_logic_vector(11 downto 0) is s_out_Port_066(11 downto 0);
 	alias REG_C_59_STG2_INTDLY_MS    : std_logic_vector(19 downto 0) is s_out_Port_067(19 downto 0);
 
-	
-
-		
-
+    -- logica boleana
+	signal s_out_Port_098: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_099: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_100: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_101: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_102: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_103: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_104: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_105: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_106: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_107: std_logic_vector(31 downto 0) := (others => '0');    
+    signal s_out_Port_108: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_109: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_110: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_111: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_112: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_113: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_114: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_115: std_logic_vector(31 downto 0) := (others => '0');
+    signal s_out_Port_116: std_logic_vector(31 downto 0) := (others => '0');
+    
+    alias REG_BOOLEAN_SEL_0: std_logic_vector(5 downto 0) is s_out_Port_098(5 downto 0);
+    alias REG_BOOLEAN_SEL_1: std_logic_vector(5 downto 0) is s_out_Port_099(5 downto 0);
+	alias REG_BOOLEAN_SEL_2: std_logic_vector(5 downto 0) is s_out_Port_100(5 downto 0);	
+    alias REG_BOOLEAN_SEL_3: std_logic_vector(5 downto 0) is s_out_Port_101(5 downto 0);
+    alias REG_BOOLEAN_SEL_4: std_logic_vector(5 downto 0) is s_out_Port_102(5 downto 0);
+    alias REG_BOOLEAN_SEL_5: std_logic_vector(5 downto 0) is s_out_Port_103(5 downto 0);
+    alias REG_BOOLEAN_SEL_6: std_logic_vector(5 downto 0) is s_out_Port_104(5 downto 0);
+    alias REG_BOOLEAN_SEL_7: std_logic_vector(5 downto 0) is s_out_Port_105(5 downto 0);
+    alias REG_BOOLEAN_SEL_SIGNALS: std_logic_vector(7 downto 0) is s_out_Port_106(7 downto 0);
+    alias REG_BOOLEAN_BLOCK_0: std_logic_vector(31 downto 0) is s_out_Port_107(31 downto 0);
+    alias REG_BOOLEAN_BLOCK_1: std_logic_vector(31 downto 0) is s_out_Port_108(31 downto 0);
+    alias REG_BOOLEAN_BLOCK_2: std_logic_vector(31 downto 0) is s_out_Port_109(31 downto 0);
+    alias REG_BOOLEAN_BLOCK_3: std_logic_vector(31 downto 0) is s_out_Port_110(31 downto 0);
+    alias REG_BOOLEAN_BLOCK_4: std_logic_vector(31 downto 0) is s_out_Port_111(31 downto 0);
+    alias REG_BOOLEAN_BLOCK_5: std_logic_vector(31 downto 0) is s_out_Port_112(31 downto 0);
+    alias REG_BOOLEAN_BLOCK_6: std_logic_vector(31 downto 0) is s_out_Port_113(31 downto 0);
+    alias REG_BOOLEAN_BLOCK_7: std_logic_vector(31 downto 0) is s_out_Port_114(31 downto 0);
+    alias REG_BOOLEAN_ALL_SIGNALS_0: std_logic_vector(31 downto 0) is s_out_Port_115(31 downto 0);
+    alias REG_BOOLEAN_ALL_SIGNALS_1: std_logic_vector(31 downto 0) is s_out_Port_116(31 downto 0);
  -- =========================
  -- Blink (1 Hz) signals
  -- =========================
@@ -2294,7 +2331,7 @@ begin
     ---------------------------------------------------
 	-- sRst active 1 or by VIO software reset (probe 24)
 	----------------------------------------------------
-	sRst <= not(iRstn) or sRstVio(0);--REG_SOFTRESET(0);
+	sRst <= not(iRstn) or sRstVio(0)or REG_SOFTRESET(0);
 	
 	-------------------
 	-- Instancia do PLL
@@ -2468,8 +2505,8 @@ begin
 		i_rst               => sRst,
 		i_data              => s_vaux0_data,
 		i_valid             => s_vaux0_valid,
-		i_offset            => x"800",--REG_A_OFFSET_U12,LEMBRAR DE VOLTAR NO PROJETO FINAL, FOI COLOCADO PARA NÃO PRECISAR DE USAR O PROCESSADO DURANTE DESENVOLVIMENTO DE BLOCOS NO FPGA PARA USAR OS CANAIS 0 1 e 2
-		i_decimation_factor => x"0B",--REG_A_DECIM_U8,
+		i_offset            => REG_A_OFFSET_U12,--x"800",--REG_A_OFFSET_U12,LEMBRAR DE VOLTAR NO PROJETO FINAL, FOI COLOCADO PARA NÃO PRECISAR DE USAR O PROCESSADO DURANTE DESENVOLVIMENTO DE BLOCOS NO FPGA PARA USAR OS CANAIS 0 1 e 2
+		i_decimation_factor => REG_A_DECIM_U8,-- x"0B",--REG_A_DECIM_U8,
 		o_data_decim  		=> s_vaux0_decim_s12,
 		o_valid_decim 		=> s_vaux0_decim_s12_valid,			
 		o_data_nodc         => s_vaux0_s12,
@@ -2485,8 +2522,8 @@ begin
 		i_rst               => sRst,
 		i_data              => s_vaux1_data,
 		i_valid             => s_vaux1_valid,
-		i_offset            => x"800",--REG_B_OFFSET_U12,
-		i_decimation_factor => x"0B",--REG_B_DECIM_U8,
+		i_offset            => REG_B_OFFSET_U12,--REG_B_OFFSET_U12 x"800",
+		i_decimation_factor => REG_B_DECIM_U8, --x"0B",--REG_B_DECIM_U8,
 		o_data_decim  		=> s_vaux1_decim_s12,
 		o_valid_decim 		=> s_vaux1_decim_s12_valid,			
 		o_data_nodc         => s_vaux1_s12,
@@ -2502,8 +2539,8 @@ begin
 		i_rst               => sRst,
 		i_data              => s_vaux2_data,
 		i_valid             => s_vaux2_valid,
-		i_offset            => x"800",--REG_C_OFFSET_U12,
-		i_decimation_factor => x"0B",--REG_C_DECIM_U8,
+		i_offset            => REG_C_OFFSET_U12,--x"800",--REG_C_OFFSET_U12,
+		i_decimation_factor => REG_C_DECIM_U8,--x"0B",--REG_C_DECIM_U8,
 		o_data_decim  		=> s_vaux2_decim_s12,
 		o_valid_decim 		=> s_vaux2_decim_s12_valid,			
 		o_data_nodc         => s_vaux2_s12,
@@ -2740,10 +2777,10 @@ begin
 		i_rst 				=> sRst,
 	    i_signal_phaseA_12  => signed(s_vaux0_decim_s12),--s_phase_A,  -- Temos que verificar quais canais realmente entraram nesse componente dos fasores (Testei com o ch 0 e canais B e C do gerador artifical) Aqui tem que ser os 3 canais de corrente IA IB e IC.
         i_valid_phaseA      => s_vaux0_decim_s12_valid,--s_valid_phase_A,--s_vaux0_decim_s12_valid,
-		i_signal_phasB_12   => s_phase_B,                -- s_vaux0_decim_s12
-		i_valid_phaseB      => s_valid_phase_B,--s_vaux1_decim_s12_valid,
-		i_signal_phaseC_12  => s_phase_C,
-		i_valid_phaseC      => s_valid_phase_C,--s_vaux2_decim_s12_valid,
+		i_signal_phasB_12   => signed(s_vaux1_decim_s12),                -- s_vaux0_decim_s12
+		i_valid_phaseB      => s_vaux1_decim_s12_valid,--s_vaux1_decim_s12_valid,
+		i_signal_phaseC_12  => signed(s_vaux2_decim_s12),
+		i_valid_phaseC      => s_vaux2_decim_s12_valid,--s_vaux2_decim_s12_valid,
 		o_valid_phaseA      => s_ph_valid_phaseA,     
 		o_Real_phaseA       => s_ph_Real_phaseA,      
 		o_Imag_phaseA       => s_ph_Imag_phaseA,      
@@ -3946,25 +3983,25 @@ begin
 			in_Port_095 	=> s_in_Port_095, --rdo
 			in_Port_096 	=> s_in_Port_096, --rdo
 			in_Port_097 	=> s_in_Port_097, --rdo
-			in_Port_098 	=> (others => '0'),
-			in_Port_099 	=> (others => '0'),
-			in_Port_100		=> (others => '0'),
-			in_Port_101		=> (others => '0'),
-			in_Port_102		=> (others => '0'),
-			in_Port_103		=> (others => '0'),
-			in_Port_104		=> (others => '0'),
-			in_Port_105		=> (others => '0'),
-			in_Port_106		=> (others => '0'),
-			in_Port_107		=> (others => '0'),
-			in_Port_108		=> (others => '0'),
-			in_Port_109		=> (others => '0'),
-			in_Port_110		=> (others => '0'),
-			in_Port_111		=> (others => '0'),
-			in_Port_112		=> (others => '0'),
-			in_Port_113		=> (others => '0'),
-			in_Port_114		=> (others => '0'),
-			in_Port_115		=> (others => '0'),
-			in_Port_116		=> (others => '0'),
+			in_Port_098 	=> s_out_Port_098,
+			in_Port_099 	=> s_out_Port_099,
+			in_Port_100		=> s_out_Port_100,
+			in_Port_101		=> s_out_Port_101,
+			in_Port_102		=> s_out_Port_102,
+			in_Port_103		=> s_out_Port_103,
+			in_Port_104		=> s_out_Port_104,
+			in_Port_105		=> s_out_Port_105,
+			in_Port_106		=> s_out_Port_106,
+			in_Port_107		=> s_out_Port_107,
+			in_Port_108		=> s_out_Port_108,
+			in_Port_109		=> s_out_Port_109,
+			in_Port_110		=> s_out_Port_110,
+			in_Port_111		=> s_out_Port_111,
+			in_Port_112		=> s_out_Port_112,
+			in_Port_113		=> s_out_Port_113,
+			in_Port_114		=> s_out_Port_114,
+			in_Port_115		=> s_out_Port_115,
+			in_Port_116		=> s_out_Port_116,
 			in_Port_117		=> (others => '0'),
 			in_Port_118		=> (others => '0'),
 			in_Port_119		=> (others => '0'),
@@ -4193,36 +4230,36 @@ begin
 			out_Port_084 	=> s_out_Port_084,
 			out_Port_085 	=> open, --rod
 			out_Port_086 	=> s_out_Port_086,
-			out_Port_087 	=> open,
-			out_Port_088 	=> open,
-			out_Port_089 	=> open,
-			out_Port_090 	=> open,
-			out_Port_091 	=> open,
-			out_Port_092 	=> open,
-			out_Port_093 	=> open,
-			out_Port_094 	=> open,
-			out_Port_095 	=> open,
-			out_Port_096 	=> open,
-			out_Port_097 	=> open,
-			out_Port_098 	=> open,
-			out_Port_099 	=> open,
-			out_Port_100	=> open,
-			out_Port_101	=> open,
-			out_Port_102	=> open,
-			out_Port_103	=> open,
-			out_Port_104	=> open,
-			out_Port_105	=> open,
-			out_Port_106	=> open,
-			out_Port_107	=> open,
-			out_Port_108	=> open,
-			out_Port_109	=> open,
-			out_Port_110	=> open,
-			out_Port_111	=> open,
-			out_Port_112	=> open,
-			out_Port_113	=> open,
-			out_Port_114	=> open,
-			out_Port_115	=> open,
-			out_Port_116	=> open,
+			out_Port_087 	=> open, -- rod
+			out_Port_088 	=> open, -- rod
+			out_Port_089 	=> open, -- rod
+			out_Port_090 	=> open, -- rod
+			out_Port_091 	=> open,-- rod
+			out_Port_092 	=> open,-- rod
+			out_Port_093 	=> open,-- rod
+			out_Port_094 	=> open,-- rod
+			out_Port_095 	=> open,-- rod
+			out_Port_096 	=> open,-- rod
+			out_Port_097 	=> open,-- rod
+			out_Port_098 	=> s_out_Port_098,
+			out_Port_099 	=> s_out_Port_099,
+			out_Port_100	=> s_out_Port_100,
+			out_Port_101	=> s_out_Port_101,
+			out_Port_102	=> s_out_Port_102,
+			out_Port_103	=> s_out_Port_103,
+			out_Port_104	=> s_out_Port_104,
+			out_Port_105	=> s_out_Port_105,
+			out_Port_106	=> s_out_Port_106,
+			out_Port_107	=> s_out_Port_107,
+			out_Port_108	=> s_out_Port_108,
+			out_Port_109	=> s_out_Port_109,
+			out_Port_110	=> s_out_Port_110,
+			out_Port_111	=> s_out_Port_111,
+			out_Port_112	=> s_out_Port_112,
+			out_Port_113	=> s_out_Port_113,
+			out_Port_114	=> s_out_Port_114,
+			out_Port_115	=> s_out_Port_115,
+			out_Port_116	=> s_out_Port_116,
 			out_Port_117	=> open,
 			out_Port_118	=> open,
 			out_Port_119	=> open,
