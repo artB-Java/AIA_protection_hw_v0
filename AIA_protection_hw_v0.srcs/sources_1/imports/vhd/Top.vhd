@@ -67,8 +67,8 @@ Entity Top is
 		-------------------
 		-- Output Trip Pin
 		------------------
-		o_GlobalTrip				: out std_logic;
-		o_teste 					: out std_logic;
+		--o_GlobalTrip				: out std_logic;
+		--o_teste 					: out std_logic;
 		------------------
 		-- Fixed PS pins
 		------------------
@@ -93,8 +93,23 @@ Entity Top is
 		FIXED_IO_ps_clk 			: inout STD_LOGIC;
 		FIXED_IO_ps_porb 			: inout STD_LOGIC;
 		FIXED_IO_ps_srstb 			: inout STD_LOGIC;
-        i2c0_scl_io : inout STD_LOGIC;
-        i2c0_sda_io : inout STD_LOGIC
+        i2c0_scl_io                 : inout STD_LOGIC;
+        i2c0_sda_io                 : inout STD_LOGIC;
+        PS_EMIO_TLED0               : inout STD_LOGIC;
+        PS_EMIO_TLED1               : inout STD_LOGIC;
+        PS_EMIO_GPIO0               : inout STD_LOGIC;
+        PS_EMIO_GPIO1               : inout STD_LOGIC;
+        PS_EMIO_GPIO2               : inout STD_LOGIC;
+        PS_UART1_rxd                : in STD_LOGIC;
+        PS_UART1_txd                : out STD_LOGIC;
+        o_relay_ch0                 : out STD_LOGIC;
+        o_relay_ch1                 : out STD_LOGIC;
+        o_relay_ch2                 : out STD_LOGIC;
+        o_relay_ch3                 : out STD_LOGIC;
+        o_relay_ch4                 : out STD_LOGIC;
+        o_relay_ch5                 : out STD_LOGIC;
+        o_relay_ch6                 : out STD_LOGIC;
+        rgb_led_tri_o               : out STD_LOGIC_VECTOR ( 2 downto 0 )
 	)
 	;
 end Top;
@@ -131,6 +146,7 @@ architecture Behavioral of Top is
 	signal s_clk2 : std_logic;
 	signal sRst   : std_logic;
 	signal sRstVio: std_logic_vector(0 downto 0);
+	signal sRstn : std_logic;
 	
 	
 -- ===================================
@@ -228,37 +244,40 @@ architecture Behavioral of Top is
 -- =========================	
  component GOD_wrapper is
   port (
-    Clk 				: in STD_LOGIC;
-	reset_rtl_0 		: in STD_LOGIC;
-    i_readdata_tri_i 	: in STD_LOGIC_VECTOR ( 31 downto 0 );
-    o_address_tri_o 	: out STD_LOGIC_VECTOR ( 7 downto 0 );
-    o_read_tri_o 		: out STD_LOGIC_VECTOR ( 0 to 0 );
-    o_write_data_tri_o 	: out STD_LOGIC_VECTOR ( 31 downto 0 );
-    o_write_tri_o 		: out STD_LOGIC_VECTOR ( 0 to 0 );
-	DDR_addr 			: inout STD_LOGIC_VECTOR ( 14 downto 0 );
-    DDR_ba 				: inout STD_LOGIC_VECTOR ( 2 downto 0 );
-    DDR_cas_n 			: inout STD_LOGIC;
-    DDR_ck_n 			: inout STD_LOGIC;
-    DDR_ck_p 			: inout STD_LOGIC;
-    DDR_cke 			: inout STD_LOGIC;
-    DDR_cs_n 			: inout STD_LOGIC;
-    DDR_dm 				: inout STD_LOGIC_VECTOR ( 3 downto 0 );
-    DDR_dq 				: inout STD_LOGIC_VECTOR ( 31 downto 0 );
-    DDR_dqs_n 			: inout STD_LOGIC_VECTOR ( 3 downto 0 );
-    DDR_dqs_p 			: inout STD_LOGIC_VECTOR ( 3 downto 0 );
-    DDR_odt 			: inout STD_LOGIC;
-    DDR_ras_n 			: inout STD_LOGIC;
-    DDR_reset_n 		: inout STD_LOGIC;
-    DDR_we_n 			: inout STD_LOGIC;
-    FIXED_IO_ddr_vrn 	: inout STD_LOGIC;
-    FIXED_IO_ddr_vrp 	: inout STD_LOGIC;
-    FIXED_IO_mio 		: inout STD_LOGIC_VECTOR ( 53 downto 0 );
-    FIXED_IO_ps_clk 	: inout STD_LOGIC;
-    FIXED_IO_ps_porb 	: inout STD_LOGIC;
-    FIXED_IO_ps_srstb 	: inout STD_LOGIC;
-    i2c0_scl_io : inout STD_LOGIC;
-    i2c0_sda_io : inout STD_LOGIC
-    
+    Clk : in STD_LOGIC;
+    DDR_addr : inout STD_LOGIC_VECTOR ( 14 downto 0 );
+    DDR_ba : inout STD_LOGIC_VECTOR ( 2 downto 0 );
+    DDR_cas_n : inout STD_LOGIC;
+  DDR_ck_n : inout STD_LOGIC;
+  DDR_ck_p : inout STD_LOGIC;
+  DDR_cke : inout STD_LOGIC;
+  DDR_cs_n : inout STD_LOGIC;
+  DDR_dm : inout STD_LOGIC_VECTOR ( 3 downto 0 );
+  DDR_dq : inout STD_LOGIC_VECTOR ( 31 downto 0 );
+  DDR_dqs_n : inout STD_LOGIC_VECTOR ( 3 downto 0 );
+  DDR_dqs_p : inout STD_LOGIC_VECTOR ( 3 downto 0 );
+  DDR_odt : inout STD_LOGIC;
+  DDR_ras_n : inout STD_LOGIC;
+  DDR_reset_n : inout STD_LOGIC;
+  DDR_we_n : inout STD_LOGIC;
+  FIXED_IO_ddr_vrn : inout STD_LOGIC;
+  FIXED_IO_ddr_vrp : inout STD_LOGIC;
+  FIXED_IO_mio : inout STD_LOGIC_VECTOR ( 53 downto 0 );
+  FIXED_IO_ps_clk : inout STD_LOGIC;
+  FIXED_IO_ps_porb : inout STD_LOGIC;
+  FIXED_IO_ps_srstb : inout STD_LOGIC;
+  PS_EMIO_tri_io : inout STD_LOGIC_VECTOR ( 4 downto 0 );
+  PS_UART1_rxd : in STD_LOGIC;
+  PS_UART1_txd : out STD_LOGIC;
+  i2c0_scl_io : inout STD_LOGIC;
+  i2c0_sda_io : inout STD_LOGIC;
+  i_readdata_tri_i : in STD_LOGIC_VECTOR ( 31 downto 0 );
+  o_address_tri_o : out STD_LOGIC_VECTOR ( 7 downto 0 );
+  o_read_tri_o : out STD_LOGIC_VECTOR ( 0 to 0 );
+  o_write_data_tri_o : out STD_LOGIC_VECTOR ( 31 downto 0 );
+  o_write_tri_o : out STD_LOGIC_VECTOR ( 0 to 0 );
+  reset_rtl_0 : in STD_LOGIC;
+  rgb_led_tri_o : out STD_LOGIC_VECTOR ( 2 downto 0 ) 
   );
   end component;
   
@@ -267,6 +286,9 @@ architecture Behavioral of Top is
 	signal s_o_write_data_tri_o 	: STD_LOGIC_VECTOR ( 31 downto 0 );
 	signal s_o_read_tri_o 			: STD_LOGIC_VECTOR ( 0 to 0 );
 	signal s_i_readdata_tri_i 		: STD_LOGIC_VECTOR ( 31 downto 0 );
+    signal s_PS_EMIO_tri_io         : std_logic_vector ( 4 downto 0);         
+	
+
 	
 
 -- =========================
@@ -1858,6 +1880,8 @@ signal s_trip_46_stg1     : std_logic;
     signal s_in_Port_095 : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
     signal s_in_Port_096 : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
     signal s_in_Port_097 : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
+    
+   
 
     
     alias REG_SEQ0_ABS   : std_logic_vector(31 downto 0) is s_in_Port_089(31 downto 0);
@@ -1880,6 +1904,33 @@ signal s_trip_46_stg1     : std_logic;
 --    alias REG_47_LUT_ADDR     : std_logic_vector(10 downto 0) is s_vio_47_reg1(24 downto 13);
 --    alias REG_47_LUT_DATA     : std_logic_vector(19 downto 0) is s_vio_47_reg1()
 
+   -- freq
+   signal s_in_Port_124 : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
+   alias REG_FREQ_U32 : std_logic_vector(31 downto 0) is s_in_Port_124(31 downto 0);
+   
+   -- globlar trip e boolean trip
+   signal s_in_Port_125 : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
+   signal s_in_Port_126 : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
+   alias REG_GLOBAL_TRIP : std_logic is s_in_Port_125(0);
+   alias REG_BOOL_TRIP : std_logic is s_in_Port_126(0);
+   signal s_GlobalTrip : std_logic := '0';
+   
+   -- relay
+   signal s_out_Port_117 : std_logic_vector(31 downto 0) := (others => '0');
+   signal s_out_Port_118 : std_logic_vector(31 downto 0) := (others => '0');
+   signal s_out_Port_119 : std_logic_vector(31 downto 0) := (others => '0');
+   signal s_out_Port_120 : std_logic_vector(31 downto 0) := (others => '0');
+   signal s_out_Port_121 : std_logic_vector(31 downto 0) := (others => '0');
+   signal s_out_Port_122 : std_logic_vector(31 downto 0) := (others => '0');
+   signal s_out_Port_123 : std_logic_vector(31 downto 0) := (others => '0');
+   
+   alias REG_RELAY_CH0 : std_logic_vector(0 downto 0) is s_out_Port_117(0 downto 0);
+   alias REG_RELAY_CH1 : std_logic_vector(0 downto 0) is s_out_Port_118(0 downto 0);
+   alias REG_RELAY_CH2 : std_logic_vector(0 downto 0) is s_out_Port_119(0 downto 0);
+   alias REG_RELAY_CH3 : std_logic_vector(0 downto 0) is s_out_Port_120(0 downto 0);
+   alias REG_RELAY_CH4 : std_logic_vector(0 downto 0) is s_out_Port_121(0 downto 0);
+   alias REG_RELAY_CH5 : std_logic_vector(0 downto 0) is s_out_Port_122(0 downto 0);
+   alias REG_RELAY_CH6 : std_logic_vector(0 downto 0) is s_out_Port_123(0 downto 0);
 	
 	-- ============================================================
 	-- Aliases legíveis para os registradores do CoreRegs (0x00..1F)
@@ -2331,7 +2382,8 @@ begin
     ---------------------------------------------------
 	-- sRst active 1 or by VIO software reset (probe 24)
 	----------------------------------------------------
-	sRst <= not(iRstn) or sRstVio(0)or REG_SOFTRESET(0);
+	
+	sRst <= not(sRstn) or sRstVio(0)or REG_SOFTRESET(0);
 	
 	-------------------
 	-- Instancia do PLL
@@ -2354,7 +2406,7 @@ begin
 	 inst_processor: GOD_wrapper
 	  port map (
 		Clk 				=> s_clk1,
-		reset_rtl_0			=> iRstn,
+		reset_rtl_0			=> sRstn,
 		--PIO for WR/RD CoreRegs
 		o_write_tri_o 		=> s_o_write_tri_o, 		
 		o_address_tri_o 	=> s_o_address_tri_o, 	
@@ -2383,8 +2435,17 @@ begin
 		FIXED_IO_ps_porb 	=> FIXED_IO_ps_porb, 	
 		FIXED_IO_ps_srstb 	=> FIXED_IO_ps_srstb,
         i2c0_scl_io         => i2c0_scl_io,
-        i2c0_sda_io			=> i2c0_sda_io
+        i2c0_sda_io			=> i2c0_sda_io,
+        rgb_led_tri_o       => rgb_led_tri_o,
+        PS_EMIO_tri_io      => s_PS_EMIO_tri_io,
+        PS_UART1_rxd        => PS_UART1_rxd,
+        PS_UART1_txd        => PS_UART1_txd
 	  );
+	  PS_EMIO_TLED0 <= s_PS_EMIO_tri_io(0);               
+      PS_EMIO_TLED1 <= s_PS_EMIO_tri_io(1);              
+      PS_EMIO_GPIO0 <= s_PS_EMIO_tri_io(2);              
+      PS_EMIO_GPIO1 <= s_PS_EMIO_tri_io(3);              
+      PS_EMIO_GPIO2 <= s_PS_EMIO_tri_io(4); 
 
 	-------------------
 	-- Instancia do Xadc
@@ -3838,7 +3899,7 @@ begin
 	---------------------------------------
 	----- Atuação do Trip Global
 	---------------------------------------
-	o_GlobalTrip <= (  s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
+    s_GlobalTrip <= (  s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
 			s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or  s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or
 			s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 or s_trip_46_stg1 or s_trip_46Temp_stg1 or s_trip_47_stg1);
 	
@@ -3868,7 +3929,7 @@ begin
 	-------------------------------
 	-- instancia do Core regs 
 	------------------------------
-	s_rst_core_regs <= not iRstn;
+	s_rst_core_regs <= not sRstn;
 	inst_CoreRegs: Core_regs
 	port map(																-- {{{
 			-- Avalon slave interface
@@ -4002,16 +4063,16 @@ begin
 			in_Port_114		=> s_out_Port_114,
 			in_Port_115		=> s_out_Port_115,
 			in_Port_116		=> s_out_Port_116,
-			in_Port_117		=> (others => '0'),
-			in_Port_118		=> (others => '0'),
-			in_Port_119		=> (others => '0'),
-			in_Port_120		=> (others => '0'),
-			in_Port_121		=> (others => '0'),
-			in_Port_122		=> (others => '0'),
-			in_Port_123		=> (others => '0'),
-			in_Port_124		=> (others => '0'),
-			in_Port_125		=> (others => '0'),
-			in_Port_126		=> (others => '0'),
+			in_Port_117		=> s_out_Port_117,
+			in_Port_118		=> s_out_Port_118,
+			in_Port_119		=> s_out_Port_119,
+			in_Port_120		=> s_out_Port_120,
+			in_Port_121		=> s_out_Port_121,
+			in_Port_122		=> s_out_Port_122,
+			in_Port_123		=> s_out_Port_123,
+			in_Port_124		=> s_in_Port_124, --RDO
+			in_Port_125		=> s_in_Port_125, --RDO
+			in_Port_126		=> s_in_Port_126, --RDO
 			in_Port_127		=> (others => '0'),
 			in_Port_128		=> (others => '0'),
 			in_Port_129		=> (others => '0'),
@@ -4260,16 +4321,16 @@ begin
 			out_Port_114	=> s_out_Port_114,
 			out_Port_115	=> s_out_Port_115,
 			out_Port_116	=> s_out_Port_116,
-			out_Port_117	=> open,
-			out_Port_118	=> open,
-			out_Port_119	=> open,
-			out_Port_120	=> open,
-			out_Port_121	=> open,
-			out_Port_122	=> open,
-			out_Port_123	=> open,
-			out_Port_124	=> open,
-			out_Port_125	=> open,
-			out_Port_126	=> open,
+			out_Port_117	=> s_out_Port_117,
+			out_Port_118	=> s_out_Port_118,
+			out_Port_119	=> s_out_Port_119,
+			out_Port_120	=> s_out_Port_120,
+			out_Port_121	=> s_out_Port_121,
+			out_Port_122	=> s_out_Port_122,
+			out_Port_123	=> s_out_Port_123,
+			out_Port_124	=> open, -- rod
+			out_Port_125	=> open, -- rod
+			out_Port_126	=> open, -- rod
 			out_Port_127	=> open,
 			out_Port_128	=> open,
 			out_Port_129	=> open,
@@ -4402,11 +4463,27 @@ begin
 	
 	);
 	
+	process(s_clk1)
+	   begin
+	       if rising_edge(s_clk1) then
+	           o_relay_ch0 <= REG_RELAY_CH0(0);
+	           o_relay_ch1 <= REG_RELAY_CH1(0);
+	           o_relay_ch2 <= REG_RELAY_CH2(0);
+	           
+	           o_relay_ch3 <= REG_RELAY_CH3(0);
+	           o_relay_ch4 <= REG_RELAY_CH4(0);
+	           o_relay_ch5 <= REG_RELAY_CH5(0);
+	           o_relay_ch6 <= REG_RELAY_CH6(0);
+	           
+	       end if;
+	end process;
 	
     process(s_clk1)
     begin
       if rising_edge(s_clk1) then
-        o_teste <=  s_Boolean_o_trip;
+        REG_BOOL_TRIP <=  s_Boolean_o_trip;
+        REG_GLOBAL_TRIP <= s_GlobalTrip;
+        sRstn <= iRstn;
       end if;
     end process;
 

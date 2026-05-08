@@ -10,7 +10,6 @@ set_property IOSTANDARD LVCMOS33 [get_ports iClk]
 ## ==============================
 ## Reset assíncrono (ativo baixo)
 ## ==============================
-set_property PACKAGE_PIN T11 [get_ports iRstn]
 set_property IOSTANDARD LVCMOS33 [get_ports iRstn]
 set_property PULLTYPE PULLUP [get_ports iRstn]
 # Reset assíncrono: não temporizar contra os clocks
@@ -30,7 +29,6 @@ set_property SLEW FAST [get_ports o_teste]
 ## ==============================
 ## Saída Global Trip
 ## ==============================
-set_property PACKAGE_PIN M15 [get_ports o_GlobalTrip]
 set_property IOSTANDARD LVCMOS18 [get_ports o_GlobalTrip]
 set_property DRIVE 12 [get_ports o_GlobalTrip]
 set_property SLEW FAST [get_ports o_GlobalTrip]
@@ -67,38 +65,38 @@ set_property SLEW FAST [get_ports o_GlobalTrip]
 # XADC external channels vauxp0..vauxp10 / vauxn0..vauxn10
 
 # canal 0
-set_property PACKAGE_PIN C20 [get_ports vauxp0]
-set_property PACKAGE_PIN B20 [get_ports vauxn0]
 # canal 1
-set_property PACKAGE_PIN E17 [get_ports vauxp1]
-set_property PACKAGE_PIN D18 [get_ports vauxn1]
 # canal 2
-set_property PACKAGE_PIN M19 [get_ports vauxp2]
-set_property PACKAGE_PIN M20 [get_ports vauxn2]
 # canal 3
-set_property PACKAGE_PIN L19 [get_ports vauxp3]
-set_property PACKAGE_PIN L20 [get_ports vauxn3]
 # canal 4
-set_property PACKAGE_PIN J18 [get_ports vauxp4]
-set_property PACKAGE_PIN H18 [get_ports vauxn4]
 # canal 5
-set_property PACKAGE_PIN J20 [get_ports vauxp5]
-set_property PACKAGE_PIN H20 [get_ports vauxn5]
 # canal 6
-set_property PACKAGE_PIN K14 [get_ports vauxp6]
-set_property PACKAGE_PIN J14 [get_ports vauxn6]
 # canal 7
+# canal 8
+# canal 9
+# canal 10
 set_property PACKAGE_PIN L14 [get_ports vauxp7]
 set_property PACKAGE_PIN L15 [get_ports vauxn7]
-# canal 8
-set_property PACKAGE_PIN B19 [get_ports vauxp8]
-set_property PACKAGE_PIN A20 [get_ports vauxn8]
-# canal 9
-set_property PACKAGE_PIN E18 [get_ports vauxp9]
-set_property PACKAGE_PIN E19 [get_ports vauxn9]
-# canal 10
+set_property PACKAGE_PIN K14 [get_ports vauxp6]
+set_property PACKAGE_PIN J14 [get_ports vauxn6]
+set_property PACKAGE_PIN J20 [get_ports vauxp5]
+set_property PACKAGE_PIN H20 [get_ports vauxn5]
+set_property PACKAGE_PIN J18 [get_ports vauxp4]
+set_property PACKAGE_PIN H18 [get_ports vauxn4]
+set_property PACKAGE_PIN L19 [get_ports vauxp3]
+set_property PACKAGE_PIN L20 [get_ports vauxn3]
 set_property PACKAGE_PIN M17 [get_ports vauxp10]
 set_property PACKAGE_PIN M18 [get_ports vauxn10]
+set_property PACKAGE_PIN M19 [get_ports vauxp2]
+set_property PACKAGE_PIN M20 [get_ports vauxn2]
+set_property PACKAGE_PIN E18 [get_ports vauxp9]
+set_property PACKAGE_PIN E19 [get_ports vauxn9]
+set_property PACKAGE_PIN E17 [get_ports vauxp1]
+set_property PACKAGE_PIN D18 [get_ports vauxn1]
+set_property PACKAGE_PIN B19 [get_ports vauxp8]
+set_property PACKAGE_PIN A20 [get_ports vauxn8]
+set_property PACKAGE_PIN C20 [get_ports vauxp0]
+set_property PACKAGE_PIN B20 [get_ports vauxn0]
 # canal 11
 set_property PACKAGE_PIN K19 [get_ports vauxp11]
 set_property PACKAGE_PIN J19 [get_ports vauxn11]
@@ -268,3 +266,61 @@ create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe20]
 set_property port_width 1 [get_debug_ports u_ila_0/probe20]
 connect_debug_port u_ila_0/probe20 [get_nets [list s_vaux0_decim_s12_valid]]
+
+set_property PACKAGE_PIN T14 [get_ports PS_EMIO_TLED0]
+set_property IOSTANDARD LVCMOS33 [get_ports PS_EMIO_GPIO0]
+set_property IOSTANDARD LVCMOS33 [get_ports PS_EMIO_GPIO1]
+set_property IOSTANDARD LVCMOS33 [get_ports PS_EMIO_GPIO2]
+set_property IOSTANDARD LVCMOS33 [get_ports PS_EMIO_TLED0]
+set_property IOSTANDARD LVCMOS33 [get_ports PS_EMIO_TLED1]
+set_property PACKAGE_PIN T15 [get_ports PS_EMIO_TLED1]
+set_property PACKAGE_PIN M14 [get_ports PS_EMIO_GPIO0]
+set_property PACKAGE_PIN M15 [get_ports PS_EMIO_GPIO1]
+set_property PACKAGE_PIN N16 [get_ports PS_EMIO_GPIO2]
+set_property IOSTANDARD LVCMOS33 [get_ports PS_UART1_rxd]
+set_property IOSTANDARD LVCMOS33 [get_ports PS_UART1_txd]
+set_property PACKAGE_PIN K9 [get_ports PS_UART1_txd]
+set_property PACKAGE_PIN L10 [get_ports PS_UART1_rxd]
+set_property PACKAGE_PIN T11 [get_ports o_relay_ch0]
+set_property PACKAGE_PIN T10 [get_ports o_relay_ch1]
+set_property PACKAGE_PIN U13 [get_ports o_relay_ch2]
+set_property PACKAGE_PIN V13 [get_ports o_relay_ch3]
+set_property PACKAGE_PIN T12 [get_ports o_relay_ch4]
+set_property PACKAGE_PIN U12 [get_ports o_relay_ch5]
+set_property PACKAGE_PIN V12 [get_ports o_relay_ch6]
+set_property IOSTANDARD LVCMOS33 [get_ports o_relay_ch0]
+set_property IOSTANDARD LVCMOS33 [get_ports o_relay_ch1]
+set_property IOSTANDARD LVCMOS33 [get_ports o_relay_ch2]
+set_property IOSTANDARD LVCMOS33 [get_ports o_relay_ch3]
+set_property IOSTANDARD LVCMOS33 [get_ports o_relay_ch4]
+set_property IOSTANDARD LVCMOS33 [get_ports o_relay_ch5]
+set_property IOSTANDARD LVCMOS33 [get_ports o_relay_ch6]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxn0]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxn1]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxn2]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxn3]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxn4]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxn5]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxn6]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxn7]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxn8]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxn9]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxn10]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxp0]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxp1]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxp2]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxp3]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxp4]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxp5]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxp6]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxp7]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxp8]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxp9]
+set_property IOSTANDARD LVCMOS33 [get_ports vauxp10]
+
+set_property PACKAGE_PIN J15 [get_ports iRstn]
+
+set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
+set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
+set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
+connect_debug_port dbg_hub/clk [get_nets s_clk1]
