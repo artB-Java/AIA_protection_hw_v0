@@ -237,8 +237,8 @@
         "PCW_EN_EMIO_WP_SDIO1": [ { "value": "0", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "PCW_EN_EMIO_SPI0": [ { "value": "0", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "PCW_EN_EMIO_SPI1": [ { "value": "0", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
-        "PCW_EN_EMIO_UART0": [ { "value": "0", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
-        "PCW_EN_EMIO_UART1": [ { "value": "1", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "PCW_EN_EMIO_UART0": [ { "value": "1", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "PCW_EN_EMIO_UART1": [ { "value": "0", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "PCW_EN_EMIO_MODEM_UART0": [ { "value": "0", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "PCW_EN_EMIO_MODEM_UART1": [ { "value": "0", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "PCW_EN_EMIO_TTC0": [ { "value": "1", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
@@ -319,7 +319,7 @@
         "PCW_S_AXI_ACP_ARUSER_VAL": [ { "value": "31", "resolve_type": "user", "format": "long", "enabled": false, "usage": "all" } ],
         "PCW_S_AXI_ACP_AWUSER_VAL": [ { "value": "31", "resolve_type": "user", "format": "long", "enabled": false, "usage": "all" } ],
         "PCW_S_AXI_HP0_ID_WIDTH": [ { "value": "6", "resolve_type": "user", "format": "long", "enabled": false, "usage": "all" } ],
-        "PCW_S_AXI_HP0_DATA_WIDTH": [ { "value": "64", "resolve_type": "user", "format": "long", "enabled": false, "usage": "all" } ],
+        "PCW_S_AXI_HP0_DATA_WIDTH": [ { "value": "64", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "PCW_S_AXI_HP1_ID_WIDTH": [ { "value": "6", "resolve_type": "user", "format": "long", "enabled": false, "usage": "all" } ],
         "PCW_S_AXI_HP1_DATA_WIDTH": [ { "value": "64", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "PCW_S_AXI_HP2_ID_WIDTH": [ { "value": "6", "resolve_type": "user", "format": "long", "enabled": false, "usage": "all" } ],
@@ -503,11 +503,11 @@
         "PCW_SD1_GRP_POW_ENABLE": [ { "value": "0", "resolve_type": "user", "enabled": false, "usage": "all" } ],
         "PCW_SD1_GRP_POW_IO": [ { "value": "<Select>", "resolve_type": "user", "enabled": false, "usage": "all" } ],
         "PCW_UART0_PERIPHERAL_ENABLE": [ { "value": "1", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
-        "PCW_UART0_UART0_IO": [ { "value": "MIO 10 .. 11", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
+        "PCW_UART0_UART0_IO": [ { "value": "EMIO", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "PCW_UART0_GRP_FULL_ENABLE": [ { "value": "0", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "PCW_UART0_GRP_FULL_IO": [ { "value": "<Select>", "resolve_type": "user", "enabled": false, "usage": "all" } ],
         "PCW_UART1_PERIPHERAL_ENABLE": [ { "value": "1", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
-        "PCW_UART1_UART1_IO": [ { "value": "EMIO", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
+        "PCW_UART1_UART1_IO": [ { "value": "MIO 48 .. 49", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "PCW_UART1_GRP_FULL_ENABLE": [ { "value": "0", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "PCW_UART1_GRP_FULL_IO": [ { "value": "<Select>", "resolve_type": "user", "enabled": false, "usage": "all" } ],
         "PCW_SPI0_PERIPHERAL_ENABLE": [ { "value": "0", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
@@ -834,8 +834,8 @@
         "PCW_MIO_53_SLEW": [ { "value": "slow", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "preset": [ { "value": "None", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "PCW_UIPARAM_GENERATE_SUMMARY": [ { "value": "NA", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
-        "PCW_MIO_TREE_PERIPHERALS": [ { "value": "GPIO#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#GPIO#Quad SPI Flash#GPIO#UART 0#UART 0#I2C 1#I2C 1#GPIO#GPIO#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#SD 0#SD 0#SD 0#SD 0#SD 0#SD 0#SD 0#SD 0#GPIO#GPIO#GPIO#USB Reset#Enet 0#Enet 0", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
-        "PCW_MIO_TREE_SIGNALS": [ { "value": "gpio[0]#qspi0_ss_b#qspi0_io[0]#qspi0_io[1]#qspi0_io[2]#qspi0_io[3]/HOLD_B#qspi0_sclk#gpio[7]#qspi_fbclk#gpio[9]#rx#tx#scl#sda#gpio[14]#gpio[15]#tx_clk#txd[0]#txd[1]#txd[2]#txd[3]#tx_ctl#rx_clk#rxd[0]#rxd[1]#rxd[2]#rxd[3]#rx_ctl#data[4]#dir#stp#nxt#data[0]#data[1]#data[2]#data[3]#clk#data[5]#data[6]#data[7]#clk#cmd#data[0]#data[1]#data[2]#data[3]#cd#wp#gpio[48]#gpio[49]#gpio[50]#reset#mdc#mdio", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
+        "PCW_MIO_TREE_PERIPHERALS": [ { "value": "GPIO#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#GPIO#Quad SPI Flash#GPIO#GPIO#GPIO#I2C 1#I2C 1#GPIO#GPIO#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#Enet 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#SD 0#SD 0#SD 0#SD 0#SD 0#SD 0#SD 0#SD 0#UART 1#UART 1#GPIO#USB Reset#Enet 0#Enet 0", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
+        "PCW_MIO_TREE_SIGNALS": [ { "value": "gpio[0]#qspi0_ss_b#qspi0_io[0]#qspi0_io[1]#qspi0_io[2]#qspi0_io[3]/HOLD_B#qspi0_sclk#gpio[7]#qspi_fbclk#gpio[9]#gpio[10]#gpio[11]#scl#sda#gpio[14]#gpio[15]#tx_clk#txd[0]#txd[1]#txd[2]#txd[3]#tx_ctl#rx_clk#rxd[0]#rxd[1]#rxd[2]#rxd[3]#rx_ctl#data[4]#dir#stp#nxt#data[0]#data[1]#data[2]#data[3]#clk#data[5]#data[6]#data[7]#clk#cmd#data[0]#data[1]#data[2]#data[3]#cd#wp#tx#rx#gpio[50]#reset#mdc#mdio", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "PCW_PS7_SI_REV": [ { "value": "PRODUCTION", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "PCW_FPGA_FCLK0_ENABLE": [ { "value": "1", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "PCW_FPGA_FCLK1_ENABLE": [ { "value": "1", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
@@ -981,8 +981,8 @@
         "I2C0_SCL_I": [ { "direction": "in", "driver_value": "0" } ],
         "I2C0_SCL_O": [ { "direction": "out" } ],
         "I2C0_SCL_T": [ { "direction": "out" } ],
-        "UART1_TX": [ { "direction": "out" } ],
-        "UART1_RX": [ { "direction": "in", "driver_value": "1" } ],
+        "UART0_TX": [ { "direction": "out" } ],
+        "UART0_RX": [ { "direction": "in", "driver_value": "1" } ],
         "TTC0_WAVE0_OUT": [ { "direction": "out" } ],
         "TTC0_WAVE1_OUT": [ { "direction": "out" } ],
         "TTC0_WAVE2_OUT": [ { "direction": "out" } ],
@@ -1118,13 +1118,13 @@
             "PS_PORB": [ { "physical_name": "PS_PORB" } ]
           }
         },
-        "UART_1": {
+        "UART_0": {
           "vlnv": "xilinx.com:interface:uart:1.0",
           "abstraction_type": "xilinx.com:interface:uart_rtl:1.0",
           "mode": "master",
           "port_maps": {
-            "TxD": [ { "physical_name": "UART1_TX" } ],
-            "RxD": [ { "physical_name": "UART1_RX" } ]
+            "TxD": [ { "physical_name": "UART0_TX" } ],
+            "RxD": [ { "physical_name": "UART0_RX" } ]
           }
         },
         "IIC_0": {

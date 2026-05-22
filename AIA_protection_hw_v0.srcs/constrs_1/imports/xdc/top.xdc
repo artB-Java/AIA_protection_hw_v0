@@ -13,7 +13,7 @@ set_property IOSTANDARD LVCMOS33 [get_ports iClk]
 set_property IOSTANDARD LVCMOS33 [get_ports iRstn]
 set_property PULLTYPE PULLUP [get_ports iRstn]
 # Reset assíncrono: não temporizar contra os clocks
-set_false_path -from [get_ports iRstn] -to [all_registers]
+set_false_path -from [get_ports iRstn]
 
 ## ==============================
 ## Sinais de teste / debug
@@ -21,17 +21,10 @@ set_false_path -from [get_ports iRstn] -to [all_registers]
 
 
 # Saída de teste
-set_property PACKAGE_PIN W19 [get_ports o_teste]
-set_property IOSTANDARD LVCMOS33 [get_ports o_teste]
-set_property DRIVE 8 [get_ports o_teste]
-set_property SLEW FAST [get_ports o_teste]
 
 ## ==============================
 ## Saída Global Trip
 ## ==============================
-set_property IOSTANDARD LVCMOS18 [get_ports o_GlobalTrip]
-set_property DRIVE 12 [get_ports o_GlobalTrip]
-set_property SLEW FAST [get_ports o_GlobalTrip]
 
 # (Opcional) Desconsiderar timing para saídas de debug:
 # set_false_path -to [get_ports {o_GlobalTrip o_teste}]
@@ -98,8 +91,6 @@ set_property PACKAGE_PIN A20 [get_ports vauxn8]
 set_property PACKAGE_PIN C20 [get_ports vauxp0]
 set_property PACKAGE_PIN B20 [get_ports vauxn0]
 # canal 11
-set_property PACKAGE_PIN K19 [get_ports vauxp11]
-set_property PACKAGE_PIN J19 [get_ports vauxn11]
 
 
 
@@ -134,81 +125,34 @@ set_property PACKAGE_PIN J19 [get_ports vauxn11]
 
 
 
-connect_debug_port u_ila_0/probe8 [get_nets [list {inst_biasdec_vaux0/i_decimation_factor[0]} {inst_biasdec_vaux0/i_decimation_factor[1]} {inst_biasdec_vaux0/i_decimation_factor[2]} {inst_biasdec_vaux0/i_decimation_factor[3]} {inst_biasdec_vaux0/i_decimation_factor[4]} {inst_biasdec_vaux0/i_decimation_factor[5]} {inst_biasdec_vaux0/i_decimation_factor[6]} {inst_biasdec_vaux0/i_decimation_factor[7]}]]
 
 
 
 
 
 
-set_property MARK_DEBUG true [get_nets {rmsA_opt[6]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[8]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[9]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[14]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[21]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[24]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[31]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[0]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[5]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[10]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[12]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[17]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[22]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[25]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[28]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[1]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[7]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[15]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[18]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[26]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[30]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[2]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[3]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[4]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[11]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[13]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[16]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[19]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[20]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[23]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[27]}]
-set_property MARK_DEBUG true [get_nets {rmsA_opt[29]}]
-set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[0]}]
-set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[2]}]
-set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[3]}]
-set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[6]}]
-set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[8]}]
-set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[9]}]
-set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[11]}]
-set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[1]}]
-set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[4]}]
-set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[5]}]
-set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[7]}]
-set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[10]}]
-connect_debug_port u_ila_0/probe0 [get_nets [list {angC_opt[0]} {angC_opt[1]} {angC_opt[2]} {angC_opt[3]} {angC_opt[4]} {angC_opt[5]} {angC_opt[6]} {angC_opt[7]} {angC_opt[8]} {angC_opt[9]} {angC_opt[10]} {angC_opt[11]} {angC_opt[12]} {angC_opt[13]} {angC_opt[14]} {angC_opt[15]}]]
-connect_debug_port u_ila_0/probe1 [get_nets [list {absA_opt[0]} {absA_opt[1]} {absA_opt[2]} {absA_opt[3]} {absA_opt[4]} {absA_opt[5]} {absA_opt[6]} {absA_opt[7]} {absA_opt[8]} {absA_opt[9]} {absA_opt[10]} {absA_opt[11]} {absA_opt[12]} {absA_opt[13]} {absA_opt[14]} {absA_opt[15]} {absA_opt[16]} {absA_opt[17]} {absA_opt[18]} {absA_opt[19]} {absA_opt[20]} {absA_opt[21]} {absA_opt[22]} {absA_opt[23]} {absA_opt[24]} {absA_opt[25]} {absA_opt[26]} {absA_opt[27]} {absA_opt[28]} {absA_opt[29]} {absA_opt[30]} {absA_opt[31]}]]
-connect_debug_port u_ila_0/probe2 [get_nets [list {angB_opt[0]} {angB_opt[1]} {angB_opt[2]} {angB_opt[3]} {angB_opt[4]} {angB_opt[5]} {angB_opt[6]} {angB_opt[7]} {angB_opt[8]} {angB_opt[9]} {angB_opt[10]} {angB_opt[11]} {angB_opt[12]} {angB_opt[13]} {angB_opt[14]} {angB_opt[15]}]]
-connect_debug_port u_ila_0/probe3 [get_nets [list {absC_opt[0]} {absC_opt[1]} {absC_opt[2]} {absC_opt[3]} {absC_opt[4]} {absC_opt[5]} {absC_opt[6]} {absC_opt[7]} {absC_opt[8]} {absC_opt[9]} {absC_opt[10]} {absC_opt[11]} {absC_opt[12]} {absC_opt[13]} {absC_opt[14]} {absC_opt[15]} {absC_opt[16]} {absC_opt[17]} {absC_opt[18]} {absC_opt[19]} {absC_opt[20]} {absC_opt[21]} {absC_opt[22]} {absC_opt[23]} {absC_opt[24]} {absC_opt[25]} {absC_opt[26]} {absC_opt[27]} {absC_opt[28]} {absC_opt[29]} {absC_opt[30]} {absC_opt[31]}]]
-connect_debug_port u_ila_0/probe4 [get_nets [list {absB_opt[0]} {absB_opt[1]} {absB_opt[2]} {absB_opt[3]} {absB_opt[4]} {absB_opt[5]} {absB_opt[6]} {absB_opt[7]} {absB_opt[8]} {absB_opt[9]} {absB_opt[10]} {absB_opt[11]} {absB_opt[12]} {absB_opt[13]} {absB_opt[14]} {absB_opt[15]} {absB_opt[16]} {absB_opt[17]} {absB_opt[18]} {absB_opt[19]} {absB_opt[20]} {absB_opt[21]} {absB_opt[22]} {absB_opt[23]} {absB_opt[24]} {absB_opt[25]} {absB_opt[26]} {absB_opt[27]} {absB_opt[28]} {absB_opt[29]} {absB_opt[30]} {absB_opt[31]}]]
-connect_debug_port u_ila_0/probe5 [get_nets [list {angA_opt[0]} {angA_opt[1]} {angA_opt[2]} {angA_opt[3]} {angA_opt[4]} {angA_opt[5]} {angA_opt[6]} {angA_opt[7]} {angA_opt[8]} {angA_opt[9]} {angA_opt[10]} {angA_opt[11]} {angA_opt[12]} {angA_opt[13]} {angA_opt[14]} {angA_opt[15]}]]
-connect_debug_port u_ila_0/probe6 [get_nets [list {rmsB_opt[0]} {rmsB_opt[1]} {rmsB_opt[2]} {rmsB_opt[3]} {rmsB_opt[4]} {rmsB_opt[5]} {rmsB_opt[6]} {rmsB_opt[7]} {rmsB_opt[8]} {rmsB_opt[9]} {rmsB_opt[10]} {rmsB_opt[11]} {rmsB_opt[12]} {rmsB_opt[13]} {rmsB_opt[14]} {rmsB_opt[15]} {rmsB_opt[16]} {rmsB_opt[17]} {rmsB_opt[18]} {rmsB_opt[19]} {rmsB_opt[20]} {rmsB_opt[21]} {rmsB_opt[22]} {rmsB_opt[23]} {rmsB_opt[24]} {rmsB_opt[25]} {rmsB_opt[26]} {rmsB_opt[27]} {rmsB_opt[28]} {rmsB_opt[29]} {rmsB_opt[30]} {rmsB_opt[31]}]]
-connect_debug_port u_ila_0/probe7 [get_nets [list {rmsA_opt[0]} {rmsA_opt[1]} {rmsA_opt[2]} {rmsA_opt[3]} {rmsA_opt[4]} {rmsA_opt[5]} {rmsA_opt[6]} {rmsA_opt[7]} {rmsA_opt[8]} {rmsA_opt[9]} {rmsA_opt[10]} {rmsA_opt[11]} {rmsA_opt[12]} {rmsA_opt[13]} {rmsA_opt[14]} {rmsA_opt[15]} {rmsA_opt[16]} {rmsA_opt[17]} {rmsA_opt[18]} {rmsA_opt[19]} {rmsA_opt[20]} {rmsA_opt[21]} {rmsA_opt[22]} {rmsA_opt[23]} {rmsA_opt[24]} {rmsA_opt[25]} {rmsA_opt[26]} {rmsA_opt[27]} {rmsA_opt[28]} {rmsA_opt[29]} {rmsA_opt[30]} {rmsA_opt[31]}]]
-connect_debug_port u_ila_0/probe8 [get_nets [list {rmsC_opt[0]} {rmsC_opt[1]} {rmsC_opt[2]} {rmsC_opt[3]} {rmsC_opt[4]} {rmsC_opt[5]} {rmsC_opt[6]} {rmsC_opt[7]} {rmsC_opt[8]} {rmsC_opt[9]} {rmsC_opt[10]} {rmsC_opt[11]} {rmsC_opt[12]} {rmsC_opt[13]} {rmsC_opt[14]} {rmsC_opt[15]} {rmsC_opt[16]} {rmsC_opt[17]} {rmsC_opt[18]} {rmsC_opt[19]} {rmsC_opt[20]} {rmsC_opt[21]} {rmsC_opt[22]} {rmsC_opt[23]} {rmsC_opt[24]} {rmsC_opt[25]} {rmsC_opt[26]} {rmsC_opt[27]} {rmsC_opt[28]} {rmsC_opt[29]} {rmsC_opt[30]} {rmsC_opt[31]}]]
-connect_debug_port u_ila_0/probe11 [get_nets [list {s_vaux0_decim_s12[0]} {s_vaux0_decim_s12[1]} {s_vaux0_decim_s12[2]} {s_vaux0_decim_s12[3]} {s_vaux0_decim_s12[4]} {s_vaux0_decim_s12[5]} {s_vaux0_decim_s12[6]} {s_vaux0_decim_s12[7]} {s_vaux0_decim_s12[8]} {s_vaux0_decim_s12[9]} {s_vaux0_decim_s12[10]} {s_vaux0_decim_s12[11]}]]
-
-
-
-connect_debug_port u_ila_0/probe5 [get_nets [list {s_sine_out[0]} {s_sine_out[1]} {s_sine_out[2]} {s_sine_out[3]} {s_sine_out[4]} {s_sine_out[5]} {s_sine_out[6]} {s_sine_out[7]} {s_sine_out[8]} {s_sine_out[9]} {s_sine_out[10]} {s_sine_out[11]}]]
-connect_debug_port u_ila_0/probe18 [get_nets [list s_ovalid]]
+# set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[0]}]
+# set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[2]}]
+# set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[3]}]
+# set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[6]}]
+# set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[8]}]
+# set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[9]}]
+# set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[11]}]
+# set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[1]}]
+# set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[4]}]
+# set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[5]}]
+# set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[7]}]
+# set_property MARK_DEBUG false [get_nets {s_vaux0_decim_s12[10]}]
 
 
 
 
 
 
-set_property MARK_DEBUG false [get_nets s_clk1]
-set_property MARK_DEBUG true [get_nets s_f46s1_trip]
-set_property MARK_DEBUG true [get_nets s_f46s2_trip]
+
+
+
+# set_property MARK_DEBUG false [get_nets s_clk1]
 
 #set_property IOSTANDARD LVCMOS33 [get_ports I2C0_SCL_O_0]
 #set_property IOSTANDARD LVCMOS33 [get_ports I2C0_SDA_O_0]
@@ -216,56 +160,20 @@ set_property MARK_DEBUG true [get_nets s_f46s2_trip]
 #set_property PACKAGE_PIN P15 [get_ports I2C0_SDA]
 
 
-set_property IOSTANDARD LVCMOS33 [get_ports I2C0_SCL]
-set_property IOSTANDARD LVCMOS33 [get_ports I2C0_SDA]
-
-set_property PACKAGE_PIN P15 [get_ports IIC_0_0_scl_io]
-set_property PACKAGE_PIN P16 [get_ports IIC_0_0_sda_io]
-set_property IOSTANDARD LVCMOS33 [get_ports IIC_0_0_scl_io]
-set_property IOSTANDARD LVCMOS33 [get_ports IIC_0_0_sda_io]
-
-set_property PULLTYPE PULLUP [get_ports IIC_0_0_scl_io]
-set_property PULLTYPE PULLUP [get_ports IIC_0_0_sda_io]
-set_property SLEW FAST [get_ports IIC_0_0_scl_io]
-set_property SLEW FAST [get_ports IIC_0_0_sda_io]
-
-connect_debug_port u_ila_0/probe19 [get_nets [list s_OutTripBooleanBlock]]
 
 
-set_property port_width 6 [get_debug_ports u_ila_0/probe12]
-connect_debug_port u_ila_0/probe12 [get_nets [list {s_sel_s0[0]} {s_sel_s0[1]} {s_sel_s0[2]} {s_sel_s0[3]} {s_sel_s0[4]} {s_sel_s0[5]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe13]
-set_property port_width 6 [get_debug_ports u_ila_0/probe13]
-connect_debug_port u_ila_0/probe13 [get_nets [list {s_sel_s7[0]} {s_sel_s7[1]} {s_sel_s7[2]} {s_sel_s7[3]} {s_sel_s7[4]} {s_sel_s7[5]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe14]
-set_property port_width 6 [get_debug_ports u_ila_0/probe14]
-connect_debug_port u_ila_0/probe14 [get_nets [list {s_sel_s4[0]} {s_sel_s4[1]} {s_sel_s4[2]} {s_sel_s4[3]} {s_sel_s4[4]} {s_sel_s4[5]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe15]
-set_property port_width 6 [get_debug_ports u_ila_0/probe15]
-connect_debug_port u_ila_0/probe15 [get_nets [list {s_sel_s5[0]} {s_sel_s5[1]} {s_sel_s5[2]} {s_sel_s5[3]} {s_sel_s5[4]} {s_sel_s5[5]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe16]
-set_property port_width 16 [get_debug_ports u_ila_0/probe16]
-connect_debug_port u_ila_0/probe16 [get_nets [list {s_ph_phase_phaseA[0]} {s_ph_phase_phaseA[1]} {s_ph_phase_phaseA[2]} {s_ph_phase_phaseA[3]} {s_ph_phase_phaseA[4]} {s_ph_phase_phaseA[5]} {s_ph_phase_phaseA[6]} {s_ph_phase_phaseA[7]} {s_ph_phase_phaseA[8]} {s_ph_phase_phaseA[9]} {s_ph_phase_phaseA[10]} {s_ph_phase_phaseA[11]} {s_ph_phase_phaseA[12]} {s_ph_phase_phaseA[13]} {s_ph_phase_phaseA[14]} {s_ph_phase_phaseA[15]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe17]
-set_property port_width 6 [get_debug_ports u_ila_0/probe17]
-connect_debug_port u_ila_0/probe17 [get_nets [list {s_sel_s3[0]} {s_sel_s3[1]} {s_sel_s3[2]} {s_sel_s3[3]} {s_sel_s3[4]} {s_sel_s3[5]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe18]
-set_property port_width 1 [get_debug_ports u_ila_0/probe18]
-connect_debug_port u_ila_0/probe18 [get_nets [list s_Boolean_o_trip]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe19]
-set_property port_width 1 [get_debug_ports u_ila_0/probe19]
-connect_debug_port u_ila_0/probe19 [get_nets [list s_ph_valid_phaseA]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe20]
-set_property port_width 1 [get_debug_ports u_ila_0/probe20]
-connect_debug_port u_ila_0/probe20 [get_nets [list s_vaux0_decim_s12_valid]]
+# Input Delays (Dados vindo da EEPROM para o SDA da FPGA)
+# max delay = tAA (550 ns) + margem de atraso da trilha na placa (assumindo ~0.5ns)
+# min delay = tDH (50 ns) - margem de trilha
+
+# Output Delays (Dados saindo da FPGA para a EEPROM)
+# max delay = tSU:DAT (100 ns) + margem de trilha
+# min delay = - tHD:DAT (0 ns) - margem de trilha
+
+
+
+
+
 
 set_property PACKAGE_PIN T14 [get_ports PS_EMIO_TLED0]
 set_property IOSTANDARD LVCMOS33 [get_ports PS_EMIO_GPIO0]
@@ -277,10 +185,8 @@ set_property PACKAGE_PIN T15 [get_ports PS_EMIO_TLED1]
 set_property PACKAGE_PIN M14 [get_ports PS_EMIO_GPIO0]
 set_property PACKAGE_PIN M15 [get_ports PS_EMIO_GPIO1]
 set_property PACKAGE_PIN N16 [get_ports PS_EMIO_GPIO2]
-set_property IOSTANDARD LVCMOS33 [get_ports PS_UART1_rxd]
-set_property IOSTANDARD LVCMOS33 [get_ports PS_UART1_txd]
-set_property PACKAGE_PIN K9 [get_ports PS_UART1_txd]
-set_property PACKAGE_PIN L10 [get_ports PS_UART1_rxd]
+set_property IOSTANDARD LVCMOS33 [get_ports PS_UART0_rxd]
+set_property IOSTANDARD LVCMOS33 [get_ports PS_UART0_txd]
 set_property PACKAGE_PIN T11 [get_ports o_relay_ch0]
 set_property PACKAGE_PIN T10 [get_ports o_relay_ch1]
 set_property PACKAGE_PIN U13 [get_ports o_relay_ch2]
@@ -320,7 +226,159 @@ set_property IOSTANDARD LVCMOS33 [get_ports vauxp10]
 
 set_property PACKAGE_PIN J15 [get_ports iRstn]
 
-set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
-set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
-set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
-connect_debug_port dbg_hub/clk [get_nets s_clk1]
+
+
+
+set_property PACKAGE_PIN L16 [get_ports PS_UART0_rxd]
+set_property PACKAGE_PIN L17 [get_ports PS_UART0_txd]
+
+#set_input_delay -clock [get_clocks -of_objects [get_pins inst_pll/inst/mmcm_adv_inst/CLKOUT0]] -min 0.000 [get_ports {i2c0_sda_io i2c0_scl_io}]
+#set_input_delay -clock [get_clocks -of_objects [get_pins inst_pll/inst/mmcm_adv_inst/CLKOUT0]] 0.000 [get_ports {i2c0_sda_io i2c0_scl_io}]
+#set_input_delay -clock [get_clocks -of_objects [get_pins inst_pll/inst/mmcm_adv_inst/CLKOUT0]] 0.000 [get_ports iRstn]
+#set_output_delay -clock [get_clocks -of_objects [get_pins inst_pll/inst/mmcm_adv_inst/CLKOUT0]] -min 0.000 [get_ports {i2c0_sda_io i2c0_scl_io}]
+#set_output_delay -clock [get_clocks -of_objects [get_pins inst_pll/inst/mmcm_adv_inst/CLKOUT0]] 0.000 [get_ports {i2c0_sda_io i2c0_scl_io}]
+
+
+
+
+
+
+#set_property PACKAGE_PIN G14 [get_ports i_switch2]
+#set_property IOSTANDARD LVCMOS33 [get_ports i_switch2]
+#set_property PACKAGE_PIN T19 [get_ports i_switch3]
+#set_property IOSTANDARD LVCMOS33 [get_ports i_switch3]
+# set_property PACKAGE_PIN R19 [get_ports i_switch4]
+# set_property IOSTANDARD LVCMOS33 [get_ports i_switch4]
+
+set_property DRIVE 12 [get_ports o_relay_ch5]
+set_property DRIVE 12 [get_ports o_relay_ch6]
+set_property SLEW FAST [get_ports o_relay_ch0]
+
+set_property PACKAGE_PIN R14 [get_ports {o_RGB_LED[2]}]
+set_property PACKAGE_PIN Y16 [get_ports {o_RGB_LED[1]}]
+set_property PACKAGE_PIN Y17 [get_ports {o_RGB_LED[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_RGB_LED[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_RGB_LED[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {o_RGB_LED[0]}]
+set_property SLEW FAST [get_ports o_relay_ch1]
+set_property SLEW FAST [get_ports o_relay_ch2]
+set_property SLEW FAST [get_ports o_relay_ch3]
+set_property SLEW FAST [get_ports o_relay_ch4]
+set_property SLEW FAST [get_ports o_relay_ch5]
+set_property SLEW FAST [get_ports o_relay_ch6]
+
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux3_data[1]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux3_data[2]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux3_data[3]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux3_data[4]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux3_data[6]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux3_data[9]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux3_data[10]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux3_data[11]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux3_data[0]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux3_data[5]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux3_data[7]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux3_data[8]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux0_data[0]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux0_data[5]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux0_data[6]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux0_data[9]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux0_data[10]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux0_data[1]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux0_data[2]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux0_data[3]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux0_data[4]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux0_data[7]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux0_data[8]}]
+# set_property MARK_DEBUG false [get_nets {inst_adc/s_vaux0_data[11]}]
+
+
+# connect_debug_port u_ila_0/probe9 [get_nets [list {s_rms_aux_2[0]} {s_rms_aux_2[1]} {s_rms_aux_2[2]} {s_rms_aux_2[3]} {s_rms_aux_2[4]} {s_rms_aux_2[5]} {s_rms_aux_2[6]} {s_rms_aux_2[7]} {s_rms_aux_2[8]} {s_rms_aux_2[9]} {s_rms_aux_2[10]} {s_rms_aux_2[11]}]]
+# connect_debug_port u_ila_0/probe11 [get_nets [list {s_rms_aux_0[0]} {s_rms_aux_0[1]} {s_rms_aux_0[2]} {s_rms_aux_0[3]} {s_rms_aux_0[4]} {s_rms_aux_0[5]} {s_rms_aux_0[6]} {s_rms_aux_0[7]} {s_rms_aux_0[8]} {s_rms_aux_0[9]} {s_rms_aux_0[10]} {s_rms_aux_0[11]}]]
+# connect_debug_port u_ila_0/probe12 [get_nets [list {s_rms_aux_3[0]} {s_rms_aux_3[1]} {s_rms_aux_3[2]} {s_rms_aux_3[3]} {s_rms_aux_3[4]} {s_rms_aux_3[5]} {s_rms_aux_3[6]} {s_rms_aux_3[7]} {s_rms_aux_3[8]} {s_rms_aux_3[9]} {s_rms_aux_3[10]} {s_rms_aux_3[11]}]]
+# connect_debug_port u_ila_0/probe13 [get_nets [list {s_rms_aux_1[0]} {s_rms_aux_1[1]} {s_rms_aux_1[2]} {s_rms_aux_1[3]} {s_rms_aux_1[4]} {s_rms_aux_1[5]} {s_rms_aux_1[6]} {s_rms_aux_1[7]} {s_rms_aux_1[8]} {s_rms_aux_1[9]} {s_rms_aux_1[10]} {s_rms_aux_1[11]}]]
+
+
+
+# create_debug_core u_ila_0 ila
+# set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+# set_property ALL_PROBE_SAME_MU_CNT 4 [get_debug_cores u_ila_0]
+# set_property C_ADV_TRIGGER true [get_debug_cores u_ila_0]
+# set_property C_DATA_DEPTH 4096 [get_debug_cores u_ila_0]
+# set_property C_EN_STRG_QUAL true [get_debug_cores u_ila_0]
+# set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+# set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+# set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+# set_property port_width 1 [get_debug_ports u_ila_0/clk]
+# connect_debug_port u_ila_0/clk [get_nets [list inst_pll/inst/clk_out1]]
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
+# set_property port_width 32 [get_debug_ports u_ila_0/probe0]
+# connect_debug_port u_ila_0/probe0 [get_nets [list {s_in_Port_069[0]} {s_in_Port_069[1]} {s_in_Port_069[2]} {s_in_Port_069[3]} {s_in_Port_069[4]} {s_in_Port_069[5]} {s_in_Port_069[6]} {s_in_Port_069[7]} {s_in_Port_069[8]} {s_in_Port_069[9]} {s_in_Port_069[10]} {s_in_Port_069[11]} {s_in_Port_069[12]} {s_in_Port_069[13]} {s_in_Port_069[14]} {s_in_Port_069[15]} {s_in_Port_069[16]} {s_in_Port_069[17]} {s_in_Port_069[18]} {s_in_Port_069[19]} {s_in_Port_069[20]} {s_in_Port_069[21]} {s_in_Port_069[22]} {s_in_Port_069[23]} {s_in_Port_069[24]} {s_in_Port_069[25]} {s_in_Port_069[26]} {s_in_Port_069[27]} {s_in_Port_069[28]} {s_in_Port_069[29]} {s_in_Port_069[30]} {s_in_Port_069[31]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe1]
+# set_property port_width 32 [get_debug_ports u_ila_0/probe1]
+# connect_debug_port u_ila_0/probe1 [get_nets [list {s_in_Port_070[0]} {s_in_Port_070[1]} {s_in_Port_070[2]} {s_in_Port_070[3]} {s_in_Port_070[4]} {s_in_Port_070[5]} {s_in_Port_070[6]} {s_in_Port_070[7]} {s_in_Port_070[8]} {s_in_Port_070[9]} {s_in_Port_070[10]} {s_in_Port_070[11]} {s_in_Port_070[12]} {s_in_Port_070[13]} {s_in_Port_070[14]} {s_in_Port_070[15]} {s_in_Port_070[16]} {s_in_Port_070[17]} {s_in_Port_070[18]} {s_in_Port_070[19]} {s_in_Port_070[20]} {s_in_Port_070[21]} {s_in_Port_070[22]} {s_in_Port_070[23]} {s_in_Port_070[24]} {s_in_Port_070[25]} {s_in_Port_070[26]} {s_in_Port_070[27]} {s_in_Port_070[28]} {s_in_Port_070[29]} {s_in_Port_070[30]} {s_in_Port_070[31]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe2]
+# set_property port_width 32 [get_debug_ports u_ila_0/probe2]
+# connect_debug_port u_ila_0/probe2 [get_nets [list {s_in_Port_136[0]} {s_in_Port_136[1]} {s_in_Port_136[2]} {s_in_Port_136[3]} {s_in_Port_136[4]} {s_in_Port_136[5]} {s_in_Port_136[6]} {s_in_Port_136[7]} {s_in_Port_136[8]} {s_in_Port_136[9]} {s_in_Port_136[10]} {s_in_Port_136[11]} {s_in_Port_136[12]} {s_in_Port_136[13]} {s_in_Port_136[14]} {s_in_Port_136[15]} {s_in_Port_136[16]} {s_in_Port_136[17]} {s_in_Port_136[18]} {s_in_Port_136[19]} {s_in_Port_136[20]} {s_in_Port_136[21]} {s_in_Port_136[22]} {s_in_Port_136[23]} {s_in_Port_136[24]} {s_in_Port_136[25]} {s_in_Port_136[26]} {s_in_Port_136[27]} {s_in_Port_136[28]} {s_in_Port_136[29]} {s_in_Port_136[30]} {s_in_Port_136[31]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe3]
+# set_property port_width 32 [get_debug_ports u_ila_0/probe3]
+# connect_debug_port u_ila_0/probe3 [get_nets [list {s_in_Port_135[0]} {s_in_Port_135[1]} {s_in_Port_135[2]} {s_in_Port_135[3]} {s_in_Port_135[4]} {s_in_Port_135[5]} {s_in_Port_135[6]} {s_in_Port_135[7]} {s_in_Port_135[8]} {s_in_Port_135[9]} {s_in_Port_135[10]} {s_in_Port_135[11]} {s_in_Port_135[12]} {s_in_Port_135[13]} {s_in_Port_135[14]} {s_in_Port_135[15]} {s_in_Port_135[16]} {s_in_Port_135[17]} {s_in_Port_135[18]} {s_in_Port_135[19]} {s_in_Port_135[20]} {s_in_Port_135[21]} {s_in_Port_135[22]} {s_in_Port_135[23]} {s_in_Port_135[24]} {s_in_Port_135[25]} {s_in_Port_135[26]} {s_in_Port_135[27]} {s_in_Port_135[28]} {s_in_Port_135[29]} {s_in_Port_135[30]} {s_in_Port_135[31]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe4]
+# set_property port_width 32 [get_debug_ports u_ila_0/probe4]
+# connect_debug_port u_ila_0/probe4 [get_nets [list {s_in_Port_134[0]} {s_in_Port_134[1]} {s_in_Port_134[2]} {s_in_Port_134[3]} {s_in_Port_134[4]} {s_in_Port_134[5]} {s_in_Port_134[6]} {s_in_Port_134[7]} {s_in_Port_134[8]} {s_in_Port_134[9]} {s_in_Port_134[10]} {s_in_Port_134[11]} {s_in_Port_134[12]} {s_in_Port_134[13]} {s_in_Port_134[14]} {s_in_Port_134[15]} {s_in_Port_134[16]} {s_in_Port_134[17]} {s_in_Port_134[18]} {s_in_Port_134[19]} {s_in_Port_134[20]} {s_in_Port_134[21]} {s_in_Port_134[22]} {s_in_Port_134[23]} {s_in_Port_134[24]} {s_in_Port_134[25]} {s_in_Port_134[26]} {s_in_Port_134[27]} {s_in_Port_134[28]} {s_in_Port_134[29]} {s_in_Port_134[30]} {s_in_Port_134[31]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe5]
+# set_property port_width 32 [get_debug_ports u_ila_0/probe5]
+# connect_debug_port u_ila_0/probe5 [get_nets [list {s_in_Port_033[0]} {s_in_Port_033[1]} {s_in_Port_033[2]} {s_in_Port_033[3]} {s_in_Port_033[4]} {s_in_Port_033[5]} {s_in_Port_033[6]} {s_in_Port_033[7]} {s_in_Port_033[8]} {s_in_Port_033[9]} {s_in_Port_033[10]} {s_in_Port_033[11]} {s_in_Port_033[12]} {s_in_Port_033[13]} {s_in_Port_033[14]} {s_in_Port_033[15]} {s_in_Port_033[16]} {s_in_Port_033[17]} {s_in_Port_033[18]} {s_in_Port_033[19]} {s_in_Port_033[20]} {s_in_Port_033[21]} {s_in_Port_033[22]} {s_in_Port_033[23]} {s_in_Port_033[24]} {s_in_Port_033[25]} {s_in_Port_033[26]} {s_in_Port_033[27]} {s_in_Port_033[28]} {s_in_Port_033[29]} {s_in_Port_033[30]} {s_in_Port_033[31]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe6]
+# set_property port_width 32 [get_debug_ports u_ila_0/probe6]
+# connect_debug_port u_ila_0/probe6 [get_nets [list {s_in_Port_034[0]} {s_in_Port_034[1]} {s_in_Port_034[2]} {s_in_Port_034[3]} {s_in_Port_034[4]} {s_in_Port_034[5]} {s_in_Port_034[6]} {s_in_Port_034[7]} {s_in_Port_034[8]} {s_in_Port_034[9]} {s_in_Port_034[10]} {s_in_Port_034[11]} {s_in_Port_034[12]} {s_in_Port_034[13]} {s_in_Port_034[14]} {s_in_Port_034[15]} {s_in_Port_034[16]} {s_in_Port_034[17]} {s_in_Port_034[18]} {s_in_Port_034[19]} {s_in_Port_034[20]} {s_in_Port_034[21]} {s_in_Port_034[22]} {s_in_Port_034[23]} {s_in_Port_034[24]} {s_in_Port_034[25]} {s_in_Port_034[26]} {s_in_Port_034[27]} {s_in_Port_034[28]} {s_in_Port_034[29]} {s_in_Port_034[30]} {s_in_Port_034[31]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe7]
+# set_property port_width 12 [get_debug_ports u_ila_0/probe7]
+# connect_debug_port u_ila_0/probe7 [get_nets [list {s_vaux1_data[0]} {s_vaux1_data[1]} {s_vaux1_data[2]} {s_vaux1_data[3]} {s_vaux1_data[4]} {s_vaux1_data[5]} {s_vaux1_data[6]} {s_vaux1_data[7]} {s_vaux1_data[8]} {s_vaux1_data[9]} {s_vaux1_data[10]} {s_vaux1_data[11]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe8]
+# set_property port_width 12 [get_debug_ports u_ila_0/probe8]
+# connect_debug_port u_ila_0/probe8 [get_nets [list {s_vaux0_decim_s12[0]} {s_vaux0_decim_s12[1]} {s_vaux0_decim_s12[2]} {s_vaux0_decim_s12[3]} {s_vaux0_decim_s12[4]} {s_vaux0_decim_s12[5]} {s_vaux0_decim_s12[6]} {s_vaux0_decim_s12[7]} {s_vaux0_decim_s12[8]} {s_vaux0_decim_s12[9]} {s_vaux0_decim_s12[10]} {s_vaux0_decim_s12[11]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe9]
+# set_property port_width 12 [get_debug_ports u_ila_0/probe9]
+# connect_debug_port u_ila_0/probe9 [get_nets [list {s_vaux1_decim_s12[0]} {s_vaux1_decim_s12[1]} {s_vaux1_decim_s12[2]} {s_vaux1_decim_s12[3]} {s_vaux1_decim_s12[4]} {s_vaux1_decim_s12[5]} {s_vaux1_decim_s12[6]} {s_vaux1_decim_s12[7]} {s_vaux1_decim_s12[8]} {s_vaux1_decim_s12[9]} {s_vaux1_decim_s12[10]} {s_vaux1_decim_s12[11]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe10]
+# set_property port_width 12 [get_debug_ports u_ila_0/probe10]
+# connect_debug_port u_ila_0/probe10 [get_nets [list {inst_adc/s_vaux0_data[0]} {inst_adc/s_vaux0_data[1]} {inst_adc/s_vaux0_data[2]} {inst_adc/s_vaux0_data[3]} {inst_adc/s_vaux0_data[4]} {inst_adc/s_vaux0_data[5]} {inst_adc/s_vaux0_data[6]} {inst_adc/s_vaux0_data[7]} {inst_adc/s_vaux0_data[8]} {inst_adc/s_vaux0_data[9]} {inst_adc/s_vaux0_data[10]} {inst_adc/s_vaux0_data[11]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe11]
+# set_property port_width 12 [get_debug_ports u_ila_0/probe11]
+# connect_debug_port u_ila_0/probe11 [get_nets [list {inst_rms_aux0/o_rms[0]} {inst_rms_aux0/o_rms[1]} {inst_rms_aux0/o_rms[2]} {inst_rms_aux0/o_rms[3]} {inst_rms_aux0/o_rms[4]} {inst_rms_aux0/o_rms[5]} {inst_rms_aux0/o_rms[6]} {inst_rms_aux0/o_rms[7]} {inst_rms_aux0/o_rms[8]} {inst_rms_aux0/o_rms[9]} {inst_rms_aux0/o_rms[10]} {inst_rms_aux0/o_rms[11]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe12]
+# set_property port_width 12 [get_debug_ports u_ila_0/probe12]
+# connect_debug_port u_ila_0/probe12 [get_nets [list {inst_rms_aux1/o_rms[0]} {inst_rms_aux1/o_rms[1]} {inst_rms_aux1/o_rms[2]} {inst_rms_aux1/o_rms[3]} {inst_rms_aux1/o_rms[4]} {inst_rms_aux1/o_rms[5]} {inst_rms_aux1/o_rms[6]} {inst_rms_aux1/o_rms[7]} {inst_rms_aux1/o_rms[8]} {inst_rms_aux1/o_rms[9]} {inst_rms_aux1/o_rms[10]} {inst_rms_aux1/o_rms[11]}]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe13]
+# set_property port_width 1 [get_debug_ports u_ila_0/probe13]
+# connect_debug_port u_ila_0/probe13 [get_nets [list s_rms_aux_0_valid]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe14]
+# set_property port_width 1 [get_debug_ports u_ila_0/probe14]
+# connect_debug_port u_ila_0/probe14 [get_nets [list s_rms_aux_1_valid]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe15]
+# set_property port_width 1 [get_debug_ports u_ila_0/probe15]
+# connect_debug_port u_ila_0/probe15 [get_nets [list s_vaux0_decim_s12_valid]]
+# create_debug_port u_ila_0 probe
+# set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe16]
+# set_property port_width 1 [get_debug_ports u_ila_0/probe16]
+# connect_debug_port u_ila_0/probe16 [get_nets [list s_vaux1_decim_s12_valid]]
+# set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
+# set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
+# set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
+# connect_debug_port dbg_hub/clk [get_nets s_clk1]
