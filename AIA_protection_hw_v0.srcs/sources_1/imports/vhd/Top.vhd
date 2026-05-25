@@ -2298,27 +2298,27 @@ end component;
   alias REG_LUT_WR_EN_C : std_logic_vector(0 downto 0) is s_out_Port_031(2 downto 2); -- [0]=A,[1]=B,[2]=C,[3]=N
   alias REG_LUT_WR_EN_N : std_logic_vector(0 downto 0) is s_out_Port_031(3 downto 3); -- [0]=A,[1]=B,[2]=C,[3]=N
 
-  -- Tensão Fase A (VA = aux4) – OFFSET/DECIMAÇÃO + 27/59 (stg1/stg2)
-  alias REG_VA_OFFSET_U12 : std_logic_vector(11 downto 0) is s_out_Port_035(11 downto 0);
-  alias REG_VA_DECIM_U8   : std_logic_vector(7 downto 0) is s_out_Port_036(7 downto 0);
-  alias REG_VA_RMS_U12      : std_logic_vector(11 downto 0) is s_in_Port_134(11 downto 0);
-  -- Enables das proteções 27/59 da fase A (VA)
-  alias REG_A_EN27_STG1 : std_logic_vector(0 downto 0) is s_out_Port_037(0 downto 0);
-  alias REG_A_EN27_STG2 : std_logic_vector(0 downto 0) is s_out_Port_037(1 downto 1);
-  alias REG_A_EN59_STG1 : std_logic_vector(0 downto 0) is s_out_Port_037(2 downto 2);
-  alias REG_A_EN59_STG2 : std_logic_vector(0 downto 0) is s_out_Port_037(3 downto 3);
-  -- 27 – Stage 1 (fase A)
-  alias REG_A_27_STG1_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_038(11 downto 0);
-  alias REG_A_27_STG1_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_039(19 downto 0);
-  -- 27 – Stage 2 (fase A)
-  alias REG_A_27_STG2_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_040(11 downto 0);
-  alias REG_A_27_STG2_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_041(19 downto 0);
-  -- 59 – Stage 1 (fase A)
-  alias REG_A_59_STG1_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_042(11 downto 0);
-  alias REG_A_59_STG1_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_043(19 downto 0);
-  -- 59 – Stage 2 (fase A)
-  alias REG_A_59_STG2_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_044(11 downto 0);
-  alias REG_A_59_STG2_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_045(19 downto 0);
+  -- Tensão Fase C (VC = aux4) – OFFSET/DECIMAÇÃO + 27/59 (stg1/stg2)
+  alias REG_VC_OFFSET_U12 : std_logic_vector(11 downto 0) is s_out_Port_035(11 downto 0);
+  alias REG_VC_DECIM_U8   : std_logic_vector(7 downto 0) is s_out_Port_036(7 downto 0);
+  alias REG_VC_RMS_U12      : std_logic_vector(11 downto 0) is s_in_Port_134(11 downto 0);
+  -- Enables das proteções 27/59 da fase C (VC)
+  alias REG_VC_EN27_STG1 : std_logic_vector(0 downto 0) is s_out_Port_037(0 downto 0);
+  alias REG_VC_EN27_STG2 : std_logic_vector(0 downto 0) is s_out_Port_037(1 downto 1);
+  alias REG_VC_EN59_STG1 : std_logic_vector(0 downto 0) is s_out_Port_037(2 downto 2);
+  alias REG_VC_EN59_STG2 : std_logic_vector(0 downto 0) is s_out_Port_037(3 downto 3);
+  -- 27 – Stage 1 (fase VC)
+  alias REG_VC_27_STG1_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_038(11 downto 0);
+  alias REG_VC_27_STG1_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_039(19 downto 0);
+  -- 27 – Stage 2 (fase VC)
+  alias REG_VC_27_STG2_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_040(11 downto 0);
+  alias REG_VC_27_STG2_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_041(19 downto 0);
+  -- 59 – Stage 1 (fase VC)
+  alias REG_VC_59_STG1_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_042(11 downto 0);
+  alias REG_VC_59_STG1_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_043(19 downto 0);
+  -- 59 – Stage 2 (fase VC)
+  alias REG_VC_59_STG2_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_044(11 downto 0);
+  alias REG_VC_59_STG2_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_045(19 downto 0);
 
   -- Tensão Fase B (VB = aux5) – OFFSET/DECIMAÇÃO + 27/59 (stg1/stg2)
   alias REG_VB_OFFSET_U12 : std_logic_vector(11 downto 0) is s_out_Port_046(11 downto 0);
@@ -2326,43 +2326,43 @@ end component;
   alias REG_VB_RMS_U12      : std_logic_vector(11 downto 0) is s_in_Port_135(11 downto 0);
 
   -- Enables das proteções 27/59 da fase B (VB)
-  alias REG_B_EN27_STG1 : std_logic_vector(0 downto 0) is s_out_Port_048(0 downto 0);
-  alias REG_B_EN27_STG2 : std_logic_vector(0 downto 0) is s_out_Port_048(1 downto 1);
-  alias REG_B_EN59_STG1 : std_logic_vector(0 downto 0) is s_out_Port_048(2 downto 2);
-  alias REG_B_EN59_STG2 : std_logic_vector(0 downto 0) is s_out_Port_048(3 downto 3);
+  alias REG_VB_EN27_STG1 : std_logic_vector(0 downto 0) is s_out_Port_048(0 downto 0);
+  alias REG_VB_EN27_STG2 : std_logic_vector(0 downto 0) is s_out_Port_048(1 downto 1);
+  alias REG_VB_EN59_STG1 : std_logic_vector(0 downto 0) is s_out_Port_048(2 downto 2);
+  alias REG_VB_EN59_STG2 : std_logic_vector(0 downto 0) is s_out_Port_048(3 downto 3);
   -- 27 – Stage 1 (fase B)
-  alias REG_B_27_STG1_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_049(11 downto 0);
-  alias REG_B_27_STG1_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_050(19 downto 0);
+  alias REG_VB_27_STG1_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_049(11 downto 0);
+  alias REG_VB_27_STG1_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_050(19 downto 0);
   -- 27 – Stage 2 (fase B)
-  alias REG_B_27_STG2_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_051(11 downto 0);
-  alias REG_B_27_STG2_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_052(19 downto 0);
+  alias REG_VB_27_STG2_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_051(11 downto 0);
+  alias REG_VB_27_STG2_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_052(19 downto 0);
   -- 59 – Stage 1 (fase B)
-  alias REG_B_59_STG1_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_053(11 downto 0);
-  alias REG_B_59_STG1_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_054(19 downto 0);
+  alias REG_VB_59_STG1_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_053(11 downto 0);
+  alias REG_VB_59_STG1_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_054(19 downto 0);
   -- 59 – Stage 2 (fase B)
-  alias REG_B_59_STG2_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_055(11 downto 0);
-  alias REG_B_59_STG2_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_056(19 downto 0);
-  -- Tensão Fase C (VC = aux6) – OFFSET/DECIMAÇÃO + 27/59 (stg1/stg2)
-  alias REG_VC_OFFSET_U12 : std_logic_vector(11 downto 0) is s_out_Port_057(11 downto 0);
-  alias REG_VC_DECIM_U8   : std_logic_vector(7 downto 0) is s_out_Port_058(7 downto 0);
-  alias REG_VC_RMS_U12      : std_logic_vector(11 downto 0) is s_in_Port_136(11 downto 0);
-  -- Enables das proteções 27/59 da fase C (VC)
-  alias REG_C_EN27_STG1 : std_logic_vector(0 downto 0) is s_out_Port_059(0 downto 0);
-  alias REG_C_EN27_STG2 : std_logic_vector(0 downto 0) is s_out_Port_059(1 downto 1);
-  alias REG_C_EN59_STG1 : std_logic_vector(0 downto 0) is s_out_Port_059(2 downto 2);
-  alias REG_C_EN59_STG2 : std_logic_vector(0 downto 0) is s_out_Port_059(3 downto 3);
+  alias REG_VB_59_STG2_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_055(11 downto 0);
+  alias REG_VB_59_STG2_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_056(19 downto 0);
+  -- Tensão Fase A (VA = aux6) – OFFSET/DECIMAÇÃO + 27/59 (stg1/stg2)
+  alias REG_VA_OFFSET_U12 : std_logic_vector(11 downto 0) is s_out_Port_057(11 downto 0);
+  alias REG_VA_DECIM_U8   : std_logic_vector(7 downto 0) is s_out_Port_058(7 downto 0);
+  alias REG_VA_RMS_U12      : std_logic_vector(11 downto 0) is s_in_Port_136(11 downto 0);
+  -- Enables das proteções 27/59 da fase A (VA)
+  alias REG_VA_EN27_STG1 : std_logic_vector(0 downto 0) is s_out_Port_059(0 downto 0);
+  alias REG_VA_EN27_STG2 : std_logic_vector(0 downto 0) is s_out_Port_059(1 downto 1);
+  alias REG_VA_EN59_STG1 : std_logic_vector(0 downto 0) is s_out_Port_059(2 downto 2);
+  alias REG_VA_EN59_STG2 : std_logic_vector(0 downto 0) is s_out_Port_059(3 downto 3);
   -- 27 – Stage 1 (fase C)
-  alias REG_C_27_STG1_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_060(11 downto 0);
-  alias REG_C_27_STG1_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_061(19 downto 0);
+  alias REG_VA_27_STG1_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_060(11 downto 0);
+  alias REG_VA_27_STG1_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_061(19 downto 0);
   -- 27 – Stage 2 (fase C)
-  alias REG_C_27_STG2_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_062(11 downto 0);
-  alias REG_C_27_STG2_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_063(19 downto 0);
+  alias REG_VA_27_STG2_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_062(11 downto 0);
+  alias REG_VA_27_STG2_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_063(19 downto 0);
   -- 59 – Stage 1 (fase C)
-  alias REG_C_59_STG1_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_064(11 downto 0);
-  alias REG_C_59_STG1_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_065(19 downto 0);
+  alias REG_VA_59_STG1_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_064(11 downto 0);
+  alias REG_VA_59_STG1_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_065(19 downto 0);
   -- 59 – Stage 2 (fase C)
-  alias REG_C_59_STG2_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_066(11 downto 0);
-  alias REG_C_59_STG2_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_067(19 downto 0);
+  alias REG_VA_59_STG2_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_066(11 downto 0);
+  alias REG_VA_59_STG2_INTDLY_MS : std_logic_vector(19 downto 0) is s_out_Port_067(19 downto 0);
 
   
 
@@ -4333,13 +4333,13 @@ begin
   (
     i_clk               => s_clk1,
     i_rst               => s_rst_27_A_stg1,
-    i_vsample_u12       => s_rms_aux_4(11 downto 0),
-    i_valid             => s_rms_aux_4_valid,
-    i_peakup_u12        => REG_A_27_STG1_PEAK_U12,
-    i_intentional_delay => REG_A_27_STG1_INTDLY_MS,
+    i_vsample_u12       => s_rms_aux_6(11 downto 0),
+    i_valid             => s_rms_aux_6_valid,
+    i_peakup_u12        => REG_VA_27_STG1_PEAK_U12,
+    i_intentional_delay => REG_VA_27_STG1_INTDLY_MS,
     o_trip              => s_trip_27_A_stg1
   );
-  s_rst_27_A_stg1 <= (sRst or not(REG_A_EN27_STG1(0)));
+  s_rst_27_A_stg1 <= (sRst or not(REG_VA_EN27_STG1(0)));
 
   -- FASE A – STAGE 2
   inst_prot_27_A_stg2 : ProtectUnderVoltage_27
@@ -4351,13 +4351,13 @@ begin
   (
     i_clk               => s_clk1,
     i_rst               => s_rst_27_A_stg2,
-    i_vsample_u12       => s_rms_aux_4(11 downto 0),
-    i_valid             => s_rms_aux_4_valid,
-    i_peakup_u12        => REG_A_27_STG2_PEAK_U12,
-    i_intentional_delay => REG_A_27_STG2_INTDLY_MS,
+    i_vsample_u12       => s_rms_aux_6(11 downto 0),
+    i_valid             => s_rms_aux_6_valid,
+    i_peakup_u12        => REG_VA_27_STG2_PEAK_U12,
+    i_intentional_delay => REG_VA_27_STG2_INTDLY_MS,
     o_trip              => s_trip_27_A_stg2
   );
-  s_rst_27_A_stg2 <= (sRst or not(REG_A_EN27_STG2(0)));
+  s_rst_27_A_stg2 <= (sRst or not(REG_VA_EN27_STG2(0)));
 
   -- FASE B – STAGE 1
   inst_prot_27_B_stg1 : ProtectUnderVoltage_27
@@ -4371,11 +4371,11 @@ begin
     i_rst               => s_rst_27_B_stg1,
     i_vsample_u12       => s_rms_aux_5(11 downto 0),
     i_valid             => s_rms_aux_5_valid,
-    i_peakup_u12        => REG_B_27_STG1_PEAK_U12,
-    i_intentional_delay => REG_B_27_STG1_INTDLY_MS,
+    i_peakup_u12        => REG_VB_27_STG1_PEAK_U12,
+    i_intentional_delay => REG_VB_27_STG1_INTDLY_MS,
     o_trip              => s_trip_27_B_stg1
   );
-  s_rst_27_B_stg1 <= (sRst or not(REG_B_EN27_STG1(0)));
+  s_rst_27_B_stg1 <= (sRst or not(REG_VB_EN27_STG1(0)));
 
   -- FASE B – STAGE 2
   inst_prot_27_B_stg2 : ProtectUnderVoltage_27
@@ -4389,11 +4389,11 @@ begin
     i_rst               => s_rst_27_B_stg2,
     i_vsample_u12       => s_rms_aux_5(11 downto 0),
     i_valid             => s_rms_aux_5_valid,
-    i_peakup_u12        => REG_B_27_STG2_PEAK_U12,
-    i_intentional_delay => REG_B_27_STG2_INTDLY_MS,
+    i_peakup_u12        => REG_VB_27_STG2_PEAK_U12,
+    i_intentional_delay => REG_VB_27_STG2_INTDLY_MS,
     o_trip              => s_trip_27_B_stg2
   );
-  s_rst_27_B_stg2 <= (sRst or not(REG_B_EN27_STG2(0)));
+  s_rst_27_B_stg2 <= (sRst or not(REG_VB_EN27_STG2(0)));
 
   -- FASE C – STAGE 1
   inst_prot_27_C_stg1 : ProtectUnderVoltage_27
@@ -4405,13 +4405,13 @@ begin
   (
     i_clk               => s_clk1,
     i_rst               => s_rst_27_C_stg1,
-    i_vsample_u12       => s_rms_aux_6(11 downto 0),
-    i_valid             => s_rms_aux_6_valid,
-    i_peakup_u12        => REG_C_27_STG1_PEAK_U12,
-    i_intentional_delay => REG_C_27_STG1_INTDLY_MS,
+    i_vsample_u12       => s_rms_aux_4(11 downto 0),
+    i_valid             => s_rms_aux_4_valid,
+    i_peakup_u12        => REG_VC_27_STG1_PEAK_U12,
+    i_intentional_delay => REG_VC_27_STG1_INTDLY_MS,
     o_trip              => s_trip_27_C_stg1
   );
-  s_rst_27_C_stg1 <= (sRst or not(REG_C_EN27_STG1(0)));
+  s_rst_27_C_stg1 <= (sRst or not(REG_VC_EN27_STG1(0)));
 
   -- FASE C – STAGE 2
   inst_prot_27_C_stg2 : ProtectUnderVoltage_27
@@ -4423,13 +4423,13 @@ begin
   (
     i_clk               => s_clk1,
     i_rst               => s_rst_27_C_stg2,
-    i_vsample_u12       => s_rms_aux_6(11 downto 0),
-    i_valid             => s_rms_aux_6_valid,
-    i_peakup_u12        => REG_C_27_STG2_PEAK_U12,
-    i_intentional_delay => REG_C_27_STG2_INTDLY_MS,
+    i_vsample_u12       => s_rms_aux_4(11 downto 0),
+    i_valid             => s_rms_aux_4_valid,
+    i_peakup_u12        => REG_VC_27_STG2_PEAK_U12,
+    i_intentional_delay => REG_VC_27_STG2_INTDLY_MS,
     o_trip              => s_trip_27_C_stg2
   );
-  s_rst_27_C_stg2 <= (sRst or not(REG_C_EN27_STG2(0)));
+  s_rst_27_C_stg2 <= (sRst or not(REG_VC_EN27_STG2(0)));
 
   -- ==================================================================================================
   -- Instância das proteções de tensão 59 (Sobretensão) - usando RMS (aux4,5,6)
@@ -4448,13 +4448,13 @@ begin
   (
     i_clk               => s_clk1,
     i_rst               => s_rst_59_A_stg1,
-    i_vsample_u12       => s_rms_aux_4(11 downto 0),
-    i_valid             => s_rms_aux_4_valid,
-    i_peakup_u12        => REG_A_59_STG1_PEAK_U12,
-    i_intentional_delay => REG_A_59_STG1_INTDLY_MS,
+    i_vsample_u12       => s_rms_aux_6(11 downto 0),
+    i_valid             => s_rms_aux_6_valid,
+    i_peakup_u12        => REG_VA_59_STG1_PEAK_U12,
+    i_intentional_delay => REG_VA_59_STG1_INTDLY_MS,
     o_trip              => s_trip_59_A_stg1
   );
-  s_rst_59_A_stg1 <= (sRst or not(REG_A_EN59_STG1(0)));
+  s_rst_59_A_stg1 <= (sRst or not(REG_VA_EN59_STG1(0)));
 
   -- FASE A – STAGE 2
   inst_prot_59_A_stg2 : ProtectOverVoltage_59
@@ -4466,13 +4466,13 @@ begin
   (
     i_clk               => s_clk1,
     i_rst               => s_rst_59_A_stg2,
-    i_vsample_u12       => s_rms_aux_4(11 downto 0),
-    i_valid             => s_rms_aux_4_valid,
-    i_peakup_u12        => REG_A_59_STG2_PEAK_U12,
-    i_intentional_delay => REG_A_59_STG2_INTDLY_MS,
+    i_vsample_u12       => s_rms_aux_6(11 downto 0),
+    i_valid             => s_rms_aux_6_valid,
+    i_peakup_u12        => REG_VA_59_STG2_PEAK_U12,
+    i_intentional_delay => REG_VA_59_STG2_INTDLY_MS,
     o_trip              => s_trip_59_A_stg2
   );
-  s_rst_59_A_stg2 <= (sRst or not(REG_A_EN59_STG2(0)));
+  s_rst_59_A_stg2 <= (sRst or not(REG_VA_EN59_STG2(0)));
 
   -- FASE B – STAGE 1
   inst_prot_59_B_stg1 : ProtectOverVoltage_59
@@ -4486,11 +4486,11 @@ begin
     i_rst               => s_rst_59_B_stg1,
     i_vsample_u12       => s_rms_aux_5(11 downto 0),
     i_valid             => s_rms_aux_5_valid,
-    i_peakup_u12        => REG_B_59_STG1_PEAK_U12,
-    i_intentional_delay => REG_B_59_STG1_INTDLY_MS,
+    i_peakup_u12        => REG_VB_59_STG1_PEAK_U12,
+    i_intentional_delay => REG_VB_59_STG1_INTDLY_MS,
     o_trip              => s_trip_59_B_stg1
   );
-  s_rst_59_B_stg1 <= (sRst or not(REG_B_EN59_STG1(0)));
+  s_rst_59_B_stg1 <= (sRst or not(REG_VB_EN59_STG1(0)));
 
   -- FASE B – STAGE 2
   inst_prot_59_B_stg2 : ProtectOverVoltage_59
@@ -4504,11 +4504,11 @@ begin
     i_rst               => s_rst_59_B_stg2,
     i_vsample_u12       => s_rms_aux_5(11 downto 0),
     i_valid             => s_rms_aux_5_valid,
-    i_peakup_u12        => REG_B_59_STG2_PEAK_U12,
-    i_intentional_delay => REG_B_59_STG2_INTDLY_MS,
+    i_peakup_u12        => REG_VB_59_STG2_PEAK_U12,
+    i_intentional_delay => REG_VB_59_STG2_INTDLY_MS,
     o_trip              => s_trip_59_B_stg2
   );
-  s_rst_59_B_stg2 <= (sRst or not(REG_B_EN59_STG2(0)));
+  s_rst_59_B_stg2 <= (sRst or not(REG_VB_EN59_STG2(0)));
 
   -- FASE C – STAGE 1
   inst_prot_59_C_stg1 : ProtectOverVoltage_59
@@ -4520,13 +4520,13 @@ begin
   (
     i_clk               => s_clk1,
     i_rst               => s_rst_59_C_stg1,
-    i_vsample_u12       => s_rms_aux_6(11 downto 0),
-    i_valid             => s_rms_aux_6_valid,
-    i_peakup_u12        => REG_C_59_STG1_PEAK_U12,
-    i_intentional_delay => REG_C_59_STG1_INTDLY_MS,
+    i_vsample_u12       => s_rms_aux_4(11 downto 0),
+    i_valid             => s_rms_aux_4_valid,
+    i_peakup_u12        => REG_VC_59_STG1_PEAK_U12,
+    i_intentional_delay => REG_VC_59_STG1_INTDLY_MS,
     o_trip              => s_trip_59_C_stg1
   );
-  s_rst_59_C_stg1 <= (sRst or not(REG_C_EN59_STG1(0)));
+  s_rst_59_C_stg1 <= (sRst or not(REG_VC_EN59_STG1(0)));
 
   -- FASE C – STAGE 2
   inst_prot_59_C_stg2 : ProtectOverVoltage_59
@@ -4538,13 +4538,13 @@ begin
   (
     i_clk               => s_clk1,
     i_rst               => s_rst_59_C_stg2,
-    i_vsample_u12       => s_rms_aux_6(11 downto 0),
-    i_valid             => s_rms_aux_6_valid,
-    i_peakup_u12        => REG_C_59_STG2_PEAK_U12,
-    i_intentional_delay => REG_C_59_STG2_INTDLY_MS,
+    i_vsample_u12       => s_rms_aux_4(11 downto 0),
+    i_valid             => s_rms_aux_4_valid,
+    i_peakup_u12        => REG_VC_59_STG2_PEAK_U12,
+    i_intentional_delay => REG_VC_59_STG2_INTDLY_MS,
     o_trip              => s_trip_59_C_stg2
   );
-  s_rst_59_C_stg2 <= (sRst or not(REG_C_EN59_STG2(0)));
+  s_rst_59_C_stg2 <= (sRst or not(REG_VC_EN59_STG2(0)));
 
   -- ==================================================================================================
 	-- Instância das proteções de tensão 81U/O -  terá que ser feito para (aux4,5,6) -- Pegarei saída do bloco de fasor de Tensão
@@ -4958,9 +4958,9 @@ begin
   s_in_Port_068(11 downto 0) <= (0 => s_trip_27_A_stg1, 1 => s_trip_27_A_stg2, 2 => s_trip_27_B_stg1, 3 => s_trip_27_B_stg2, 4 => s_trip_27_C_stg1, 5 => s_trip_27_C_stg2,
   6 => s_trip_59_A_stg1, 7 => s_trip_59_A_stg2, 8 => s_trip_59_B_stg1, 9 => s_trip_59_B_stg2, 10 => s_trip_59_C_stg1, 11 => s_trip_59_C_stg2);
   -- RMS tensões – VA (aux4) e VB (aux5)
-  REG_VA_RMS_U12  <= s_rms_aux_4(11 downto 0); -- VA
+  REG_VA_RMS_U12  <= s_rms_aux_6(11 downto 0); -- VA
   REG_VB_RMS_U12  <= s_rms_aux_5(11 downto 0); -- VB
-  REG_VC_RMS_U12  <= s_rms_aux_6(11 downto 0); -- VC
+  REG_VC_RMS_U12  <= s_rms_aux_4(11 downto 0); -- VC
 
   -- Trips e alarmes da 81 mais sinais de monitoramento
   -- Fase A
