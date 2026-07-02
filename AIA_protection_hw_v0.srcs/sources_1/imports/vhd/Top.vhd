@@ -279,6 +279,7 @@ architecture Behavioral of Top is
   signal s_o_read_tri_o       : std_logic_vector (0 to 0);
   signal s_i_readdata_tri_i   : std_logic_vector (31 downto 0);
   signal s_PS_EMIO_tri_io     : std_logic_vector (4 downto 0);
+                    
   -- =========================
   -- Component xadc
   -- =========================
@@ -616,6 +617,53 @@ end component;
   signal s_rst_50_B : std_logic;
   signal s_rst_50_C : std_logic;
   signal s_rst_50_N : std_logic;
+
+  
+  -- ==========================================================================
+  -- -- Component: Prot51_51N_ACC TESTE
+  -- ==========================================================================
+  component Prot51_51N_ACC is
+    generic (
+      -- Frequência de clock do sistema (Hz). Por padrão, 100 MHz.
+      G_CLK_HZ    : natural := 100_000_000;
+      -- Histerese em "contagens RMS" para evitar chatter (i_peakup - G_HYST).
+      G_HYST      : natural := 0;
+      -- Larguras da LUT (RAM) usadas para a curva temporizada.
+      G_ADDR_BITS : natural := 11; -- 2^11 = 2048 endereços (RMS 0..2047)
+      G_DATA_BITS : natural := 20  -- Taxa de incremento (velocidade), máximo 20 bits
+    );
+    port (
+      --------------------------
+      -- Clock / Reset / Start
+      --------------------------
+      i_clk_100MHz       : in  std_logic; 
+      i_rst              : in  std_logic; 
+      i_start_51_51N     : in  std_logic; 
+
+      --------------------------
+      -- Medida RMS e limiar
+      --------------------------
+      i_rms_51_51N       : in  std_logic_vector(11 downto 0); 
+      i_rms_51_51N_valid : in  std_logic; 
+      i_peakup           : in  std_logic_vector(11 downto 0); 
+
+      --------------------------
+      -- Interface RAM (LUT curva 51/51N)
+      --------------------------
+      o_ram_addr         : out std_logic_vector(G_ADDR_BITS-1 downto 0); 
+      o_ram_rd_req       : out std_logic;                                
+      i_ram_data         : in  std_logic_vector(G_DATA_BITS-1 downto 0);  
+
+      --------------------------
+      -- Saídas de proteção / debug
+      --------------------------
+      o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  
+      o_start_trip_time  : out std_logic;                                 
+      o_trip_51_51N      : out std_logic                                  
+    );
+  end component;
+
+
   -- ============================================================================
   -- -- Component: Prot51_51N_Time (time-delayed overcurrent protection 51/51N)
   -- ==========================================================================
@@ -623,7 +671,7 @@ end component;
     generic (
       G_CLK_HZ    : natural := 100_000_000; -- Hz
       G_HYST      : natural := 0; -- histerese em contagens RMS
-      G_ADDR_BITS : natural := 11; -- 2048 endereços (0..2047)
+      G_ADDR_BITS : natural := 12; -- 2048 endereços (0..2047)
       G_DATA_BITS : natural := 20 -- tempo em ms
     );
     port (
@@ -636,7 +684,7 @@ end component;
       i_rms_51_51N_valid : in std_logic;
       i_peakup           : in std_logic_vector(11 downto 0);
       -- Interface RAM (LUT)
-      o_ram_addr   : out std_logic_vector(10 downto 0);
+      o_ram_addr   : out std_logic_vector(11 downto 0);
       o_ram_rd_req : out std_logic;
       i_ram_data   : in std_logic_vector(19 downto 0);
       -- Saídas
@@ -654,11 +702,11 @@ end component;
   signal s_trip_51_B     : std_logic;
   signal s_trip_51_C     : std_logic;
   -- Handshake BRAM porta A -> proteção 51
-  signal s_51_ram_addr_A   : std_logic_vector(10 downto 0);
+  signal s_51_ram_addr_A   : std_logic_vector(11 downto 0);
   signal s_51_ram_rd_req_A : std_logic;
-  signal s_51_ram_addr_B   : std_logic_vector(10 downto 0);
+  signal s_51_ram_addr_B   : std_logic_vector(11 downto 0);
   signal s_51_ram_rd_req_B : std_logic;
-  signal s_51_ram_addr_C   : std_logic_vector(10 downto 0);
+  signal s_51_ram_addr_C   : std_logic_vector(11 downto 0);
   signal s_51_ram_rd_req_C : std_logic;
   -- ========= 51N (neutro, VAUX3) =========
   signal s_start_51N      : std_logic := '1';
@@ -667,7 +715,7 @@ end component;
   signal s_start_trip_51N : std_logic;
   signal s_trip_51N       : std_logic;
   -- Handshake BRAM porta B -> proteção 51N
-  signal s_51N_ram_addr   : std_logic_vector(10 downto 0);
+  signal s_51N_ram_addr   : std_logic_vector(11 downto 0);
   signal s_51N_ram_rd_req : std_logic;
   -- reset signals
   signal s_rst_51_A : std_logic;
@@ -681,7 +729,7 @@ end component;
     generic (
       G_CLK_HZ    : natural := 100_000_000; -- Frequencia do clock (Hz)
       G_HYST_VUF  : natural := 5; -- Histerese em unidades de 0.05% (5 = 0.25%)
-      G_ADDR_BITS : natural := 11; -- Bits de endereco da LUT (2^11=2048, igual ao blk_mem_gen_0)
+      G_ADDR_BITS : natural := 12; -- Bits de endereco da LUT (2^11=2048, igual ao blk_mem_gen_0)
       G_DATA_BITS : natural := 20 -- Bits de dado da LUT (tempo em ms)
     );
     port (
@@ -713,7 +761,7 @@ end component;
   signal s_trip_47_stg1 : std_logic;
   signal s_rst_47_stg1  : std_logic;
   -- Handshake BRAM porta A -> proteção 47
-  signal s_47_ram_addr_stg1   : std_logic_vector(10 downto 0);
+  signal s_47_ram_addr_stg1   : std_logic_vector(11 downto 0);
   signal s_47_ram_rd_req_stg1 : std_logic;
 
   -- =========================================================================
@@ -724,47 +772,47 @@ end component;
       clka  : in std_logic;
       ena   : in std_logic;
       wea   : in std_logic_vector(0 downto 0);
-      addra : in std_logic_vector(10 downto 0);
+      addra : in std_logic_vector(11 downto 0);
       dina  : in std_logic_vector(19 downto 0);
       douta : out std_logic_vector(19 downto 0);
       clkb  : in std_logic;
       enb   : in std_logic;
       web   : in std_logic_vector(0 downto 0);
-      addrb : in std_logic_vector(10 downto 0);
+      addrb : in std_logic_vector(11 downto 0);
       dinb  : in std_logic_vector(19 downto 0);
       doutb : out std_logic_vector(19 downto 0)
     );
   end component;
-  signal s_51_bram_addrb      : std_logic_vector(10 downto 0) := (others => '0');
+  signal s_51_bram_addrb      : std_logic_vector(11 downto 0) := (others => '0');
   signal s_51_bram_dina       : std_logic_vector(19 downto 0) := (others => '0');
   signal s_51_bram_dinb       : std_logic_vector(19 downto 0) := (others => '0');
   signal s_51_bram_douta      : std_logic_vector(19 downto 0);
   signal s_51_bram_doutb      : std_logic_vector(19 downto 0);
   signal s_51_bram_wea        : std_logic_vector(0 downto 0)  := "0"; -- "0" = somente leitura
   signal s_51_bram_web        : std_logic_vector(0 downto 0)  := "0";
-  signal s_51_A_bram_addrb    : std_logic_vector(10 downto 0) := (others => '0');
+  signal s_51_A_bram_addrb    : std_logic_vector(11 downto 0) := (others => '0');
   signal s_51_A_bram_dina     : std_logic_vector(19 downto 0) := (others => '0');
   signal s_51_A_bram_dinb     : std_logic_vector(19 downto 0) := (others => '0');
   signal s_51_A_bram_douta    : std_logic_vector(19 downto 0);
   signal s_51_A_bram_doutb    : std_logic_vector(19 downto 0);
   signal s_51_A_bram_wea      : std_logic_vector(0 downto 0)  := "0"; -- "0" = somente leitura
   signal s_51_A_bram_web      : std_logic_vector(0 downto 0)  := "0";
-  signal s_51_B_bram_addrb    : std_logic_vector(10 downto 0) := (others => '0');
+  signal s_51_B_bram_addrb    : std_logic_vector(11 downto 0) := (others => '0');
   signal s_51_B_bram_dina     : std_logic_vector(19 downto 0) := (others => '0');
   signal s_51_B_bram_dinb     : std_logic_vector(19 downto 0) := (others => '0');
   signal s_51_B_bram_douta    : std_logic_vector(19 downto 0);
   signal s_51_B_bram_doutb    : std_logic_vector(19 downto 0);
   signal s_51_B_bram_wea      : std_logic_vector(0 downto 0)  := "0"; -- "0" = somente leitura
   signal s_51_B_bram_web      : std_logic_vector(0 downto 0)  := "0";
-  signal s_51_C_bram_addrb    : std_logic_vector(10 downto 0) := (others => '0');
+  signal s_51_C_bram_addrb    : std_logic_vector(11 downto 0) := (others => '0');
   signal s_51_C_bram_dina     : std_logic_vector(19 downto 0) := (others => '0');
   signal s_51_C_bram_dinb     : std_logic_vector(19 downto 0) := (others => '0');
   signal s_51_C_bram_douta    : std_logic_vector(19 downto 0);
   signal s_51_C_bram_doutb    : std_logic_vector(19 downto 0);
   signal s_51_C_bram_wea      : std_logic_vector(0 downto 0)  := "0"; -- "0" = somente leitura
   signal s_51_C_bram_web      : std_logic_vector(0 downto 0)  := "0";
-  signal s_51N_bram_addra     : std_logic_vector(10 downto 0) := (others => '0');
-  signal s_51N_bram_addrb     : std_logic_vector(10 downto 0) := (others => '0');
+  signal s_51N_bram_addra     : std_logic_vector(11 downto 0) := (others => '0');
+  signal s_51N_bram_addrb     : std_logic_vector(11 downto 0) := (others => '0');
   signal s_51N_bram_dina      : std_logic_vector(19 downto 0) := (others => '0');
   signal s_51N_bram_dinb      : std_logic_vector(19 downto 0) := (others => '0');
   signal s_51N_bram_douta     : std_logic_vector(19 downto 0);
@@ -778,7 +826,7 @@ end component;
   -- signal s_47_bram_doutb      : std_logic_vector(19 downto 0);
   -- signal s_47_bram_wea        : std_logic_vector(0 downto 0)  := "0"; -- "0" = somente leitura
   -- signal s_47_bram_web        : std_logic_vector(0 downto 0)  := "0";
-  signal s_47_stg1_bram_addrb    : std_logic_vector(10 downto 0) := (others => '0');
+  signal s_47_stg1_bram_addrb    : std_logic_vector(11 downto 0) := (others => '0');
   signal s_47_stg1_bram_dina  : std_logic_vector(19 downto 0) := (others => '0');
   signal s_47_stg1_bram_dinb     : std_logic_vector(19 downto 0) := (others => '0');
   signal s_47_stg1_bram_douta : std_logic_vector(19 downto 0);
@@ -2185,15 +2233,20 @@ end component;
   signal s_in_Port_125  : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
   signal s_in_Port_126  : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
 
-  -- Relay
+  -- Force trip
   signal s_out_Port_127 : std_logic_vector(31 downto 0) := (others => '0');
-  signal s_out_Port_128 : std_logic_vector(31 downto 0) := (others => '0');
+
+  -- Not used
+  
   signal s_out_Port_129 : std_logic_vector(31 downto 0) := (others => '0');
   signal s_out_Port_130 : std_logic_vector(31 downto 0) := (others => '0');
   signal s_out_Port_131 : std_logic_vector(31 downto 0) := (others => '0');
   signal s_out_Port_132 : std_logic_vector(31 downto 0) := (others => '0');
   signal s_out_Port_133 : std_logic_vector(31 downto 0) := (others => '0');
   --
+
+  -- RAM output
+  signal s_in_Port_128 : std_logic_vector(31 downto 0) := (others => '0');
 
   -- RMS
   signal s_in_Port_134 : std_logic_vector(31 downto 0) := (others => '0'); 
@@ -2291,7 +2344,7 @@ end component;
   alias REG_N_51_PEAK_U12  : std_logic_vector(11 downto 0) is s_out_Port_028(11 downto 0);
 
   -- LUT (0x1D..0x1F)
-  alias REG_LUT_ADDR    : std_logic_vector(10 downto 0) is s_out_Port_029(10 downto 0); -- 0..2047
+  alias REG_LUT_ADDR    : std_logic_vector(11 downto 0) is s_out_Port_029(11 downto 0); -- 0..2047
   alias REG_LUT_DATA    : std_logic_vector(19 downto 0) is s_out_Port_030(19 downto 0); -- 20b
   alias REG_LUT_WR_EN_A : std_logic_vector(0 downto 0) is s_out_Port_031(0 downto 0); -- [0]=A,[1]=B,[2]=C,[3]=N
   alias REG_LUT_WR_EN_B : std_logic_vector(0 downto 0) is s_out_Port_031(1 downto 1); -- [0]=A,[1]=B,[2]=C,[3]=N
@@ -2398,13 +2451,13 @@ end component;
   alias REG_46Temp_STG1_EN       : std_logic_vector(0 downto 0) is s_out_Port_079(0 downto 0);
   alias REG_46Temp_STG1_TRIP     : std_logic_vector(0 downto 0) is s_in_Port_080(0 downto 0);
 
-  alias REG_47_STG1_VPU_U11   : std_logic_vector(10 downto 0) is s_out_Port_081(10 downto 0);
-  alias REG_47_STG1_VUF_U11   : std_logic_vector(10 downto 0) is s_in_Port_085(10 downto 0);
+  alias REG_47_STG1_VPU_U11   : std_logic_vector(11 downto 0) is s_out_Port_081(11 downto 0);
+  alias REG_47_STG1_VUF_U11   : std_logic_vector(11 downto 0) is s_in_Port_085(11 downto 0);
   alias REG_47_STG1_TIME_MS   : std_logic_vector(19 downto 0) is s_in_Port_087(19 downto 0);
   alias REG_47_STG1_TRIP      : std_logic_vector(0 downto 0) is s_in_Port_088(0 downto 0);
   alias REG_47_STG1_EN        : std_logic_vector(0 downto 0) is s_out_Port_082(0 downto 0);
   alias REG_47_STG1_LUT_WR_EN : std_logic_vector(0 downto 0) is s_out_Port_083(0 downto 0);
-  alias REG_47_STG1_LUT_ADDR  : std_logic_vector(10 downto 0) is s_out_Port_084(10 downto 0);
+  alias REG_47_STG1_LUT_ADDR  : std_logic_vector(11 downto 0) is s_out_Port_084(11 downto 0);
   alias REG_47_STG1_LUT_DATA  : std_logic_vector(19 downto 0) is s_out_Port_086(19 downto 0);
 
   alias REG_SEQ0_ABS   : std_logic_vector(31 downto 0) is s_in_Port_089(31 downto 0);
@@ -2421,22 +2474,15 @@ end component;
 
   alias REG_GLOBAL_TRIP : std_logic is s_in_Port_125(0);
   alias REG_BOOL_TRIP   : std_logic is s_in_Port_126(0);
+  alias REG_FORCE_GLOBAL_TRIP: std_logic is s_out_Port_127(0);
 
-  alias REG_RELAY_CH0_FORCE_ACT : std_logic is s_out_Port_117(0);
-  alias REG_RELAY_CH1_FORCE_ACT : std_logic is s_out_Port_118(0);
-  alias REG_RELAY_CH2_FORCE_ACT : std_logic is s_out_Port_119(0);
-  alias REG_RELAY_CH3_FORCE_ACT : std_logic is s_out_Port_120(0);
-  alias REG_RELAY_CH4_FORCE_ACT : std_logic is s_out_Port_121(0);
-  alias REG_RELAY_CH5_FORCE_ACT : std_logic is s_out_Port_122(0);
-  alias REG_RELAY_CH6_FORCE_ACT : std_logic is s_out_Port_123(0);
-
-  alias REG_RELAY_CH0_EN : std_logic is s_out_Port_127(0);
-  alias REG_RELAY_CH1_EN : std_logic is s_out_Port_128(0);
-  alias REG_RELAY_CH2_EN : std_logic is s_out_Port_129(0);
-  alias REG_RELAY_CH3_EN : std_logic is s_out_Port_130(0);
-  alias REG_RELAY_CH4_EN : std_logic is s_out_Port_131(0);
-  alias REG_RELAY_CH5_EN : std_logic is s_out_Port_132(0);
-  alias REG_RELAY_CH6_EN : std_logic is s_out_Port_133(0);
+  alias REG_RELAY_CH0_EN : std_logic is s_out_Port_117(0);
+  alias REG_RELAY_CH1_EN : std_logic is s_out_Port_118(0);
+  alias REG_RELAY_CH2_EN : std_logic is s_out_Port_119(0);
+  alias REG_RELAY_CH3_EN : std_logic is s_out_Port_120(0);
+  alias REG_RELAY_CH4_EN : std_logic is s_out_Port_121(0);
+  alias REG_RELAY_CH5_EN : std_logic is s_out_Port_122(0);
+  alias REG_RELAY_CH6_EN : std_logic is s_out_Port_123(0);
 
   -- Aliases da proteção 81 (configuração comum para A/B/C)
 	alias REG_81_PICKUP_UNDER_E1_MHZ : std_logic_vector(31 downto 0) is s_out_Port_137;
@@ -2525,6 +2571,9 @@ end component;
   alias REG_VB_CALIB_OFFSET : STD_LOGIC_VECTOR(11 downto 0) is s_in_Port_164(11 downto 0);
   alias REG_VC_CALIB_OFFSET : STD_LOGIC_VECTOR(11 downto 0) is s_in_Port_165(11 downto 0);
 
+  -- 
+  alias REG_A_LUT_DATA_OUT : STD_LOGIC_VECTOR(19 downto 0) is s_in_Port_128(19 downto 0);
+
 
   -- =========================
   -- Blink (1 Hz) signals
@@ -2572,6 +2621,7 @@ end component;
   --attribute keep       of s_rms_aux_10        : signal is "true";
   --attribute keep       of s_rms_aux_10_valid  : signal is "true";
 
+
   
   attribute KEEP of s_vaux0_decim_s12_valid : signal is "true";
   attribute KEEP of s_vaux1_decim_s12_valid : signal is "true";
@@ -2586,6 +2636,15 @@ end component;
   attribute DONT_TOUCH of s_vaux0_decim_s12 : signal is "true";
   attribute DONT_TOUCH of s_vaux1_decim_s12 : signal is "true";
   attribute DONT_TOUCH of s_vaux2_decim_s12 : signal is "true";
+
+  attribute KEEP of s_rms_aux_0_valid : signal is "true";
+  attribute KEEP of s_rms_aux_1_valid : signal is "true";
+  attribute KEEP of s_rms_aux_0 : signal is "true";
+  attribute KEEP of s_rms_aux_1 : signal is "true";
+  attribute DONT_TOUCH of s_rms_aux_0_valid : signal is "true";
+  attribute DONT_TOUCH of s_rms_aux_1_valid : signal is "true";
+  attribute DONT_TOUCH of s_rms_aux_0 : signal is "true";
+  attribute DONT_TOUCH of s_rms_aux_1 : signal is "true";
   
   --attribute KEEP of s_ovalid : signal is "true";
   --attribute KEEP of s_sine_out : signal is "true";
@@ -2931,7 +2990,8 @@ begin
   -- sRst active 1 or by VIO software reset (probe 24)
   ----------------------------------------------------
 
-  sRst <= not(sRstn) or sRstVio(0) or REG_SOFTRESET(0) or not(s_Locked);
+  sRst <= not(sRstn) or sRstVio(0) or REG_SOFTRESET(0) or not(s_Locked) ;
+  
 
   -------------------
   -- Instancia do PLL
@@ -4065,11 +4125,11 @@ begin
   -- 51 (fase, usa VAUX0-AUX2 for A/B/C)
   -- =========================
 
-  inst_prot_51_time_A : Prot51_51N_Time
+  inst_prot_51_time_A : Prot51_51N_ACC
   generic map(
     G_CLK_HZ    => 100_000_000, -- ajuste se s_clk1 ≠ 100 MHz
     G_HYST      => 10, -- histerese (ex.: 10 contagens RMS)
-    G_ADDR_BITS => 11,
+    G_ADDR_BITS => 12,
     G_DATA_BITS => 20
   )
   port map
@@ -4111,13 +4171,14 @@ begin
     web   => REG_LUT_WR_EN_A, -- "0" = somente leitura
     addrb => REG_LUT_ADDR, -- 11 bits
     dinb  => REG_LUT_DATA, -- 20 bits
-    doutb => s_51_A_bram_doutb -- 20 bits
+    doutb => REG_A_LUT_DATA_OUT--s_51_A_bram_doutb -- 20 bits
   );
+
   inst_prot_51_time_B : Prot51_51N_Time
   generic map(
     G_CLK_HZ    => 100_000_000, -- ajuste se s_clk1 ≠ 100 MHz
     G_HYST      => 10, -- histerese (ex.: 10 contagens RMS)
-    G_ADDR_BITS => 11,
+    G_ADDR_BITS => 12,
     G_DATA_BITS => 20
   )
   port map
@@ -4161,11 +4222,11 @@ begin
     dinb  => REG_LUT_DATA, -- 20 bits
     doutb => s_51_B_bram_doutb -- 20 bits
   );
-  inst_prot_51_time_C : Prot51_51N_Time
+  inst_prot_51_time_C : Prot51_51N_ACC
   generic map(
     G_CLK_HZ    => 100_000_000, -- ajuste se s_clk1 ≠ 100 MHz
     G_HYST      => 10, -- histerese (ex.: 10 contagens RMS)
-    G_ADDR_BITS => 11,
+    G_ADDR_BITS => 12,
     G_DATA_BITS => 20
   )
   port map
@@ -4213,11 +4274,11 @@ begin
   -- =========================
   -- 51N (fase, usa VAUX3)
   -- =========================	
-  inst_prot_51N_time : Prot51_51N_Time
+  inst_prot_51N_time : Prot51_51N_ACC
   generic map(
     G_CLK_HZ    => 100_000_000, -- ajuste se s_clk1 ≠ 100 MHz
     G_HYST      => 10, -- histerese (ex.: 10 contagens RMS)
-    G_ADDR_BITS => 11,
+    G_ADDR_BITS => 12,
     G_DATA_BITS => 20
   )
   port map
@@ -4275,7 +4336,7 @@ begin
   generic map(
     G_CLK_HZ    => 100_000_000,
     G_HYST_VUF  => 5,
-    G_ADDR_BITS => 11,
+    G_ADDR_BITS => 12,
     G_DATA_BITS => 20
   )
   port map
@@ -4934,14 +4995,18 @@ begin
 	
 		o_rocof_abs_mHz_win  => s_rocofdf_abs_mHz_win_C
 		);
-
+ 
   ---------------------------------------
   ----- Atuação do Trip Global
   ---------------------------------------
   s_GlobalTrip <= (s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
     s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or
-    s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 or 
-    s_trip_46_stg1 or s_trip_46Temp_stg1 or s_trip_47_stg1 or s_trip_81_A or s_trip_81_B or s_trip_81_C or s_trip_81R_A or s_trip_81R_B or s_trip_81R_C);
+    s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 );
+
+    -- s_GlobalTrip <= (s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
+    -- s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or
+    -- s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 or 
+    -- s_trip_46_stg1 or s_trip_46Temp_stg1 or s_trip_47_stg1 or s_trip_81_A or s_trip_81_B or s_trip_81_C or s_trip_81R_A or s_trip_81R_B or s_trip_81R_C or REG_FORCE_GLOBAL_TRIP);
 
   ------------------------------------
   ---- Leitura para monitoramento
@@ -5013,7 +5078,7 @@ begin
   -------------------------------
   -- instancia do Core regs 
   ------------------------------
-  s_rst_core_regs <= not sRstn;
+  s_rst_core_regs <= (not sRstn);
   inst_CoreRegs : Core_regs
   port map
   (-- {{{
@@ -5159,7 +5224,7 @@ begin
     in_Port_125 => s_in_Port_125, --RDO
     in_Port_126 => s_in_Port_126, --RDO
     in_Port_127 => s_out_Port_127,
-    in_Port_128 => s_out_Port_128,
+    in_Port_128 => s_in_Port_128,
     in_Port_129 => s_out_Port_129,
     in_Port_130 => s_out_Port_130,
     in_Port_131 => s_out_Port_131,
@@ -5417,7 +5482,7 @@ begin
     out_Port_125 => open, -- rod
     out_Port_126 => open, -- rod
     out_Port_127 => s_out_Port_127,
-    out_Port_128 => s_out_Port_128,
+    out_Port_128 => open,  -- rod
     out_Port_129 => s_out_Port_129,
     out_Port_130 => s_out_Port_130,
     out_Port_131 => s_out_Port_131,
@@ -5551,14 +5616,14 @@ begin
   s_rgb(0)        <= REG_RGB_LED(0) or s_GlobalTrip;
   s_rgb(1)        <= REG_RGB_LED(1) or s_GlobalTrip;
   s_rgb(2)        <= REG_RGB_LED(2) or s_GlobalTrip;
-  s_relay_ch0_out <= (REG_RELAY_CH0_FORCE_ACT or (s_GlobalTrip and REG_RELAY_CH0_EN));
-  s_relay_ch1_out <= (REG_RELAY_CH1_FORCE_ACT or (s_GlobalTrip and REG_RELAY_CH1_EN));
-  s_relay_ch2_out <= (REG_RELAY_CH2_FORCE_ACT or (s_GlobalTrip and REG_RELAY_CH2_EN));
-  s_relay_ch3_out <= (REG_RELAY_CH3_FORCE_ACT or (s_GlobalTrip and REG_RELAY_CH3_EN));
-  s_relay_ch4_out <= (REG_RELAY_CH4_FORCE_ACT or (s_GlobalTrip and REG_RELAY_CH4_EN));
-  s_relay_ch5_out <= (REG_RELAY_CH5_FORCE_ACT or (s_GlobalTrip and REG_RELAY_CH5_EN));
-  s_relay_ch6_out <= (REG_RELAY_CH6_FORCE_ACT or (s_GlobalTrip and REG_RELAY_CH6_EN));
-  sRstn           <= iRstn or (not REG_SOFTRESET(0));
+  s_relay_ch0_out <= (s_GlobalTrip or REG_RELAY_CH0_EN);
+  s_relay_ch1_out <= (s_GlobalTrip or REG_RELAY_CH1_EN);
+  s_relay_ch2_out <= (s_GlobalTrip or REG_RELAY_CH2_EN);
+  s_relay_ch3_out <= (s_GlobalTrip or REG_RELAY_CH3_EN);
+  s_relay_ch4_out <= (s_GlobalTrip or REG_RELAY_CH4_EN);
+  s_relay_ch5_out <= (s_GlobalTrip or REG_RELAY_CH5_EN);
+  s_relay_ch6_out <= (s_GlobalTrip or REG_RELAY_CH6_EN);
+  sRstn           <= iRstn;
 
   process (s_clk1, sRst)
   begin

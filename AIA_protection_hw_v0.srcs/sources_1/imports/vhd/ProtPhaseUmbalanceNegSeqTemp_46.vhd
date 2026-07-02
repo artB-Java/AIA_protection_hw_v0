@@ -65,12 +65,13 @@ end entity;
 architecture rtl of ProtPhaseUmbalanceNegSeqTemp_46 is
  -- threshold
  signal r_ith   : unsigned(G_I2_WIDTH-1 downto 0) := (others => '0');
- signal r_in_sq : unsigned((G_I2_WIDTH*2)-1 downto 0) := (others => '0');
+ signal r_in_sq : unsigned((G_IN_WIDTH*2)-1 downto 0) := (others => '0');
  signal r_acc_limit : unsigned(G_ACC_WIDTH-1 downto 0) := (others => '0');
  signal r_acc_count : unsigned(G_ACC_WIDTH-1 downto 0) := (others => '0');
+ signal r_k_1000  : unsigned(G_K_WIDTH+9 downto 0) := (others => '0');
   
   -- Estados
-  type t_state is (S_IDLE, S_CALC_PARAM, S_CALC_ACC_LIMIT_1, S_CALC_ACC_LIMIT_2, S_MONITORING, S_ACTIVATED_TIMER, S_TRIPPED);
+  type t_state is (S_IDLE, S_CALC_PARAM, S_CALC_ACC_LIMIT_1, S_MONITORING, S_ACTIVATED_TIMER, S_TRIPPED);
   signal r_state      : t_state := S_IDLE;
 
   -- Saídas/flags
@@ -124,15 +125,18 @@ begin
               r_ith_hyst_low <= (others => '0');
             end if;
             -- calculo de In^2
-            r_in_sq <= resize(r_inom * r_inom, 64);   
+            --r_in_sq <= resize(r_inom * r_inom, 64);
+            r_in_sq <= r_inom * r_inom;
+            -- calculo paralelo de (k * 1000) (16b * 10b = 26b)
+            r_k_1000 <= unsigned(i_k_const) * to_unsigned(1000, 10);   
             r_state <= S_CALC_ACC_LIMIT_1;
           when S_CALC_ACC_LIMIT_1 =>
             -- calculo do limite com base nos parametros
-            r_acc_limit <= resize(r_in_sq * unsigned(i_k_const), G_ACC_WIDTH);
-            r_state <= S_CALC_ACC_LIMIT_2;
-          when S_CALC_ACC_LIMIT_2 =>
-            -- multiplicação pelo tempo com base no tick(ocorre a cada 1ms -> esse valor pode mudar devido ao CLK(100MHz))
-            r_acc_limit <= resize(r_acc_limit * to_unsigned(1000, 10), G_ACC_WIDTH);
+            r_acc_limit <= resize(r_in_sq * r_k_1000, G_ACC_WIDTH);
+          --   r_state <= S_CALC_ACC_LIMIT_2;
+          -- when S_CALC_ACC_LIMIT_2 =>
+          --   -- multiplicação pelo tempo com base no tick(ocorre a cada 1ms -> esse valor pode mudar devido ao CLK(100MHz))
+          --   r_acc_limit <= resize(r_acc_limit * to_unsigned(1000, 10), G_ACC_WIDTH);
             r_state <= S_MONITORING;
           when S_MONITORING =>
             r_trip     <= '0';
