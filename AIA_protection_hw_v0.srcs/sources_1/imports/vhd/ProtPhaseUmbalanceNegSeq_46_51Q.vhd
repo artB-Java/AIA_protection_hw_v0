@@ -17,7 +17,7 @@ entity ProtPhaseUmbalanceNegSeq_46_51Q is
     -- Frequência de clock do sistema (Hz). Por padrão, 100 MHz.
     G_CLK_HZ    : natural := 100_000_000;
     -- Histerese em "contagens RMS" para evitar chatter (i_peakup - G_HYST).
-    -- Ex.: se G_HYST=10, sai do temporizado quando RMS <= (peakup-10).
+    -- Ex.: se G_HYST=10, sai do temporizado quando RMS <= (peakup-10)
     G_HYST      : natural := 0;
     -- Larguras da LUT (RAM) usadas para a curva temporizada.
     G_ADDR_BITS : natural := 12; -- 2^12 = 4096 endereços (RMS 0..4095)
@@ -88,15 +88,19 @@ architecture rtl of ProtPhaseUmbalanceNegSeq_46_51Q is
   --signal hyst_e2_u12                       : unsigned(11 downto 0);
   signal low_thr_e1_u12                    : unsigned(11 downto 0);  -- (peak - G_HYST) saturado em 0
   signal low_thr_e2_u12                    : unsigned(11 downto 0);
-  signal above_peak, below_low          : std_logic;
+  signal e1_above_peak, e1_below_low          : std_logic;
+  signal e2_above_peak, e2_below_low          : std_logic;
 
   -- divisor de 1 ms
   signal ms_div_cnt                     : natural range 0 to C_MS_TICKS-1 := 0;
   signal ms_tick                        : std_logic := '0';
 
   -- contador de tempo em ms (saturado)
-  signal time_ms_reg                    : unsigned(G_DATA_BITS-1 downto 0) := (others => '0');
-  signal time_cnt_en                    : std_logic := '0';
+  signal time_ms_e1_reg                    : unsigned(G_DATA_BITS-1 downto 0) := (others => '0');
+  signal time_cnt_e1_en                    : std_logic := '0';
+
+  signal time_ms_e2_reg                    : unsigned(G_DATA_BITS-1 downto 0) := (others => '0');
+  signal time_cnt_e2_en                    : std_logic := '0';
 
   -- tempo alvo em ms (lido da RAM)
   signal target_ms_reg                  : unsigned(G_DATA_BITS-1 downto 0) := (others => '0');
@@ -110,10 +114,17 @@ architecture rtl of ProtPhaseUmbalanceNegSeq_46_51Q is
 
 
   -- saída de início de temporização (pulso)
-  signal start_trip_pulse_reg           : std_logic := '0';
+  -- signal start_trip_e1_pulse_reg              : std_logic := '0';
+  -- signal start_trip_e2_pulse_reg              : std_logic := '0';
+
+  signal alarm_e1_reg                      : std_logic := '0';
+  signal alarm_e2_reg                      : std_logic := '0';
 
   -- trip latched
-  signal trip_reg                       : std_logic := '0';
+  signal trip_reg                          : std_logic := '0';
+  signal trip_e1_reg                       : std_logic := '0';
+  signal trip_e2_reg                       : std_logic := '0';
+
 
   -- utilitários
   function sat11_from_u12(x : unsigned(11 downto 0)) return unsigned is
@@ -139,11 +150,16 @@ begin
   hyst_u12      <= to_unsigned(G_HYST, 12);
 
   -- low_thr = max(0, peak - G_HYST)
-  low_thr_u12 <= (others => '0') when (peak_u12 <= hyst_u12) else (peak_u12 - hyst_u12);
+  low_thr_e1_u12 <= (others => '0') when (peak_e1_u12 <= hyst_u12) else (peak_e1_u12 - hyst_u12);
+  low_thr_e2_u12 <= (others => '0') when (peak_e2_u12 <= hyst_u12) else (peak_e2_u12 - hyst_u12);
+  
 
-  -- Comparações são avaliadas quando i_rms_51_51N_valid='1' (usadas na FSM)
-  above_peak <= '1' when (rms_u12 >  peak_u12) else '0';
-  below_low  <= '1' when (rms_u12 <= low_thr_u12) else '0';
+  -- Comparações são avaliadas quando valid='1' (usadas na FSM)
+  e1_above_peak <= '1' when (seq_abs_u12 >  peak_e1_u12) else '0';
+  e1_below_low  <= '1' when (seq_abs_u12 <= low_thr_e1_u12) else '0';
+
+  e2_above_peak <= '1' when (seq_abs_u12 >  peak_e2_u12) else '0';
+  e2_below_low  <= '1' when (seq_abs_u12 <= low_thr_e2_u12) else '0';
 
   -----------------------------------------------------------------------------
   -- Divisor de 1 ms (gera ms_tick = '1' por 1 ciclo a cada 1 ms)
@@ -173,14 +189,14 @@ begin
   begin
     if rising_edge(i_clk_100MHz) then
       if i_rst = '1' then
-        time_ms_reg <= (others => '0');
+        time_ms_e1_reg <= (others => '0');
       else
-        if time_cnt_en = '0' then
-          time_ms_reg <= (others => '0');
+        if time_cnt_e1_en = '0' then
+          time_ms_e1_reg <= (others => '0');
         else
           if ms_tick = '1' then
-            if time_ms_reg /= (time_ms_reg'range => '1') then
-              time_ms_reg <= time_ms_reg + 1;
+            if time_ms_e1_reg /= (time_ms_e1_reg'range => '1') then
+              time_ms_e1_reg <= time_ms_e1_reg + 1;
             end if;
           end if;
         end if;
@@ -189,7 +205,7 @@ begin
   end process;
 
   -----------------------------------------------------------------------------
-  -- Detecção de borda em i_start_51_51N
+  -- Detecção de borda em i_start
   -----------------------------------------------------------------------------
   p_start_edge : process(i_clk_100MHz)
   begin
@@ -199,10 +215,10 @@ begin
         start_pulse <= '0';
       else
         start_pulse <= '0';
-        if (start_d = '0') and (i_start_51_51N = '1') then
+        if (start_d = '0') and (i_start = '1') then
           start_pulse <= '1';
         end if;
-        start_d <= i_start_51_51N;
+        start_d <= i_start;
       end if;
     end if;
   end process;
@@ -214,25 +230,29 @@ begin
   begin
     if rising_edge(i_clk_100MHz) then
       if i_rst = '1' then
-        state               <= S_IDLE;
-        trip_reg            <= '0';
-        target_ms_reg       <= (others => '0');
-        ram_addr_reg        <= (others => '0');
-        ram_rd_req_pulse    <= '0';
-		s_rd_req_d      	<= '0';
-		s_ram_data_valid    <= '0';		
-        start_trip_pulse_reg<= '0';
-        time_cnt_en         <= '0';
+        state                <= S_IDLE;
+        trip_reg             <= '0';
+        target_ms_reg        <= (others => '0');
+        ram_addr_reg         <= (others => '0');
+        ram_rd_req_pulse     <= '0';
+		    s_rd_req_d      	   <= '0';
+		    s_ram_data_valid     <= '0';		
+        --start_trip_pulse_reg <= '0';
+        alarm_e1_reg         <= '0'; 
+        alarm_e2_reg         <= '0';
+        time_cnt_e1_en       <= '0';
       else
         state <= state_nxt;
 
         -- defaults a cada ciclo
         ram_rd_req_pulse     <= '0';
         start_trip_pulse_reg <= '0';
+        alarm_e1_reg         <= '0'; 
+        alarm_e2_reg         <= '0';
 		
-		-- Geração do valid interno da RAM
-		s_rd_req_d       <= ram_rd_req_pulse;
-		s_ram_data_valid <= s_rd_req_d;      
+        -- Geração do valid interno da RAM
+        s_rd_req_d       <= ram_rd_req_pulse;
+        s_ram_data_valid <= s_rd_req_d;      
 
         -- ações por estado
         case state is
@@ -249,7 +269,9 @@ begin
                 ram_addr_reg     <= sat11_from_u12(rms_u12);
                 ram_rd_req_pulse <= '1';           -- requisita leitura da LUT
                 time_cnt_en      <= '1';           -- inicia contagem de ms já neste estado
-                start_trip_pulse_reg <= '1';       -- pulso de início de temporização
+                --start_trip_pulse_reg <= '1';       -- pulso de início de temporização
+                alarm_e1_reg         <= '1'; 
+                --alarm_e2_reg         <= '0';
               end if;
             end if;
 
@@ -275,7 +297,7 @@ begin
           when S_TIME_ACTIVE =>
             time_cnt_en <= '1';
             -- Leitura contínua da LUT em cada novo RMS válido (mantém curva atualizada)
-            if i_rms_51_51N_valid = '1' then
+            if i_rms_51_51N_valid = '1' then 
               if below_low = '1' then
                 time_cnt_en <= '0'; -- será efetivado na próxima transição
               else
@@ -373,7 +395,9 @@ begin
   -----------------------------------------------------------------------------
   o_trip_51_51N     <= trip_reg;
   o_time_ms         <= std_logic_vector(time_ms_reg);
-  o_start_trip_time <= start_trip_pulse_reg;
+  --o_start_trip_time <= start_trip_pulse_reg;
+  o_alarm_e1 <= alarm_e1_reg;          
+  o_alarm_e2 <= alarm_e2_reg;         
 
   o_ram_addr        <= std_logic_vector(ram_addr_reg);
   o_ram_rd_req      <= ram_rd_req_pulse;
