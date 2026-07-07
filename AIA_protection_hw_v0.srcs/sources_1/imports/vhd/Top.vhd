@@ -1476,72 +1476,60 @@ end component;
   -- =======================
   -- Compente da funcao 46
   --========================
-  component ProtPhaseUmbalanceNegSeqTemp_46 is
-    generic (
-      G_MS_TICKS      : natural := 100_000; -- ciclos de i_clk por 1 ms (100MHz -> 100_000)
-      G_HYST_U12      : natural := 0; -- histerese (0..4095) na mesma unidade de i_peakup_u12
-      G_IN_WIDTH      : integer := 12;
-      G_IPICKUP_WIDTH : integer := 12;
-      G_I2_WIDTH      : integer := 32;
-      G_K_WIDTH       : integer := 16;
-      G_ACC_WIDTH     : integer := 80
-    );
-    port (
-      --------------------------
-      -- Clock / Reset
-      --------------------------
-      i_clk : in std_logic;
-      i_rst : in std_logic; -- reset síncrono, ativo-alto
-      --------------------------
-      -- Entradas
-      --------------------------
-      i_seq2_abs   : in std_logic_vector(G_I2_WIDTH - 1 downto 0); -- unsigned (0..4095(2047))
-      i_valid      : in std_logic; -- pulso de amostra válida
-      i_peakup_u12 : in std_logic_vector(G_IPICKUP_WIDTH - 1 downto 0); -- unsigned (0..4095)
-      --i_intentional_delay : in  std_logic_vector(19 downto 0); -- atraso intencional [ms]
-      i_in      : in std_logic_vector(G_IN_WIDTH - 1 downto 0);
-      i_k_const : in std_logic_vector(G_K_WIDTH - 1 downto 0);
+  component ProtPhaseUmbalanceNegSeq_46_51Q is
+  generic (
+    G_CLK_HZ    : natural := 100_000_000;
+    G_HYST      : natural := 0;
+    G_TIME_WIDTH       : natural := 20;
+    G_ADDR_BITS : natural := 12; 
+    G_DATA_BITS : natural := 20 
+  );
+  port (
+    --------------------------
+    -- Clock / Reset / Start
+    --------------------------
+    i_clk_100MHz       : in  std_logic; -- usar 100 MHz (ou outro; ajuste G_CLK_HZ)
+    i_rst              : in  std_logic; -- reset síncrono (nível alto)
+    i_start            : in  std_logic; -- pulso/nível para armar e iniciar monitoramento
 
-      --------------------------
-      -- Saída
-      --------------------------
-      o_trip : out std_logic
-    );
-  end component;
-  signal s_rst_46Temp_stg1  : std_logic;
-  signal s_trip_46Temp_stg1 : std_logic;
+    --------------------------
+    -- Medida seqNeg e limiar
+    --------------------------
+    i_seq2_abs          : in  std_logic_vector(31 downto 0); -- RMS 12b (0..*), usado addr[10:0]
+    i_seq2_valid        : in  std_logic; -- '1' quando RMS atual é válido (amostras espaçadas)
+    i_seq2_pickup_e1    : in  std_logic_vector(11 downto 0); -- limiar de atuação (contagens RMS)
+    i_seq2_pickup_e2    : in  std_logic_vector(11 downto 0); -- limiar de atuação (contagens RMS)
+    i_delay_e1_ms       : in unsigned(G_TIME_WIDTH-1 downto 0);
 
-  component ProtPhaseUmbalanceNegSeq_46 is
-    generic (
-      G_MS_TICKS      : natural := 100_000; -- ciclos de i_clk por 1 ms (100MHz -> 100_000)
-      G_HYST_U12      : natural := 0; -- histerese (0..4095) na mesma unidade de i_peakup_u12
-      G_IN_WIDTH      : integer := 12;
-      G_IPICKUP_WIDTH : integer := 12;
-      G_I2_WIDTH      : integer := 32
-    );
-    port (
-      --------------------------
-      -- Clock / Reset
-      --------------------------
-      i_clk : in std_logic;
-      i_rst : in std_logic; -- reset síncrono, ativo-alto
-      --------------------------
-      -- Entradas
-      --------------------------
-      i_seq2_abs          : in std_logic_vector(G_I2_WIDTH - 1 downto 0); -- unsigned (0..4095(2047))
-      i_valid             : in std_logic; -- pulso de amostra válida
-      i_peakup_u12        : in std_logic_vector(G_IPICKUP_WIDTH - 1 downto 0); -- unsigned (0..4095)
-      i_intentional_delay : in std_logic_vector(19 downto 0); -- atraso intencional [ms]
-      i_in                : in std_logic_vector(G_IN_WIDTH - 1 downto 0);
+    --------------------------
+    -- Interface RAM (LUT)
+    --------------------------
+    o_ram_addr         : out std_logic_vector(G_ADDR_BITS-1 downto 0);  -- endereço (RMS mapeado)
+    o_ram_rd_req       : out std_logic;                                 -- pulso de leitura (1 ciclo)
+    i_ram_data         : in  std_logic_vector(G_DATA_BITS-1 downto 0);  -- tempo-alvo em ms
 
-      --------------------------
-      -- Saída
-      --------------------------
-      o_trip : out std_logic
-    );
-  end component;
-  signal s_rst_46_stg1  : std_logic;
-  signal s_trip_46_stg1 : std_logic;
+    --------------------------
+    -- Saídas de proteção / debug
+    --------------------------
+    o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
+    o_e1_time_cnt      : out STD_LOGIC_VECTOR(G_TIME_WIDTH-1 downto 0);
+    o_alarm_e1         : out std_logic;
+    o_alarm_e2         : out std_logic;                        
+    o_trip_46_e1       : out std_logic;
+    o_trip_46_e2       : out std_logic;
+    o_trip_46          : out std_logic                                   
+  );
+end component;
+signal s_46_s1_ram_addr      : std_logic_vector(11 downto 0);
+signal s_46_s1_ram_rd_req    : std_logic;
+signal s_46_s1_time_ms       : std_logic_vector(19 downto 0);  -- contador de ms (satura)
+signal s_46_s1_e1_time_cnt   : STD_LOGIC_VECTOR(19 downto 0);
+signal s_46_s1_rst           : std_logic;
+signal s_46_s1_bram_wea      : std_logic_vector(0 downto 0);
+signal s_46_s1_bram_dina     : std_logic_vector(19 downto 0);
+signal s_46_s1_bram_douta    : std_logic_vector(19 downto 0);
+signal s_46_s1_bram_doutb    : std_logic_vector(19 downto 0);
+
   -- =========================
   -- Core Regs
   -- =========================
@@ -2439,17 +2427,21 @@ end component;
   alias REG_BOOLEAN_ALL_SIGNALS_0 : std_logic_vector(31 downto 0) is s_out_Port_115(31 downto 0);
   alias REG_BOOLEAN_ALL_SIGNALS_1 : std_logic_vector(31 downto 0) is s_out_Port_116(31 downto 0);
 
-  alias REG_46_STG1_IPU_U12  : std_logic_vector(11 downto 0) is s_out_Port_071(11 downto 0);
-  alias REG_46_STG1_INOM_U12 : std_logic_vector(11 downto 0) is s_out_Port_072(11 downto 0);
-  alias REG_46_STG1_DLY_U20  : std_logic_vector(19 downto 0) is s_out_Port_073(19 downto 0);
-  alias REG_46_STG1_EN       : std_logic_vector(0 downto 0) is s_out_Port_074(0 downto 0);
-  alias REG_46_STG1_TRIP     : std_logic_vector(0 downto 0) is s_in_Port_075(0 downto 0);
+  alias REG_46_S1_E1_I2PU_U12 : std_logic_vector(11 downto 0) is s_out_Port_071(11 downto 0);
+  alias REG_46_S1_E2_I2PU_U12 : std_logic_vector(11 downto 0) is s_out_Port_072(11 downto 0);
+  alias REG_46_S1_E1_DLY_U20  : std_logic_vector(19 downto 0) is s_out_Port_073(19 downto 0);
+  alias REG_46_S1_EN          : std_logic is s_out_Port_074(0);
+  alias REG_46_S1_E1_TRIP     : std_logic is s_in_Port_075(0);
+  alias REG_46_S1_E2_TRIP     : std_logic is s_in_Port_075(1);
+  alias REG_46_S1_TRIP        : std_logic is s_in_Port_075(2);
+  alias REG_46_S1_E1_ALARM    : std_logic is s_in_Port_075(3);
+  alias REG_46_S1_E2_ALARM    : std_logic is s_in_Port_075(4);
 
-  alias REG_46Temp_STG1_IPU_U12  : std_logic_vector(11 downto 0) is s_out_Port_076(11 downto 0);
-  alias REG_46Temp_STG1_INOM_U12 : std_logic_vector(11 downto 0) is s_out_Port_077(11 downto 0);
-  alias REG_46Temp_STG1_K_U16    : std_logic_vector(15 downto 0) is s_out_Port_078(15 downto 0);
-  alias REG_46Temp_STG1_EN       : std_logic_vector(0 downto 0) is s_out_Port_079(0 downto 0);
-  alias REG_46Temp_STG1_TRIP     : std_logic_vector(0 downto 0) is s_in_Port_080(0 downto 0);
+  alias REG_46_S1_LUT_WR_EN  : std_logic_vector(0 downto 0) is s_out_Port_076(0 downto 0);
+  alias REG_46_S1_LUT_ADDR   : std_logic_vector(11 downto 0) is s_out_Port_077(11 downto 0);
+  alias REG_46_S1_LUT_DATA   : std_logic_vector(19 downto 0) is s_out_Port_078(19 downto 0);
+  alias REG_46_S1_LUT_DOUTB  : std_logic_vector(20 downto 0) is s_out_Port_079(20 downto 0);
+  -- alias REG_46Temp_STG1_TRIP     : std_logic_vector(0 downto 0) is s_in_Port_080(0 downto 0);
 
   alias REG_47_STG1_VPU_U11   : std_logic_vector(11 downto 0) is s_out_Port_081(11 downto 0);
   alias REG_47_STG1_VUF_U11   : std_logic_vector(11 downto 0) is s_in_Port_085(11 downto 0);
@@ -3699,51 +3691,58 @@ begin
 
   );
 
-  inst_prot_46_stg1 : ProtPhaseUmbalanceNegSeq_46
-  generic map(
-    G_MS_TICKS      => 100_000,
-    G_HYST_U12      => 0,
-    G_IN_WIDTH      => 12,
-    G_IPICKUP_WIDTH => 12,
-    G_I2_WIDTH      => 32
+  --------------------------------------------------
+  ---- Instancia da funcao 46
+  --------------------------------------------------
+  inst_prot_46_51Q_s1 : ProtPhaseUmbalanceNegSeq_46_51Q
+   generic map(
+      G_CLK_HZ => 100_000_000,
+      G_HYST => 0,
+      G_TIME_WIDTH => 20,
+      G_ADDR_BITS => 12,
+      G_DATA_BITS => 20
   )
-  port map
-  (
-    i_clk               => s_clk1,
-    i_rst               => s_rst_46_stg1,
-    i_seq2_abs          => std_logic_vector(s_seq2_abs),
-    i_valid             => s_seq_valid,
-    i_peakup_u12        => REG_46_STG1_IPU_U12,
-    i_intentional_delay => REG_46_STG1_DLY_U20,
-    i_in                => REG_46_STG1_INOM_U12,
-    o_trip              => s_trip_46_stg1
+   port map(
+      i_clk_100MHz      => s_clk1,
+      i_rst             => s_46_s1_rst,
+      i_start           => '1',
+      i_seq2_abs        => std_logic_vector(s_seq2_abs),
+      i_seq2_valid      => s_seq_valid,
+      i_seq2_pickup_e1  => REG_46_S1_E1_I2PU_U12,
+      i_seq2_pickup_e2  => REG_46_S1_E2_I2PU_U12,
+      i_delay_e1_ms     => UNSIGNED(REG_46_S1_E1_DLY_U20),
+      o_ram_addr        => s_46_s1_ram_addr,
+      o_ram_rd_req      => s_46_s1_ram_rd_req,
+      i_ram_data        => s_46_s1_bram_douta,
+      o_time_ms         => s_46_s1_time_ms,
+      o_e1_time_cnt     => s_46_s1_e1_time_cnt,
+      o_alarm_e1        => REG_46_S1_E1_ALARM,
+      o_alarm_e2        => REG_46_S1_E2_ALARM,
+      o_trip_46_e1      => REG_46_S1_E1_TRIP,
+      o_trip_46_e2      => REG_46_S1_E2_TRIP,
+      o_trip_46         => REG_46_S1_TRIP
   );
-  s_rst_46_stg1       <= (sRst or not(REG_46_STG1_EN(0)));
-  REG_46_STG1_TRIP(0) <= s_trip_46_stg1;
+  s_46_s1_rst <= (sRst or REG_46_S1_EN);
 
-  inst_prot_46temp_stg1 : ProtPhaseUmbalanceNegSeqTemp_46
-  generic map(
-    G_MS_TICKS      => 100_000,
-    G_HYST_U12      => 0,
-    G_IN_WIDTH      => 12,
-    G_IPICKUP_WIDTH => 12,
-    G_I2_WIDTH      => 32,
-    G_ACC_WIDTH     => 80,
-    G_K_WIDTH       => 16
-  )
+  inst_bram0_46_s1 : blk_mem_gen_0
   port map
   (
-    i_clk        => s_clk1,
-    i_rst        => s_rst_46Temp_stg1,
-    i_seq2_abs   => std_logic_vector(s_seq2_abs),
-    i_valid      => s_seq_valid,
-    i_peakup_u12 => REG_46Temp_STG1_IPU_U12,
-    i_in         => REG_46Temp_STG1_INOM_U12,
-    i_k_const    => REG_46Temp_STG1_K_U16,
-    o_trip       => s_trip_46Temp_stg1
+    -- Porta A
+    clka  => s_clk1,
+    ena   => '1',
+    wea   => s_46_s1_bram_wea, -- "0" = somente leitura (ROM via COE)
+    addra => s_46_s1_ram_addr, -- 11 bits
+    dina  => s_46_s1_bram_dina, -- 20 bits (não usado se wea="0")
+    douta => s_46_s1_bram_douta, -- 20 bits
+
+    -- Porta B
+    clkb  => s_clk1,
+    enb   => '1',
+    web   => REG_46_S1_LUT_WR_EN, -- "0" = somente leitura
+    addrb => REG_46_S1_LUT_ADDR, -- 11 bits
+    dinb  => REG_46_S1_LUT_DATA, -- 20 bits
+    doutb => REG_46_S1_LUT_DOUTB--s_51_A_bram_doutb -- 20 bits
   );
-  s_rst_46Temp_stg1       <= (sRst or not(REG_46Temp_STG1_EN(0)));
-  REG_46Temp_STG1_TRIP(0) <= s_trip_46Temp_stg1;
 
   inst_rms_aux0 : MovingAverageRMS
   generic map(

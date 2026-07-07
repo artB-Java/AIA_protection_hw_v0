@@ -52,6 +52,7 @@ entity ProtPhaseUmbalanceNegSeq_46_51Q is
     -- Saídas de proteção / debug
     --------------------------
     o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
+    o_e1_time_cnt      : out STD_LOGIC_VECTOR(G_TIME_WIDTH-1 downto 0);
     o_alarm_e1         : out std_logic;
     o_alarm_e2         : out std_logic;                        
     o_trip_46_e1       : out std_logic;
@@ -59,6 +60,7 @@ entity ProtPhaseUmbalanceNegSeq_46_51Q is
     o_trip_46          : out std_logic                                   
   );
 end entity;
+
 
 architecture rtl of ProtPhaseUmbalanceNegSeq_46_51Q is
 
@@ -101,6 +103,7 @@ architecture rtl of ProtPhaseUmbalanceNegSeq_46_51Q is
   signal time_ms_reg          : unsigned(G_DATA_BITS-1 downto 0) := (others => '0');
   signal time_cnt_en       : std_logic := '0';
   signal e1_ms_cnt            : unsigned(G_TIME_WIDTH-1 downto 0) := (others => '0');
+  
 
 
   -- signal time_ms_e2_reg                    : unsigned(G_DATA_BITS-1 downto 0) := (others => '0');
@@ -236,6 +239,7 @@ begin
         trip_e2_reg          <= '0';
         target_ms_reg        <= (others => '0');
         ram_addr_reg         <= (others => '0');
+        e1_ms_cnt            <= (others => '0');
         ram_rd_req_pulse     <= '0';
 		    s_rd_req_d      	   <= '0';
 		    s_ram_data_valid     <= '0';		
@@ -259,9 +263,11 @@ begin
             trip_e1_reg          <= '0';
             trip_e2_reg          <= '0';
             time_cnt_en <= '0';
+            e1_ms_cnt  <= (others => '0');
 
           when S_MONITORING =>
             time_cnt_en <= '0';
+            e1_ms_cnt  <= (others => '0');
             -- Verifica apenas nos pulsos válidos de RMS
             if i_seq2_valid = '1' then
               if e2_above_peak = '1' then
@@ -275,7 +281,31 @@ begin
             end if;
 
           when S_E1_TIMING =>
-            
+            alarm_e1_reg <= '1';
+            alarm_e2_reg <= '0';
+            if i_seq2_valid = '1' then
+              if e2_above_peak = '1' then
+                e1_ms_cnt  <= (others => '0');
+                ram_addr_reg       <= seq_abs_u12;
+                ram_rd_req_pulse   <= '1';           -- requisita leitura da LUT
+                time_cnt_en        <= '1';           -- inicia contagem de ms já neste estado
+                alarm_e2_reg <= '1';
+                alarm_e1_reg <= '0';
+              elsif e1_below_low = '1' then
+                alarm_e1_reg <= '0';
+                alarm_e2_reg <= '0';
+                e1_ms_cnt  <= (others => '0');
+              end if;
+            end if;
+            if ms_tick = '1' then
+              if e1_ms_cnt /= (e1_ms_cnt'range => '1') then
+                if e1_ms_cnt >= i_delay_e1_ms then
+                  trip_e1_reg <= '1'; 
+                else
+                  e1_ms_cnt <= e1_ms_cnt + 1;
+                end if;
+              end if;
+            end if;
 
           when S_TIME_WAIT_RD =>
             time_cnt_en <= '1'; -- contador ativo enquanto aguardamos o dado da RAM
@@ -317,6 +347,25 @@ begin
               trip_e2_reg <= '1';
             end if;
 
+          when S_E1_TRIPPED =>
+            alarm_e1_reg <= '1';
+            alarm_e2_reg <= '0';
+            trip_e1_reg  <= '1';
+            trip_e2_reg  <= '0';
+            if i_seq2_valid = '1' then
+              if e2_above_peak = '1' then
+                e1_ms_cnt  <= (others => '0');
+                ram_addr_reg       <= seq_abs_u12;
+                ram_rd_req_pulse   <= '1';           -- requisita leitura da LUT
+                time_cnt_en        <= '1';           -- inicia contagem de ms já neste estado
+                alarm_e2_reg <= '1';
+              elsif e1_below_low = '1' then
+                e1_ms_cnt  <= (others => '0');
+                trip_e1_reg    <= '0';
+                alarm_e1_reg   <= '0';
+              end if;
+            end if; 
+
           when S_E2_TRIPPED =>
             time_cnt_en <= '0';
             -- trip_reg fica latched até reset ou novo start
@@ -355,7 +404,7 @@ begin
           state_nxt <= S_TIME_WAIT_RD;
         elsif (i_seq2_valid = '1') and (e1_above_peak = '1') then
           if i_delay_e1_ms = 0 then
-                state_nxt <= S_TRIPPED_E1;
+                state_nxt <= S_E1_TRIPPED;
               else
                 state_nxt <= S_E1_TIMING;
               end if;
@@ -373,7 +422,7 @@ begin
         end if;
       
       when S_TIME_WAIT_RD =>
-        if (i_seq2_valid = '1') and (e2_above_peak = '1') then
+        if (i_seq2_valid = '1') and (e2_below_low = '1') then
           state_nxt <= S_MONITORING;
         elsif (s_ram_data_valid = '1') then
           state_nxt <= S_TIME_ACTIVE;
@@ -382,7 +431,7 @@ begin
       when S_TIME_ACTIVE =>
         if trip_e2_reg = '1' then
           state_nxt <= S_E2_TRIPPED;
-        elsif (i_seq2_valid = '1') and (e2_above_peak = '1') then
+        elsif (i_seq2_valid = '1') and (e2_below_low = '1') then
           state_nxt <= S_MONITORING;
         else
           -- permanece temporizando enquanto acima do limiar inferior
@@ -390,7 +439,15 @@ begin
         end if;
 
       when S_E1_TRIPPED =>
-        
+        if start_pulse = '1' then
+          state_nxt <= S_MONITORING;
+        end if;
+        if (i_seq2_valid = '1') and (e2_above_peak = '1') then
+          state_nxt <= S_TIME_WAIT_RD;
+        end if;
+        if (i_seq2_valid = '1') and (e1_below_low = '1') then
+          state_nxt <= S_MONITORING;
+        end if;
 
       when S_E2_TRIPPED =>
         -- libera com reset ou novo start
@@ -415,6 +472,7 @@ begin
   o_trip_46_e1       <= trip_e1_reg;
   o_trip_46_e2       <= trip_e2_reg;
   o_time_ms         <= std_logic_vector(time_ms_reg);
+  o_e1_time_cnt     <= std_logic_vector(e1_ms_cnt);
   
   o_alarm_e1 <= alarm_e1_reg;          
   o_alarm_e2 <= alarm_e2_reg;         

@@ -140,18 +140,8 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/imports/vhd/ProtPhaseUmbalanceNegSeqTemp_46.vhd">
-        <FileInfo RelPath="ProtPhaseUmbalanceNegSeqTemp_46.vhd">
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../Users/Arthu/projetos_vivado/module_j_prototype/x14XC7C020Fasor_rev02/vhd/ProtPhaseUmbalanceNegSeqTemp_46.vhd"/>
-          <Attr Name="ImportTime" Val="1772128346"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/vhd/ProtPhaseUmbalanceNegSeq_46.vhd">
-        <FileInfo RelPath="ProtPhaseUmbalanceNegSeq_46.vhd">
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../Users/Arthu/projetos_vivado/module_j_prototype/x14XC7C020Fasor_rev02/vhd/ProtPhaseUmbalanceNegSeq_46.vhd"/>
-          <Attr Name="ImportTime" Val="1772125335"/>
+      <File Path="$PSRCDIR/sources_1/imports/vhd/ProtPhaseUmbalanceNegSeq_46_51Q.vhd">
+        <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
@@ -316,6 +306,24 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhd/ProtPhaseUmbalanceNegSeqTemp_46.vhd">
+        <FileInfo RelPath="ProtPhaseUmbalanceNegSeqTemp_46.vhd">
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../Users/Arthu/projetos_vivado/module_j_prototype/x14XC7C020Fasor_rev02/vhd/ProtPhaseUmbalanceNegSeqTemp_46.vhd"/>
+          <Attr Name="ImportTime" Val="1772128346"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhd/ProtPhaseUmbalanceNegSeq_46.vhd">
+        <FileInfo RelPath="ProtPhaseUmbalanceNegSeq_46.vhd">
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../Users/Arthu/projetos_vivado/module_j_prototype/x14XC7C020Fasor_rev02/vhd/ProtPhaseUmbalanceNegSeq_46.vhd"/>
+          <Attr Name="ImportTime" Val="1772125335"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sources_1/imports/vhd/symcomp_3ph_from_phasors_fsm.vhd">
         <FileInfo RelPath="symcomp_3ph_from_phasors_fsm.vhd">
           <Attr Name="AutoDisabled" Val="1"/>
@@ -399,13 +407,6 @@
         </FileInfo>
       </File>
       <File Path="$PSRCDIR/sources_1/imports/vhd/rocof_from_phasor_shortwin.vhd">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/vhd/ProtPhaseUmbalanceNegSeq_46_51Q.vhd">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
