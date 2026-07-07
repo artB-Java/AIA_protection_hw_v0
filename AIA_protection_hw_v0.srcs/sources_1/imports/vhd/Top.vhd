@@ -2440,7 +2440,7 @@ signal s_46_s1_bram_doutb    : std_logic_vector(19 downto 0);
   alias REG_46_S1_LUT_WR_EN  : std_logic_vector(0 downto 0) is s_out_Port_076(0 downto 0);
   alias REG_46_S1_LUT_ADDR   : std_logic_vector(11 downto 0) is s_out_Port_077(11 downto 0);
   alias REG_46_S1_LUT_DATA   : std_logic_vector(19 downto 0) is s_out_Port_078(19 downto 0);
-  alias REG_46_S1_LUT_DOUTB  : std_logic_vector(19 downto 0) is s_out_Port_079(20 downto 0);
+  alias REG_46_S1_LUT_DOUTB  : std_logic_vector(19 downto 0) is s_out_Port_079(19 downto 0);
   -- alias REG_46Temp_STG1_TRIP     : std_logic_vector(0 downto 0) is s_in_Port_080(0 downto 0);
 
   alias REG_47_STG1_VPU_U11   : std_logic_vector(11 downto 0) is s_out_Port_081(11 downto 0);
