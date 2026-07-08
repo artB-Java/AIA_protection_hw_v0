@@ -51,6 +51,7 @@ entity ProtPhaseUmbalanceNegSeq_46_51Q is
     --------------------------
     -- Saídas de proteção / debug
     --------------------------
+    o_seq_abs_u12      : out UNSIGNED(11 downto 0);
     o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
     o_e1_time_cnt      : out STD_LOGIC_VECTOR(G_TIME_WIDTH-1 downto 0);
     o_alarm_e1         : out std_logic;
@@ -473,6 +474,7 @@ begin
   o_trip_46_e2       <= trip_e2_reg;
   o_time_ms         <= std_logic_vector(time_ms_reg);
   o_e1_time_cnt     <= std_logic_vector(e1_ms_cnt);
+  o_seq_abs_u12     <= seq_abs_u12;
   
   o_alarm_e1 <= alarm_e1_reg;          
   o_alarm_e2 <= alarm_e2_reg;         

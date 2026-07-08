@@ -187,7 +187,11 @@ architecture Behavioral of Top is
       probe_out36 : out std_logic_vector(5 downto 0);
       probe_out37 : out std_logic_vector(5 downto 0);
       probe_out38 : out std_logic_vector(5 downto 0);
-      probe_out39 : out std_logic_vector(5 downto 0)
+      probe_out39 : out std_logic_vector(5 downto 0);
+      probe_out40 : out std_logic_vector(19 downto 0);
+      probe_out41 : out std_logic_vector(0 downto 0);
+      probe_out42 : out std_logic_vector(11 downto 0);
+      probe_out43 : out std_logic_vector(11 downto 0)
 
     );
   end component;
@@ -231,6 +235,11 @@ architecture Behavioral of Top is
   signal s_sel_s5             : std_logic_vector(5 downto 0);
   signal s_sel_s6             : std_logic_vector(5 downto 0);
   signal s_sel_s7             : std_logic_vector(5 downto 0);
+
+  signal s_46_s1_vio_e1_dly  : std_logic_vector(19 downto 0);
+  signal s_46_s1_vio_e1_en   : std_logic_vector(0 downto 0) := (others => '0');
+  signal s_46_s1_vio_e1_i2pu : std_logic_vector(11 downto 0);
+  signal s_46_s1_vio_e2_i2pu : std_logic_vector(11 downto 0);
 
   -- =========================
   -- Component Processor
@@ -1511,6 +1520,7 @@ end component;
     --------------------------
     -- Saídas de proteção / debug
     --------------------------
+    o_seq_abs_u12      : out UNSIGNED(11 downto 0);
     o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
     o_e1_time_cnt      : out STD_LOGIC_VECTOR(G_TIME_WIDTH-1 downto 0);
     o_alarm_e1         : out std_logic;
@@ -1525,10 +1535,13 @@ signal s_46_s1_ram_rd_req    : std_logic;
 signal s_46_s1_time_ms       : std_logic_vector(19 downto 0);  -- contador de ms (satura)
 signal s_46_s1_e1_time_cnt   : STD_LOGIC_VECTOR(19 downto 0);
 signal s_46_s1_rst           : std_logic;
-signal s_46_s1_bram_wea      : std_logic_vector(0 downto 0);
-signal s_46_s1_bram_dina     : std_logic_vector(19 downto 0);
+signal s_46_s1_bram_wea      : std_logic_vector(0 downto 0)  := (others => '0');
+signal s_46_s1_bram_dina     : std_logic_vector(19 downto 0) := (others => '0');
 signal s_46_s1_bram_douta    : std_logic_vector(19 downto 0);
 signal s_46_s1_bram_doutb    : std_logic_vector(19 downto 0);
+signal s_46_s1_i2_abs_u12     : unsigned(11 downto 0) := (others => '0');
+
+
 
   -- =========================
   -- Core Regs
@@ -2157,7 +2170,7 @@ signal s_46_s1_bram_doutb    : std_logic_vector(19 downto 0);
   signal s_out_Port_076 : std_logic_vector(31 downto 0) := (others => '0');
   signal s_out_Port_077 : std_logic_vector(31 downto 0) := (others => '0');
   signal s_out_Port_078 : std_logic_vector(31 downto 0) := (others => '0');
-  signal s_out_Port_079 : std_logic_vector(31 downto 0) := (others => '0');
+  signal s_in_Port_079 : std_logic_vector(31 downto 0) := (others => '0');
   signal s_in_Port_080  : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
 
   
@@ -2440,7 +2453,7 @@ signal s_46_s1_bram_doutb    : std_logic_vector(19 downto 0);
   alias REG_46_S1_LUT_WR_EN  : std_logic_vector(0 downto 0) is s_out_Port_076(0 downto 0);
   alias REG_46_S1_LUT_ADDR   : std_logic_vector(11 downto 0) is s_out_Port_077(11 downto 0);
   alias REG_46_S1_LUT_DATA   : std_logic_vector(19 downto 0) is s_out_Port_078(19 downto 0);
-  alias REG_46_S1_LUT_DOUTB  : std_logic_vector(19 downto 0) is s_out_Port_079(19 downto 0);
+  alias REG_46_S1_LUT_DOUTB  : std_logic_vector(19 downto 0) is s_in_Port_079(19 downto 0);
   -- alias REG_46Temp_STG1_TRIP     : std_logic_vector(0 downto 0) is s_in_Port_080(0 downto 0);
 
   alias REG_47_STG1_VPU_U11   : std_logic_vector(11 downto 0) is s_out_Port_081(11 downto 0);
@@ -2614,6 +2627,53 @@ signal s_46_s1_bram_doutb    : std_logic_vector(19 downto 0);
   --attribute keep       of s_rms_aux_10_valid  : signal is "true";
 
 
+attribute KEEP of s_46_s1_rst : signal is "true";
+attribute KEEP of s_seq2_abs : signal is "true";
+attribute KEEP of s_seq_valid : signal is "true";
+attribute KEEP of s_46_s1_vio_e1_i2pu : signal is "true";
+attribute KEEP of s_46_s1_vio_e2_i2pu : signal is "true";
+attribute KEEP of s_46_s1_vio_e1_dly : signal is "true";
+attribute KEEP of s_46_s1_ram_addr : signal is "true";
+attribute KEEP of s_46_s1_ram_rd_req : signal is "true";
+attribute KEEP of s_46_s1_bram_douta : signal is "true";
+attribute KEEP of s_46_s1_time_ms : signal is "true";
+attribute KEEP of s_46_s1_e1_time_cnt : signal is "true";
+attribute KEEP of REG_46_S1_E1_ALARM : signal is "true";
+-- attribute KEEP of REG_46_S1_E2_ALARM : signal is "true";
+-- attribute KEEP of REG_46_S1_E1_TRIP : signal is "true";
+-- attribute KEEP of REG_46_S1_E2_TRIP : signal is "true";
+-- attribute KEEP of REG_46_S1_TRIP : signal is "true";
+attribute KEEP of s_46_s1_vio_e1_en : signal is "true";
+attribute KEEP of REG_46_S1_LUT_WR_EN : signal is "true";
+attribute KEEP of REG_46_S1_LUT_ADDR : signal is "true";
+attribute KEEP of REG_46_S1_LUT_DATA : signal is "true";
+attribute KEEP of REG_46_S1_LUT_DOUTB : signal is "true";
+attribute KEEP of s_46_s1_i2_abs_u12 : signal is "true";
+
+
+attribute DONT_TOUCH of s_46_s1_rst : signal is "true";
+attribute DONT_TOUCH of s_seq2_abs : signal is "true";
+attribute DONT_TOUCH of s_seq_valid : signal is "true";
+attribute DONT_TOUCH of s_46_s1_vio_e1_i2pu : signal is "true";
+attribute DONT_TOUCH of s_46_s1_vio_e2_i2pu : signal is "true";
+attribute DONT_TOUCH of s_46_s1_vio_e1_dly : signal is "true";
+attribute DONT_TOUCH of s_46_s1_ram_addr : signal is "true";
+attribute DONT_TOUCH of s_46_s1_ram_rd_req : signal is "true";
+attribute DONT_TOUCH of s_46_s1_bram_douta : signal is "true";
+attribute DONT_TOUCH of s_46_s1_time_ms : signal is "true";
+attribute DONT_TOUCH of s_46_s1_e1_time_cnt : signal is "true";
+attribute DONT_TOUCH of REG_46_S1_E1_ALARM : signal is "true";
+-- attribute DONT_TOUCH of REG_46_S1_E2_ALARM : signal is "true";
+-- attribute DONT_TOUCH of REG_46_S1_E1_TRIP : signal is "true";
+-- attribute DONT_TOUCH of REG_46_S1_E2_TRIP : signal is "true";
+-- attribute DONT_TOUCH of REG_46_S1_TRIP : signal is "true";
+attribute DONT_TOUCH of s_46_s1_vio_e1_en : signal is "true";
+attribute DONT_TOUCH of REG_46_S1_LUT_WR_EN : signal is "true";
+attribute DONT_TOUCH of REG_46_S1_LUT_ADDR : signal is "true";
+attribute DONT_TOUCH of REG_46_S1_LUT_DATA : signal is "true";
+attribute DONT_TOUCH of REG_46_S1_LUT_DOUTB : signal is "true";
+attribute DONT_TOUCH of s_46_s1_i2_abs_u12 : signal is "true";
+
   
   attribute KEEP of s_vaux0_decim_s12_valid : signal is "true";
   attribute KEEP of s_vaux1_decim_s12_valid : signal is "true";
@@ -2707,7 +2767,7 @@ signal s_46_s1_bram_doutb    : std_logic_vector(19 downto 0);
   
   
   
- attribute KEEP of  s_seq_valid 		  	  : signal is "true";
+ --attribute KEEP of  s_seq_valid 		  	  : signal is "true";
  attribute KEEP of  s_seq0_re 		  		  : signal is "true";
  attribute KEEP of  s_seq0_im 		  		  : signal is "true";
  attribute KEEP of  s_seq0_abs    	  		  : signal is "true";
@@ -2720,13 +2780,13 @@ signal s_46_s1_bram_doutb    : std_logic_vector(19 downto 0);
  attribute KEEP of  s_seq1_im     	  		  : signal is "true";
  attribute KEEP of  s_seq2_re     	  		  : signal is "true";
  attribute KEEP of  s_seq2_im     	  		  : signal is "true";
- attribute KEEP of  s_seq2_abs    	  		  : signal is "true";
+ --attribute KEEP of  s_seq2_abs    	  		  : signal is "true";
  attribute KEEP of  s_seq2_phase  	  		  : signal is "true";
  attribute KEEP of  s_seq2_rms    	  		  : signal is "true"; 
   
   
   
- attribute DONT_TOUCH of  s_seq_valid 		  	  : signal is "true"; 	
+ --attribute DONT_TOUCH of  s_seq_valid 		  	  : signal is "true"; 	
  attribute DONT_TOUCH of  s_seq0_re 		  : signal is "true";
  attribute DONT_TOUCH of  s_seq0_im 		  : signal is "true";
  attribute DONT_TOUCH of  s_seq0_abs    	  : signal is "true";
@@ -2739,7 +2799,7 @@ signal s_46_s1_bram_doutb    : std_logic_vector(19 downto 0);
  attribute DONT_TOUCH of  s_seq1_im     	  : signal is "true";
  attribute DONT_TOUCH of  s_seq2_re     	  : signal is "true";
  attribute DONT_TOUCH of  s_seq2_im     	  : signal is "true";
- attribute DONT_TOUCH of  s_seq2_abs    	  : signal is "true";
+-- attribute DONT_TOUCH of  s_seq2_abs    	  : signal is "true";
  attribute DONT_TOUCH of  s_seq2_phase  	  : signal is "true";
  attribute DONT_TOUCH of  s_seq2_rms    	  : signal is "true";
  
@@ -3245,7 +3305,11 @@ begin
     probe_out36 => s_sel_s4,
     probe_out37 => s_sel_s5,
     probe_out38 => s_sel_s6,
-    probe_out39 => s_sel_s7
+    probe_out39 => s_sel_s7,
+    probe_out40 => s_46_s1_vio_e1_dly,
+    probe_out41 => s_46_s1_vio_e1_en,
+    probe_out42 => s_46_s1_vio_e1_i2pu,
+    probe_out43 => s_46_s1_vio_e2_i2pu
   );
   ------------------------------------------------
   -- Bias removal and Decimation VAUX0 - Phase A
@@ -3656,7 +3720,7 @@ begin
 
   REG_SEQ1_ABS   <= std_logic_vector(s_seq1_abs);
   REG_SEQ1_PHASE <= std_logic_vector(s_seq1_phase);
-  REG_SEQ1_RMS   <= std_logic_vector(s_seq1_rms);
+  REG_SEQ1_RMS   <= std_logic_vector(s_seq1_rms); 
 
   REG_SEQ2_ABS   <= std_logic_vector(s_seq2_abs);
   REG_SEQ2_PHASE <= std_logic_vector(s_seq2_phase);
@@ -3708,12 +3772,13 @@ begin
       i_start           => '1',
       i_seq2_abs        => std_logic_vector(s_seq2_abs),
       i_seq2_valid      => s_seq_valid,
-      i_seq2_pickup_e1  => REG_46_S1_E1_I2PU_U12,
-      i_seq2_pickup_e2  => REG_46_S1_E2_I2PU_U12,
-      i_delay_e1_ms     => UNSIGNED(REG_46_S1_E1_DLY_U20),
+      i_seq2_pickup_e1  => s_46_s1_vio_e1_i2pu,--REG_46_S1_E1_I2PU_U12,
+      i_seq2_pickup_e2  => s_46_s1_vio_e2_i2pu,--REG_46_S1_E2_I2PU_U12,
+      i_delay_e1_ms     => UNSIGNED(s_46_s1_vio_e1_dly),--UNSIGNED(REG_46_S1_E1_DLY_U20),
       o_ram_addr        => s_46_s1_ram_addr,
       o_ram_rd_req      => s_46_s1_ram_rd_req,
       i_ram_data        => s_46_s1_bram_douta,
+      o_seq_abs_u12     => s_46_s1_i2_abs_u12,
       o_time_ms         => s_46_s1_time_ms,
       o_e1_time_cnt     => s_46_s1_e1_time_cnt,
       o_alarm_e1        => REG_46_S1_E1_ALARM,
@@ -3722,7 +3787,8 @@ begin
       o_trip_46_e2      => REG_46_S1_E2_TRIP,
       o_trip_46         => REG_46_S1_TRIP
   );
-  s_46_s1_rst <= (sRst or REG_46_S1_EN);
+  s_46_s1_rst <= (sRst or s_46_s1_vio_e1_en(0)); -- or REG_46_S1_EN);
+
 
   inst_bram0_46_s1 : blk_mem_gen_0
   port map
@@ -3739,9 +3805,9 @@ begin
     clkb  => s_clk1,
     enb   => '1',
     web   => REG_46_S1_LUT_WR_EN, -- "0" = somente leitura
-    addrb => REG_46_S1_LUT_ADDR, -- 11 bits
-    dinb  => REG_46_S1_LUT_DATA, -- 20 bits
-    doutb => REG_46_S1_LUT_DOUTB--s_51_A_bram_doutb -- 20 bits
+    addrb => REG_46_S1_LUT_ADDR,  -- 11 bits
+    dinb  => REG_46_S1_LUT_DATA,  -- 20 bits
+    doutb => REG_46_S1_LUT_DOUTB  --s_51_A_bram_doutb -- 20 bits
   );
 
   inst_rms_aux0 : MovingAverageRMS
@@ -5174,7 +5240,7 @@ begin
     in_Port_076 => s_out_Port_076,
     in_Port_077 => s_out_Port_077,
     in_Port_078 => s_out_Port_078,
-    in_Port_079 => s_out_Port_079,
+    in_Port_079 => s_in_Port_079, --rdo
     in_Port_080 => s_in_Port_080, --rdo
     in_Port_081 => s_out_Port_081,
     in_Port_082 => s_out_Port_082,
@@ -5432,7 +5498,7 @@ begin
     out_Port_076 => s_out_Port_076,
     out_Port_077 => s_out_Port_077,
     out_Port_078 => s_out_Port_078,
-    out_Port_079 => s_out_Port_079,
+    out_Port_079 => open, --rod
     out_Port_080 => open, --rod
     out_Port_081 => s_out_Port_081,
     out_Port_082 => s_out_Port_082,
