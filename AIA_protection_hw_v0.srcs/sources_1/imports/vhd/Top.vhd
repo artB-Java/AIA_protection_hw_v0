@@ -406,6 +406,13 @@ architecture Behavioral of Top is
         o_offset_valid : out std_logic                      
     );
 end component;
+signal s_aux0_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
+signal s_aux1_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
+signal s_aux2_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
+signal s_aux3_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
+signal s_aux4_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
+signal s_aux5_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
+signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
 
 
 
@@ -1504,7 +1511,7 @@ end component;
     --------------------------
     -- Medida seqNeg e limiar
     --------------------------
-    i_seq2_abs          : in  std_logic_vector(31 downto 0); -- RMS 12b (0..*), usado addr[10:0]
+    i_seq2_abs          : in  unsigned(31 downto 0); -- RMS 12b (0..*), usado addr[10:0]
     i_seq2_valid        : in  std_logic; -- '1' quando RMS atual é válido (amostras espaçadas)
     i_seq2_pickup_e1    : in  std_logic_vector(11 downto 0); -- limiar de atuação (contagens RMS)
     i_seq2_pickup_e2    : in  std_logic_vector(11 downto 0); -- limiar de atuação (contagens RMS)
@@ -1522,6 +1529,7 @@ end component;
     --------------------------
     o_seq_abs_u12      : out UNSIGNED(11 downto 0);
     o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
+    o_target_ms_reg    : out unsigned(G_DATA_BITS-1 downto 0);
     o_e1_time_cnt      : out STD_LOGIC_VECTOR(G_TIME_WIDTH-1 downto 0);
     o_alarm_e1         : out std_logic;
     o_alarm_e2         : out std_logic;                        
@@ -1540,6 +1548,12 @@ signal s_46_s1_bram_dina     : std_logic_vector(19 downto 0) := (others => '0');
 signal s_46_s1_bram_douta    : std_logic_vector(19 downto 0);
 signal s_46_s1_bram_doutb    : std_logic_vector(19 downto 0);
 signal s_46_s1_i2_abs_u12     : unsigned(11 downto 0) := (others => '0');
+signal s_46_s1_ram_target_ms  : UNSIGNED(19 downto 0) := (others => '0');
+signal s_46_s1_e1_trip        : std_logic;
+signal s_46_s1_e2_trip        : std_logic;
+signal s_46_s1_trip        : std_logic;
+signal s_46_s1_e1_alarm        : std_logic;
+signal s_46_s1_e2_alarm        : std_logic;
 
 
 
@@ -2638,17 +2652,18 @@ attribute KEEP of s_46_s1_ram_rd_req : signal is "true";
 attribute KEEP of s_46_s1_bram_douta : signal is "true";
 attribute KEEP of s_46_s1_time_ms : signal is "true";
 attribute KEEP of s_46_s1_e1_time_cnt : signal is "true";
-attribute KEEP of REG_46_S1_E1_ALARM : signal is "true";
--- attribute KEEP of REG_46_S1_E2_ALARM : signal is "true";
--- attribute KEEP of REG_46_S1_E1_TRIP : signal is "true";
--- attribute KEEP of REG_46_S1_E2_TRIP : signal is "true";
--- attribute KEEP of REG_46_S1_TRIP : signal is "true";
+attribute KEEP of s_46_s1_e1_alarm : signal is "true";
+attribute KEEP of s_46_s1_e2_alarm : signal is "true";
+attribute KEEP of s_46_s1_e1_trip : signal is "true";
+attribute KEEP of s_46_s1_e2_trip : signal is "true";
+attribute KEEP of s_46_s1_trip : signal is "true";
 attribute KEEP of s_46_s1_vio_e1_en : signal is "true";
 attribute KEEP of REG_46_S1_LUT_WR_EN : signal is "true";
 attribute KEEP of REG_46_S1_LUT_ADDR : signal is "true";
 attribute KEEP of REG_46_S1_LUT_DATA : signal is "true";
 attribute KEEP of REG_46_S1_LUT_DOUTB : signal is "true";
 attribute KEEP of s_46_s1_i2_abs_u12 : signal is "true";
+attribute KEEP of s_46_s1_ram_target_ms : signal is "true";
 
 
 attribute DONT_TOUCH of s_46_s1_rst : signal is "true";
@@ -2662,17 +2677,18 @@ attribute DONT_TOUCH of s_46_s1_ram_rd_req : signal is "true";
 attribute DONT_TOUCH of s_46_s1_bram_douta : signal is "true";
 attribute DONT_TOUCH of s_46_s1_time_ms : signal is "true";
 attribute DONT_TOUCH of s_46_s1_e1_time_cnt : signal is "true";
-attribute DONT_TOUCH of REG_46_S1_E1_ALARM : signal is "true";
--- attribute DONT_TOUCH of REG_46_S1_E2_ALARM : signal is "true";
--- attribute DONT_TOUCH of REG_46_S1_E1_TRIP : signal is "true";
--- attribute DONT_TOUCH of REG_46_S1_E2_TRIP : signal is "true";
--- attribute DONT_TOUCH of REG_46_S1_TRIP : signal is "true";
+attribute DONT_TOUCH of s_46_s1_e1_alarm : signal is "true";
+attribute DONT_TOUCH of s_46_s1_e2_alarm : signal is "true";
+attribute DONT_TOUCH of s_46_s1_e1_trip : signal is "true";
+attribute DONT_TOUCH of s_46_s1_e2_trip : signal is "true";
+attribute DONT_TOUCH of s_46_s1_trip : signal is "true";
 attribute DONT_TOUCH of s_46_s1_vio_e1_en : signal is "true";
 attribute DONT_TOUCH of REG_46_S1_LUT_WR_EN : signal is "true";
 attribute DONT_TOUCH of REG_46_S1_LUT_ADDR : signal is "true";
 attribute DONT_TOUCH of REG_46_S1_LUT_DATA : signal is "true";
 attribute DONT_TOUCH of REG_46_S1_LUT_DOUTB : signal is "true";
 attribute DONT_TOUCH of s_46_s1_i2_abs_u12 : signal is "true";
+attribute DONT_TOUCH of s_46_s1_ram_target_ms : signal is "true";
 
   
   attribute KEEP of s_vaux0_decim_s12_valid : signal is "true";
@@ -3177,9 +3193,11 @@ begin
       i_rst => sRst,
       i_data_raw => s_vaux0_data,
       i_valid => s_vaux0_valid,
-      o_offset_avg => REG_A_CALIB_OFFSET,
+      o_offset_avg => s_aux0_calib_offset,
       o_offset_valid => open
   );
+  REG_A_CALIB_OFFSET <= s_aux0_calib_offset;
+
 
   inst_aux1_XadcDcOffsetCalibrator: XadcDcOffsetCalibrator
   generic map(
@@ -3190,9 +3208,10 @@ begin
       i_rst => sRst,
       i_data_raw => s_vaux1_data,
       i_valid => s_vaux1_valid,
-      o_offset_avg => REG_B_CALIB_OFFSET,
+      o_offset_avg => s_aux1_calib_offset,
       o_offset_valid => open
   );
+  REG_B_CALIB_OFFSET <= s_aux1_calib_offset;
 
     inst_aux2_XadcDcOffsetCalibrator: XadcDcOffsetCalibrator
    generic map(
@@ -3203,9 +3222,11 @@ begin
       i_rst => sRst,
       i_data_raw => s_vaux2_data,
       i_valid => s_vaux2_valid,
-      o_offset_avg => REG_C_CALIB_OFFSET,
+      o_offset_avg => s_aux2_calib_offset,
       o_offset_valid => open
   );
+  REG_C_CALIB_OFFSET <= s_aux2_calib_offset;
+
 
     inst_aux3_XadcDcOffsetCalibrator: XadcDcOffsetCalibrator
    generic map(
@@ -3216,9 +3237,11 @@ begin
       i_rst => sRst,
       i_data_raw => s_vaux3_data,
       i_valid => s_vaux3_valid,
-      o_offset_avg => REG_N_CALIB_OFFSET,
+      o_offset_avg => s_aux3_calib_offset,
       o_offset_valid => open
   );
+  REG_N_CALIB_OFFSET <= s_aux3_calib_offset;
+
 
     inst_aux4_XadcDcOffsetCalibrator: XadcDcOffsetCalibrator
    generic map(
@@ -3229,9 +3252,10 @@ begin
       i_rst => sRst,
       i_data_raw => s_vaux4_data,
       i_valid => s_vaux4_valid,
-      o_offset_avg => REG_VA_CALIB_OFFSET,
+      o_offset_avg => s_aux4_calib_offset,
       o_offset_valid => open
   );
+  REG_VC_CALIB_OFFSET <= s_aux4_calib_offset;
 
     inst_aux5_XadcDcOffsetCalibrator: XadcDcOffsetCalibrator
    generic map(
@@ -3242,9 +3266,10 @@ begin
       i_rst => sRst,
       i_data_raw => s_vaux5_data,
       i_valid => s_vaux5_valid,
-      o_offset_avg => REG_VB_CALIB_OFFSET,
+      o_offset_avg => s_aux5_calib_offset,
       o_offset_valid => open
   );
+  REG_VB_CALIB_OFFSET <= s_aux5_calib_offset;
 
     inst_aux6_XadcDcOffsetCalibrator: XadcDcOffsetCalibrator
    generic map(
@@ -3255,9 +3280,10 @@ begin
       i_rst => sRst,
       i_data_raw => s_vaux6_data,
       i_valid => s_vaux6_valid,
-      o_offset_avg => REG_VC_CALIB_OFFSET,
+      o_offset_avg => s_aux6_calib_offset,
       o_offset_valid => open
   );
+  REG_VA_CALIB_OFFSET <= s_aux6_calib_offset;
 
   -------------------
   -- Instancia do VIO
@@ -3321,7 +3347,7 @@ begin
     i_rst               => sRst,
     i_data              => s_vaux0_data,
     i_valid             => s_vaux0_valid,
-    i_offset            => REG_A_OFFSET_U12, --x"800",--REG_A_OFFSET_U12,LEMBRAR DE VOLTAR NO PROJETO FINAL, FOI COLOCADO PARA NÃO PRECISAR DE USAR O PROCESSADO DURANTE DESENVOLVIMENTO DE BLOCOS NO FPGA PARA USAR OS CANAIS 0 1 e 2
+    i_offset            => s_aux0_calib_offset,--REG_A_OFFSET_U12, --x"800",--REG_A_OFFSET_U12,LEMBRAR DE VOLTAR NO PROJETO FINAL, FOI COLOCADO PARA NÃO PRECISAR DE USAR O PROCESSADO DURANTE DESENVOLVIMENTO DE BLOCOS NO FPGA PARA USAR OS CANAIS 0 1 e 2
     i_decimation_factor => REG_A_DECIM_U8, -- x"0B",--REG_A_DECIM_U8,
     o_data_decim        => s_vaux0_decim_s12,
     o_valid_decim       => s_vaux0_decim_s12_valid,
@@ -3339,7 +3365,7 @@ begin
     i_rst               => sRst,
     i_data              => s_vaux1_data,
     i_valid             => s_vaux1_valid,
-    i_offset            => REG_B_OFFSET_U12, --REG_B_OFFSET_U12 x"800",
+    i_offset            => s_aux1_calib_offset,--REG_B_OFFSET_U12, --REG_B_OFFSET_U12 x"800",
     i_decimation_factor => REG_B_DECIM_U8, --x"0B",--REG_B_DECIM_U8,
     o_data_decim        => s_vaux1_decim_s12,
     o_valid_decim       => s_vaux1_decim_s12_valid,
@@ -3357,7 +3383,7 @@ begin
     i_rst               => sRst,
     i_data              => s_vaux2_data,
     i_valid             => s_vaux2_valid,
-    i_offset            => REG_C_OFFSET_U12, --x"800",--REG_C_OFFSET_U12,
+    i_offset            => s_aux0_calib_offset,--REG_C_OFFSET_U12, --x"800",--REG_C_OFFSET_U12,
     i_decimation_factor => REG_C_DECIM_U8, --x"0B",--REG_C_DECIM_U8,
     o_data_decim        => s_vaux2_decim_s12,
     o_valid_decim       => s_vaux2_decim_s12_valid,
@@ -3375,7 +3401,7 @@ begin
     i_rst               => sRst,
     i_data              => s_vaux3_data,
     i_valid             => s_vaux3_valid,
-    i_offset            => REG_N_OFFSET_U12,
+    i_offset            => s_aux3_calib_offset,--REG_N_OFFSET_U12,
     i_decimation_factor => REG_N_DECIM_U8,
     o_data_decim        => s_vaux3_decim_s12,
     o_valid_decim       => s_vaux3_decim_s12_valid,
@@ -3393,7 +3419,7 @@ begin
     i_rst               => sRst,
     i_data              => s_vaux4_data,
     i_valid             => s_vaux4_valid,
-    i_offset            => REG_VA_OFFSET_U12,
+    i_offset            => s_aux4_calib_offset,--REG_VA_OFFSET_U12,
     i_decimation_factor => REG_VA_DECIM_U8,
     o_data_decim        => s_vaux4_decim_s12,
     o_valid_decim       => s_vaux4_decim_s12_valid,
@@ -3411,7 +3437,7 @@ begin
     i_rst               => sRst,
     i_data              => s_vaux5_data,
     i_valid             => s_vaux5_valid,
-    i_offset            => REG_VB_OFFSET_U12,
+    i_offset            => s_aux5_calib_offset,--REG_VB_OFFSET_U12,
     i_decimation_factor => REG_VB_DECIM_U8,
     o_data_decim        => s_vaux5_decim_s12,
     o_valid_decim       => s_vaux5_decim_s12_valid,
@@ -3429,7 +3455,7 @@ begin
     i_rst               => sRst,
     i_data              => s_vaux6_data,
     i_valid             => s_vaux6_valid,
-    i_offset            => REG_VC_OFFSET_U12,
+    i_offset            => s_aux6_calib_offset,--REG_VC_OFFSET_U12,
     i_decimation_factor => REG_VC_DECIM_U8,
     o_data_decim        => s_vaux6_decim_s12,
     o_valid_decim       => s_vaux6_decim_s12_valid,
@@ -3770,7 +3796,7 @@ begin
       i_clk_100MHz      => s_clk1,
       i_rst             => s_46_s1_rst,
       i_start           => '1',
-      i_seq2_abs        => std_logic_vector(s_seq2_abs),
+      i_seq2_abs        => s_seq2_abs,
       i_seq2_valid      => s_seq_valid,
       i_seq2_pickup_e1  => s_46_s1_vio_e1_i2pu,--REG_46_S1_E1_I2PU_U12,
       i_seq2_pickup_e2  => s_46_s1_vio_e2_i2pu,--REG_46_S1_E2_I2PU_U12,
@@ -3780,15 +3806,20 @@ begin
       i_ram_data        => s_46_s1_bram_douta,
       o_seq_abs_u12     => s_46_s1_i2_abs_u12,
       o_time_ms         => s_46_s1_time_ms,
+      o_target_ms_reg   => s_46_s1_ram_target_ms,
       o_e1_time_cnt     => s_46_s1_e1_time_cnt,
-      o_alarm_e1        => REG_46_S1_E1_ALARM,
-      o_alarm_e2        => REG_46_S1_E2_ALARM,
-      o_trip_46_e1      => REG_46_S1_E1_TRIP,
-      o_trip_46_e2      => REG_46_S1_E2_TRIP,
-      o_trip_46         => REG_46_S1_TRIP
+      o_alarm_e1        => s_46_s1_e1_alarm,
+      o_alarm_e2        => s_46_s1_e2_alarm,
+      o_trip_46_e1      => s_46_s1_e1_trip,
+      o_trip_46_e2      => s_46_s1_e2_trip,
+      o_trip_46         => s_46_s1_trip
   );
-  s_46_s1_rst <= (sRst or s_46_s1_vio_e1_en(0)); -- or REG_46_S1_EN);
-
+  s_46_s1_rst <= (sRst or s_46_s1_vio_e1_en(0)); -- or not REG_46_S1_EN);
+  REG_46_S1_E1_ALARM <=  s_46_s1_e1_alarm;
+  REG_46_S1_E2_ALARM <=  s_46_s1_e2_alarm;
+  REG_46_S1_E1_TRIP  <=  s_46_s1_e1_trip;
+  REG_46_S1_E2_TRIP  <=  s_46_s1_e2_trip;
+  REG_46_S1_TRIP     <=  s_46_s1_trip;
 
   inst_bram0_46_s1 : blk_mem_gen_0
   port map

@@ -35,7 +35,7 @@ entity ProtPhaseUmbalanceNegSeq_46_51Q is
     --------------------------
     -- Medida seqNeg e limiar
     --------------------------
-    i_seq2_abs          : in  std_logic_vector(31 downto 0); -- RMS 12b (0..*), usado addr[10:0]
+    i_seq2_abs          : in  unsigned(31 downto 0); -- RMS 12b (0..*), usado addr[10:0]
     i_seq2_valid        : in  std_logic; -- '1' quando RMS atual é válido (amostras espaçadas)
     i_seq2_pickup_e1    : in  std_logic_vector(11 downto 0); -- limiar de atuação (contagens RMS)
     i_seq2_pickup_e2    : in  std_logic_vector(11 downto 0); -- limiar de atuação (contagens RMS)
@@ -53,6 +53,7 @@ entity ProtPhaseUmbalanceNegSeq_46_51Q is
     --------------------------
     o_seq_abs_u12      : out UNSIGNED(11 downto 0);
     o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
+    o_target_ms_reg    : out unsigned(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
     o_e1_time_cnt      : out STD_LOGIC_VECTOR(G_TIME_WIDTH-1 downto 0);
     o_alarm_e1         : out std_logic;
     o_alarm_e2         : out std_logic;                        
@@ -85,7 +86,7 @@ architecture rtl of ProtPhaseUmbalanceNegSeq_46_51Q is
 
   -- comparações e limiares
   signal seq_abs_u12                    : unsigned(11 downto 0);
-  signal seq_abs_u32                    : unsigned(31 downto 0);
+  signal seq_abs_mult                   : unsigned(35 downto 0);
   signal peak_e1_u12                    : unsigned(11 downto 0);
   signal peak_e2_u12                    : unsigned(11 downto 0);
   signal hyst_u12                       : unsigned(11 downto 0);
@@ -148,8 +149,8 @@ begin
   -----------------------------------------------------------------------------
   -- Conversões e limiares (combinacionais)
   -----------------------------------------------------------------------------
-  seq_abs_u32   <= SHIFT_RIGHT(unsigned(i_seq2_abs), 19);
-  seq_abs_u12   <= seq_abs_u32(11 downto 0);
+  seq_abs_mult  <= i_seq2_abs * to_unsigned(10, 4);
+  seq_abs_u12   <= RESIZE(SHIFT_RIGHT(seq_abs_mult, 19), seq_abs_u12'length);
   peak_e1_u12   <= unsigned(i_seq2_pickup_e1);
   peak_e2_u12   <= unsigned(i_seq2_pickup_e2);
   hyst_u12      <= to_unsigned(G_HYST, 12);
@@ -251,8 +252,8 @@ begin
         state <= state_nxt;
         -- defaults a cada ciclo
         ram_rd_req_pulse     <= '0';
-        alarm_e1_reg         <= '0'; 
-        alarm_e2_reg         <= '0';
+        -- alarm_e1_reg         <= '0'; 
+        -- alarm_e2_reg         <= '0';
 		
         -- Geração do valid interno da RAM
         s_rd_req_d       <= ram_rd_req_pulse;
@@ -265,6 +266,8 @@ begin
             trip_e2_reg          <= '0';
             time_cnt_en <= '0';
             e1_ms_cnt  <= (others => '0');
+            alarm_e1_reg         <= '0'; 
+            alarm_e2_reg         <= '0';
 
           when S_MONITORING =>
             time_cnt_en <= '0';
@@ -473,6 +476,7 @@ begin
   o_trip_46_e1       <= trip_e1_reg;
   o_trip_46_e2       <= trip_e2_reg;
   o_time_ms         <= std_logic_vector(time_ms_reg);
+  o_target_ms_reg   <=   target_ms_reg;
   o_e1_time_cnt     <= std_logic_vector(e1_ms_cnt);
   o_seq_abs_u12     <= seq_abs_u12;
   

@@ -80,12 +80,12 @@ end
 lut = uint32(lut_ms(:));                       % garante tipo inteiro
 lut = min(lut, uint32(2^20-1));                % clamp em 20 bits
 
-fid = fopen('lut46_ms.mem','w');
+fid = fopen('lut_ms.mem','w');
 fprintf(fid, '%05X\n', lut);                   % 20 bits -> 5 hex por linha
 fclose(fid);
 
 lut = uint32(lut_ms(:));
-fid = fopen('lut46_init.vhd','w');
+fid = fopen('lut_init.vhd','w');
 fprintf(fid,'shared variable ram : memory_t := (\n');
 for i = 1:numel(lut)
     fprintf(fid,'  %4d => std_logic_vector(to_unsigned(%u, 20)),\n', i-1, lut(i));
@@ -112,7 +112,7 @@ elseif numel(lut) > DEPTH
 end
 
 % Escreve COE em HEX com 5 dígitos (20 bits)
-fid = fopen('lut46_ms.coe','w');
+fid = fopen('lut_ms.coe','w');
 fprintf(fid,'memory_initialization_radix=16;\n');
 fprintf(fid,'memory_initialization_vector=\n');
 for i = 1:DEPTH
