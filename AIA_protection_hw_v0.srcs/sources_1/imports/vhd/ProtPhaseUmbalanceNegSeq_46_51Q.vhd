@@ -18,7 +18,7 @@ entity ProtPhaseUmbalanceNegSeq_46_51Q is
     G_CLK_HZ    : natural := 100_000_000;
     -- Histerese em "contagens RMS" para evitar chatter (i_peakup - G_HYST).
     -- Ex.: se G_HYST=10, sai do temporizado quando RMS <= (peakup-10)
-    G_HYST      : natural := 0;
+    G_HYST      : natural := 5;
     G_TIME_WIDTH       : natural := 20;
     -- Larguras da LUT (RAM) usadas para a curva temporizada.
     G_ADDR_BITS : natural := 12; -- 2^12 = 4096 endereços (RMS 0..4095)
@@ -51,6 +51,7 @@ entity ProtPhaseUmbalanceNegSeq_46_51Q is
     --------------------------
     -- Saídas de proteção / debug
     --------------------------
+    o_seq_abs_stable   : out unsigned(11 downto 0);
     o_seq_abs_u12      : out UNSIGNED(11 downto 0);
     o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
     o_target_ms_reg    : out unsigned(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
@@ -87,12 +88,15 @@ architecture rtl of ProtPhaseUmbalanceNegSeq_46_51Q is
   -- comparações e limiares
   signal seq_abs_u12                    : unsigned(11 downto 0);
   signal seq_abs_mult                   : unsigned(35 downto 0);
+  signal seq_abs_reg                    : unsigned(31 downto 0);
   signal peak_e1_u12                    : unsigned(11 downto 0);
   signal peak_e2_u12                    : unsigned(11 downto 0);
   signal hyst_u12                       : unsigned(11 downto 0);
+ 
 
   signal low_thr_e1_u12                 : unsigned(11 downto 0);  -- (peak - G_HYST) saturado em 0
   signal low_thr_e2_u12                 : unsigned(11 downto 0);
+
   signal e1_above_peak, e1_below_low    : std_logic;
   signal e2_above_peak, e2_below_low    : std_logic;
 
@@ -131,6 +135,7 @@ architecture rtl of ProtPhaseUmbalanceNegSeq_46_51Q is
   signal trip_e1_reg                       : std_logic := '0';
   signal trip_e2_reg                       : std_logic := '0';
 
+  signal seq_abs_stable : unsigned(11 downto 0) := (others => '0');
 
   -- utilitários
   -- function sat11_from_u12(x : unsigned(11 downto 0)) return unsigned is
@@ -150,7 +155,8 @@ begin
   -- Conversões e limiares (combinacionais)
   -----------------------------------------------------------------------------
   seq_abs_mult  <= i_seq2_abs * to_unsigned(10, 4);
-  seq_abs_u12   <= RESIZE(SHIFT_RIGHT(seq_abs_mult, 19), seq_abs_u12'length);
+  seq_abs_reg   <= RESIZE(SHIFT_RIGHT(seq_abs_mult, 19),32);
+  seq_abs_u12   <= RESIZE(seq_abs_reg, seq_abs_u12'length);
   peak_e1_u12   <= unsigned(i_seq2_pickup_e1);
   peak_e2_u12   <= unsigned(i_seq2_pickup_e2);
   hyst_u12      <= to_unsigned(G_HYST, 12);
@@ -158,7 +164,6 @@ begin
   -- low_thr = max(0, peak - G_HYST)
   low_thr_e1_u12 <= (others => '0') when (peak_e1_u12 <= hyst_u12) else (peak_e1_u12 - hyst_u12);
   low_thr_e2_u12 <= (others => '0') when (peak_e2_u12 <= hyst_u12) else (peak_e2_u12 - hyst_u12);
-  
 
   -- Comparações são avaliadas quando valid='1' (usadas na FSM)
   e1_above_peak <= '1' when (seq_abs_u12 >  peak_e1_u12) else '0';
@@ -166,6 +171,31 @@ begin
 
   e2_above_peak <= '1' when (seq_abs_u12 >  peak_e2_u12) else '0';
   e2_below_low  <= '1' when (seq_abs_u12 <= low_thr_e2_u12) else '0';
+
+  -----------------------------------------------------------------------------
+  -- Filtor Delta com hyterese
+  -----------------------------------------------------------------------------
+  p_filtro_delta : process (i_clk_100MHz)
+    variable diff : unsigned(11 downto 0);
+  begin
+    if rising_edge(i_clk_100MHz) then
+      if i_rst = '1' then
+        diff := (others => '0');
+        seq_abs_stable <= (others => '0');
+      else
+        if seq_abs_u12 > seq_abs_stable then
+          diff := seq_abs_u12 - seq_abs_stable;
+        else
+          diff := seq_abs_stable - seq_abs_u12;
+        end if;
+
+        if diff > hyst_u12 then
+          seq_abs_stable <= seq_abs_u12;
+        end if;
+      end if;
+    end if;
+  end process;
+
 
   -----------------------------------------------------------------------------
   -- Divisor de 1 ms (gera ms_tick = '1' por 1 ciclo a cada 1 ms)
@@ -275,7 +305,7 @@ begin
             -- Verifica apenas nos pulsos válidos de RMS
             if i_seq2_valid = '1' then
               if e2_above_peak = '1' then
-                ram_addr_reg       <= seq_abs_u12;
+                ram_addr_reg       <= seq_abs_stable;
                 ram_rd_req_pulse   <= '1';           -- requisita leitura da LUT
                 time_cnt_en     <= '1';           -- inicia contagem de ms já neste estado
                 alarm_e2_reg <= '1';
@@ -290,7 +320,7 @@ begin
             if i_seq2_valid = '1' then
               if e2_above_peak = '1' then
                 e1_ms_cnt  <= (others => '0');
-                ram_addr_reg       <= seq_abs_u12;
+                ram_addr_reg       <= seq_abs_stable;
                 ram_rd_req_pulse   <= '1';           -- requisita leitura da LUT
                 time_cnt_en        <= '1';           -- inicia contagem de ms já neste estado
                 alarm_e2_reg <= '1';
@@ -324,7 +354,7 @@ begin
                 time_cnt_en <= '0';
               else
                 -- pode atualizar o endereço (mantém LUT "on-the-fly")
-                ram_addr_reg     <= seq_abs_u12;
+                ram_addr_reg     <= seq_abs_stable;
                 ram_rd_req_pulse <= '1';
               end if;
             end if;
@@ -336,7 +366,7 @@ begin
               if e2_below_low = '1' then
                 time_cnt_en <= '0'; -- será efetivado na próxima transição
               else
-                ram_addr_reg     <= seq_abs_u12;
+                ram_addr_reg     <= seq_abs_stable;--seq_abs_th;
                 ram_rd_req_pulse <= '1';
               end if;
             end if;
@@ -359,7 +389,7 @@ begin
             if i_seq2_valid = '1' then
               if e2_above_peak = '1' then
                 e1_ms_cnt  <= (others => '0');
-                ram_addr_reg       <= seq_abs_u12;
+                ram_addr_reg       <= seq_abs_stable;
                 ram_rd_req_pulse   <= '1';           -- requisita leitura da LUT
                 time_cnt_en        <= '1';           -- inicia contagem de ms já neste estado
                 alarm_e2_reg <= '1';
@@ -479,6 +509,7 @@ begin
   o_target_ms_reg   <=   target_ms_reg;
   o_e1_time_cnt     <= std_logic_vector(e1_ms_cnt);
   o_seq_abs_u12     <= seq_abs_u12;
+  o_seq_abs_stable  <= seq_abs_stable;
   
   o_alarm_e1 <= alarm_e1_reg;          
   o_alarm_e2 <= alarm_e2_reg;         

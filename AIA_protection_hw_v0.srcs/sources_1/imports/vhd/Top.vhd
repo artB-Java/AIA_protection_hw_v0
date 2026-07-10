@@ -1495,7 +1495,7 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
   component ProtPhaseUmbalanceNegSeq_46_51Q is
   generic (
     G_CLK_HZ    : natural := 100_000_000;
-    G_HYST      : natural := 0;
+    G_HYST      : natural := 5;
     G_TIME_WIDTH       : natural := 20;
     G_ADDR_BITS : natural := 12; 
     G_DATA_BITS : natural := 20 
@@ -1527,6 +1527,7 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
     --------------------------
     -- Saídas de proteção / debug
     --------------------------
+    o_seq_abs_stable   : out unsigned(11 downto 0);
     o_seq_abs_u12      : out UNSIGNED(11 downto 0);
     o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
     o_target_ms_reg    : out unsigned(G_DATA_BITS-1 downto 0);
@@ -1554,6 +1555,7 @@ signal s_46_s1_e2_trip        : std_logic;
 signal s_46_s1_trip        : std_logic;
 signal s_46_s1_e1_alarm        : std_logic;
 signal s_46_s1_e2_alarm        : std_logic;
+signal s_46_s1_seq_stable      : unsigned(11 downto 0) := (others => '0') ;
 
 
 
@@ -2664,6 +2666,7 @@ attribute KEEP of REG_46_S1_LUT_DATA : signal is "true";
 attribute KEEP of REG_46_S1_LUT_DOUTB : signal is "true";
 attribute KEEP of s_46_s1_i2_abs_u12 : signal is "true";
 attribute KEEP of s_46_s1_ram_target_ms : signal is "true";
+attribute KEEP of s_46_s1_seq_stable : signal is "true";
 
 
 attribute DONT_TOUCH of s_46_s1_rst : signal is "true";
@@ -2689,6 +2692,7 @@ attribute DONT_TOUCH of REG_46_S1_LUT_DATA : signal is "true";
 attribute DONT_TOUCH of REG_46_S1_LUT_DOUTB : signal is "true";
 attribute DONT_TOUCH of s_46_s1_i2_abs_u12 : signal is "true";
 attribute DONT_TOUCH of s_46_s1_ram_target_ms : signal is "true";
+attribute DONT_TOUCH of s_46_s1_seq_stable : signal is "true";
 
   
   attribute KEEP of s_vaux0_decim_s12_valid : signal is "true";
@@ -3787,7 +3791,7 @@ begin
   inst_prot_46_51Q_s1 : ProtPhaseUmbalanceNegSeq_46_51Q
    generic map(
       G_CLK_HZ => 100_000_000,
-      G_HYST => 0,
+      G_HYST => 5,
       G_TIME_WIDTH => 20,
       G_ADDR_BITS => 12,
       G_DATA_BITS => 20
@@ -3804,6 +3808,7 @@ begin
       o_ram_addr        => s_46_s1_ram_addr,
       o_ram_rd_req      => s_46_s1_ram_rd_req,
       i_ram_data        => s_46_s1_bram_douta,
+      o_seq_abs_stable  => s_46_s1_seq_stable,
       o_seq_abs_u12     => s_46_s1_i2_abs_u12,
       o_time_ms         => s_46_s1_time_ms,
       o_target_ms_reg   => s_46_s1_ram_target_ms,
@@ -5097,7 +5102,7 @@ begin
   ---------------------------------------
   s_GlobalTrip <= (s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
     s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or
-    s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 );
+    s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 or s_46_s1_trip);
 
     -- s_GlobalTrip <= (s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
     -- s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or

@@ -387,7 +387,7 @@ set_property SLEW FAST [get_ports o_relay_ch6]
 
 
 
-connect_debug_port u_ila_0/probe10 [get_nets [list inst_prot_46_51Q_s1/alarm_e2_reg]]
+# connect_debug_port u_ila_0/probe10 [get_nets [list inst_prot_46_51Q_s1/alarm_e2_reg]]
 
 create_debug_core u_ila_0 ila
 set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
