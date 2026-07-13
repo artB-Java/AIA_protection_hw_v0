@@ -18,7 +18,7 @@ entity ProtPhaseUmbalanceNegSeq_46_51Q is
     G_CLK_HZ    : natural := 100_000_000;
     -- Histerese em "contagens RMS" para evitar chatter (i_peakup - G_HYST).
     -- Ex.: se G_HYST=10, sai do temporizado quando RMS <= (peakup-10)
-    G_HYST      : natural := 5;
+    G_HYST      : natural := 0;
     G_TIME_WIDTH       : natural := 20;
     -- Larguras da LUT (RAM) usadas para a curva temporizada.
     G_ADDR_BITS : natural := 12; -- 2^12 = 4096 endereços (RMS 0..4095)
@@ -175,26 +175,42 @@ begin
   -----------------------------------------------------------------------------
   -- Filtor Delta com hyterese
   -----------------------------------------------------------------------------
-  p_filtro_delta : process (i_clk_100MHz)
-    variable diff : unsigned(11 downto 0);
+
+  p_filtro_iir : process (i_clk_100MHz)
+    variable diff   : unsigned(11 downto 0);
+    variable filter : unsigned(11 downto 0);
   begin
     if rising_edge(i_clk_100MHz) then
       if i_rst = '1' then
         diff := (others => '0');
-        seq_abs_stable <= (others => '0');
+        filter := (others => '0');
+        seq_abs_stable <= (others => '0'); 
       else
-        if seq_abs_u12 > seq_abs_stable then
-          diff := seq_abs_u12 - seq_abs_stable;
+        if seq_abs_u12 > filter then
+          diff := seq_abs_u12 - filter;
+          filter := filter + SHIFT_RIGHT(diff, 3);
         else
-          diff := seq_abs_stable - seq_abs_u12;
+          diff := filter - seq_abs_u12;
+          filter := filter - SHIFT_RIGHT(diff, 3);
         end if;
-
-        if diff > hyst_u12 then
-          seq_abs_stable <= seq_abs_u12;
-        end if;
+        seq_abs_stable <= filter;
       end if;
     end if;
   end process;
+
+  -- p_iir_filter : process (i_clk_100MHz)
+  --   variable filter : unsigned(15 downto 0) := (others => '0') ;
+  -- begin
+  --   if rising_edge(i_clk_100MHz) then
+  --     if i_rst = '1' then
+  --       filter := (others => '0');
+  --       seq_abs_stable <= (others => '0');
+  --     else
+  --       filter := filter - SHIFT_RIGHT(filter, 4) + seq_abs_u12;
+  --       seq_abs_stable <= RESIZE(SHIFT_RIGHT(filter, 4), 12);
+  --     end if;
+  --   end if;
+  -- end process;
 
 
   -----------------------------------------------------------------------------

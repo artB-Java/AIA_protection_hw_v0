@@ -32,7 +32,7 @@ entity ProtVoltageUmbalanceNegSeq_47 is
   generic (
     G_CLK_HZ    : natural := 100_000_000; -- Frequencia do clock (Hz)
     G_HYST_VUF  : natural := 5;           -- Histerese em unidades de 0.05% (5 = 0.25%)
-    G_ADDR_BITS : natural := 11;          -- Bits de endereco da LUT (2^11=2048, igual ao blk_mem_gen_0)
+    G_ADDR_BITS : natural := 12;          -- Bits de endereco da LUT (2^11=2048, igual ao blk_mem_gen_0)
     G_DATA_BITS : natural := 20           -- Bits de dado da LUT (tempo em ms)
   );
   port (
@@ -112,6 +112,8 @@ architecture rtl of ProtVoltageUmbalanceNegSeq_47 is
   signal s_hyst_low : unsigned(G_ADDR_BITS-1 downto 0);
   signal s_above    : std_logic; -- r_vuf >  pickup
   signal s_below    : std_logic; -- r_vuf <= hyst_low
+  signal s_seq2_abs_u12 : UNSIGNED(G_ADDR_BITS-1 downto 0);
+  signal s_seq1_abs_u12 : UNSIGNED(G_ADDR_BITS-1 downto 0);
 
   -- =========================================================================
   -- Interface BRAM
@@ -140,12 +142,25 @@ architecture rtl of ProtVoltageUmbalanceNegSeq_47 is
   -- =========================================================================
   signal r_trip     : std_logic := '0';
 
+
+  function gain_removal (x:unsigned(31 downto 0)) return unsigned is
+    variable mult_reg : unsigned(35 downto 0);
+    variable y        : unsigned(31 downto 0);
+  begin
+    mult_reg := x * TO_UNSIGNED(10, 4);
+    y := RESIZE(SHIFT_RIGHT(mult_reg, 19),32);
+    return RESIZE(y, 12);
+  end function;
+
 begin
 
   -- =========================================================================
   -- Limiares combinacionais
   -- =========================================================================
   s_pickup   <= unsigned(i_pickup_vuf);
+  
+  s_seq1_abs_u12 <= gain_removal(unsigned(i_seq1_abs));
+  s_seq2_abs_u12 <= gain_removal(unsigned(i_seq2_abs));
 
   s_hyst_low <= (others => '0')
                 when (s_pickup <= to_unsigned(G_HYST_VUF, G_ADDR_BITS))
@@ -257,13 +272,13 @@ begin
           --   Protecao div/0: seq1=0 -> VUF max, pula iteracoes
           -- --------------------------------------------------------------
           when S_DIV_LOAD =>
-            if unsigned(i_seq1_abs) = 0 then
+            if s_seq1_abs_u12 = 0 then
               r_vuf   <= (others => '1');
               r_state <= S_CHECK_VUF;
             else
-              r_div_reg  <= resize(unsigned(i_seq2_abs), 32) *
+              r_div_reg  <= resize(s_seq2_abs_u12, 32) *
                             to_unsigned(2000, C_MUL_BITS);
-              r_divisor  <= resize(unsigned(i_seq1_abs), C_DIV_BITS);
+              r_divisor  <= resize(s_seq1_abs_u12, C_DIV_BITS);
               r_partial  <= (others => '0');
               r_quotient <= (others => '0');
               r_div_cnt  <= 0;

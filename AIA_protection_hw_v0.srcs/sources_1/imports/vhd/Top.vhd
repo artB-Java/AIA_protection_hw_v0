@@ -191,7 +191,9 @@ architecture Behavioral of Top is
       probe_out40 : out std_logic_vector(19 downto 0);
       probe_out41 : out std_logic_vector(0 downto 0);
       probe_out42 : out std_logic_vector(11 downto 0);
-      probe_out43 : out std_logic_vector(11 downto 0)
+      probe_out43 : out std_logic_vector(11 downto 0);
+      probe_out44 : out std_logic_vector(11 downto 0);
+      probe_out45 : out std_logic_vector(0 downto 0)
 
     );
   end component;
@@ -240,6 +242,11 @@ architecture Behavioral of Top is
   signal s_46_s1_vio_e1_en   : std_logic_vector(0 downto 0) := (others => '0');
   signal s_46_s1_vio_e1_i2pu : std_logic_vector(11 downto 0);
   signal s_46_s1_vio_e2_i2pu : std_logic_vector(11 downto 0);
+
+  signal s_47_s1_vio_en   : std_logic_vector(0 downto 0) := (others => '0');
+  signal s_47_s1_vio_vufp : std_logic_vector(11 downto 0);
+
+  
 
   -- =========================
   -- Component Processor
@@ -776,6 +783,8 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
   -- ========= 47 =========
   signal s_trip_47_stg1 : std_logic;
   signal s_rst_47_stg1  : std_logic;
+  signal s_47_time_ms   : STD_LOGIC_VECTOR(19 downto 0);
+  signal s_47_vuf       : std_logic_vector(11 downto 0);      
   -- Handshake BRAM porta A -> proteção 47
   signal s_47_ram_addr_stg1   : std_logic_vector(11 downto 0);
   signal s_47_ram_rd_req_stg1 : std_logic;
@@ -987,6 +996,22 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
   signal s_ph_Imag_phaseC  : signed(35 downto 0);
   signal s_ph_RMS_phaseC   : unsigned(31 downto 0);
   signal s_ph_phase_phaseC : signed(15 downto 0);
+
+  signal s_ph_valid_phaseVA : std_logic;
+  signal s_ph_Real_phaseVA  : signed(35 downto 0);
+  signal s_ph_Imag_phaseVA  : signed(35 downto 0);
+  signal s_ph_RMS_phaseVA   : unsigned(31 downto 0);
+  signal s_ph_phase_phaseVA : signed(15 downto 0);
+  signal s_ph_valid_phaseVB : std_logic;
+  signal s_ph_Real_phaseVB  : signed(35 downto 0);
+  signal s_ph_Imag_phaseVB  : signed(35 downto 0);
+  signal s_ph_RMS_phaseVB   : unsigned(31 downto 0);
+  signal s_ph_phase_phaseVB : signed(15 downto 0);
+  signal s_ph_valid_phaseVC : std_logic;
+  signal s_ph_Real_phaseVC  : signed(35 downto 0);
+  signal s_ph_Imag_phaseVC  : signed(35 downto 0);
+  signal s_ph_RMS_phaseVC   : unsigned(31 downto 0);
+  signal s_ph_phase_phaseVC : signed(15 downto 0);
   --  -------------------------------------------------------------
   --  -- Componentes simetricas seq 0, 1, 2
   --  ------------------------------------------------------------- 	
@@ -1096,6 +1121,23 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
   signal s_seq2_phase : signed(15 downto 0);
   signal s_seq2_rms   : unsigned(31 downto 0);
   signal s_seq_valid  : std_logic;
+
+  signal s_v0_re    : signed(35 downto 0);
+  signal s_v0_im    : signed(35 downto 0);
+  signal s_v0_abs   : unsigned(31 downto 0);
+  signal s_v0_phase : signed(15 downto 0);
+  signal s_v0_rms   : unsigned(31 downto 0);
+  signal s_v1_abs   : unsigned(31 downto 0);
+  signal s_v1_phase : signed(15 downto 0);
+  signal s_v1_rms   : unsigned(31 downto 0);
+  signal s_v1_re    : signed(35 downto 0);
+  signal s_v1_im    : signed(35 downto 0);
+  signal s_v2_re    : signed(35 downto 0);
+  signal s_v2_im    : signed(35 downto 0);
+  signal s_v2_abs   : unsigned(31 downto 0);
+  signal s_v2_phase : signed(15 downto 0);
+  signal s_v2_rms   : unsigned(31 downto 0);
+  signal s_vseq_valid  : std_logic;
 
   -------------------------------------------------------------
   ----- Gerador de sinal com DC 3harmonica ----- Only for test
@@ -1495,7 +1537,7 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
   component ProtPhaseUmbalanceNegSeq_46_51Q is
   generic (
     G_CLK_HZ    : natural := 100_000_000;
-    G_HYST      : natural := 5;
+    G_HYST      : natural := 0;
     G_TIME_WIDTH       : natural := 20;
     G_ADDR_BITS : natural := 12; 
     G_DATA_BITS : natural := 20 
@@ -3339,7 +3381,9 @@ begin
     probe_out40 => s_46_s1_vio_e1_dly,
     probe_out41 => s_46_s1_vio_e1_en,
     probe_out42 => s_46_s1_vio_e1_i2pu,
-    probe_out43 => s_46_s1_vio_e2_i2pu
+    probe_out43 => s_46_s1_vio_e2_i2pu,
+    probe_out44 => s_47_s1_vio_vufp,
+    probe_out45 => s_47_s1_vio_en
   );
   ------------------------------------------------
   -- Bias removal and Decimation VAUX0 - Phase A
@@ -3619,7 +3663,7 @@ begin
   -------------------------------------
   -- Fasor unified Re/Im, RMS, phase
   -------------------------------------
-  inst_fasor_unified : phasor_64pts_3ph_unified_fsm
+  inst_I_fasor_unified : phasor_64pts_3ph_unified_fsm
   generic map(
     SAMPLE_WIDTH => 12,
     COEFF_WIDTH  => 15,
@@ -3653,6 +3697,42 @@ begin
     o_Imag_phaseC      => s_ph_Imag_phaseC,
     o_RMS_phaseC       => s_ph_RMS_phaseC,
     o_phase_phaseC     => s_ph_phase_phaseC
+  );
+
+  inst_V_fasor_unified : phasor_64pts_3ph_unified_fsm
+  generic map(
+    SAMPLE_WIDTH => 12,
+    COEFF_WIDTH  => 15,
+    ACC_WIDTH    => 36,
+    OUT_WIDTH    => 32,
+    ANG_WIDTH    => 16,
+    ITER         => 16
+  )
+  port map
+  (
+    i_clk              => s_clk1,
+    i_rst              => sRst,
+    i_signal_phaseA_12 => signed(s_vaux6_decim_s12), --s_phase_A,  -- Temos que verificar quais canais realmente entraram nesse componente dos fasores (Testei com o ch 0 e canais B e C do gerador artifical) Aqui tem que ser os 3 canais de corrente IA IB e IC.
+    i_valid_phaseA     => s_vaux6_decim_s12_valid, --s_valid_phase_A,--s_vaux0_decim_s12_valid,
+    i_signal_phasB_12  => signed(s_vaux5_decim_s12), -- s_vaux0_decim_s12
+    i_valid_phaseB     => s_vaux5_decim_s12_valid, --s_vaux1_decim_s12_valid,
+    i_signal_phaseC_12 => signed(s_vaux4_decim_s12),
+    i_valid_phaseC     => s_vaux4_decim_s12_valid, --s_vaux2_decim_s12_valid,
+    o_valid_phaseA     => s_ph_valid_phaseVA,
+    o_Real_phaseA      => s_ph_Real_phaseVA,
+    o_Imag_phaseA      => s_ph_Imag_phaseVA,
+    o_RMS_phaseA       => s_ph_RMS_phaseVA,
+    o_phase_phaseA     => s_ph_phase_phaseVA,
+    o_valid_phaseB     => s_ph_valid_phaseVB,
+    o_Real_phaseB      => s_ph_Real_phaseVB,
+    o_Imag_phaseB      => s_ph_Imag_phaseVB,
+    o_RMS_phaseB       => s_ph_RMS_phaseVB,
+    o_phase_phaseB     => s_ph_phase_phaseVB,
+    o_valid_phaseC     => s_ph_valid_phaseVC,
+    o_Real_phaseC      => s_ph_Real_phaseVC,
+    o_Imag_phaseC      => s_ph_Imag_phaseVC,
+    o_RMS_phaseC       => s_ph_RMS_phaseVC,
+    o_phase_phaseC     => s_ph_phase_phaseVC
   );
   --	-------------------------------------
   --	-- Instancia componente de seq simetricas
@@ -3697,7 +3777,7 @@ begin
   -------------------------------------
   -- Instancia componente de seq simetricas
   -------------------------------------
-  inst_symcom_retpol : symcomp_3ph_from_phasors_fsm_retpol
+  inst_I_symcom_retpol : symcomp_3ph_from_phasors_fsm_retpol
   generic map(
     ACC_WIDTH => 36
   )
@@ -3756,6 +3836,54 @@ begin
   REG_SEQ2_PHASE <= std_logic_vector(s_seq2_phase);
   REG_SEQ2_RMS   <= std_logic_vector(s_seq2_rms);
 
+  inst_V_symcom_retpol : symcomp_3ph_from_phasors_fsm_retpol
+  generic map(
+    ACC_WIDTH => 36
+  )
+  port map
+  (
+    i_clk => s_clk1,
+    i_rst => sRst,
+    -- ========================
+    -- Entradas – Fase VA
+    -- ========================
+    i_valid_phaseA => s_ph_valid_phaseVA,
+    i_Re_phaseA    => s_ph_Real_phaseVA,
+    i_Im_phaseA    => s_ph_Imag_phaseVA,
+    -- ========================
+    -- Entradas – Fase VB
+    -- ========================
+    i_valid_phaseB => s_ph_valid_phaseVB,
+    i_Re_phaseB    => s_ph_Real_phaseVB,
+    i_Im_phaseB    => s_ph_Imag_phaseVB,
+    -- ========================
+    -- Entradas – Fase VC
+    -- ========================
+    i_valid_phaseC => s_ph_valid_phaseVC,
+    i_Re_phaseC    => s_ph_Real_phaseVC,
+    i_Im_phaseC    => s_ph_Imag_phaseVC,
+    -- ========================
+    -- Saídas – Componentes Simétricas
+    -- ========================
+    o_valid_seq  => s_vseq_valid,
+    o_seq0_re    => s_v0_re,
+    o_seq0_im    => s_v0_im,
+    o_seq0_abs   => s_v0_abs,
+    o_seq0_phase => s_v0_phase,
+    o_seq0_rms   => s_v0_rms,
+    o_seq1_abs   => s_v1_abs,
+    o_seq1_phase => s_v1_phase,
+    o_seq1_rms   => s_v1_rms,
+    o_seq1_re    => s_v1_re,
+    o_seq1_im    => s_v1_im,
+    o_seq2_re    => s_v2_re,
+    o_seq2_im    => s_v2_im,
+    o_seq2_abs   => s_v2_abs,
+    o_seq2_phase => s_v2_phase,
+    o_seq2_rms   => s_v2_rms
+
+  );
+
   
 
   --------------------------------------------------
@@ -3791,7 +3919,7 @@ begin
   inst_prot_46_51Q_s1 : ProtPhaseUmbalanceNegSeq_46_51Q
    generic map(
       G_CLK_HZ => 100_000_000,
-      G_HYST => 5,
+      G_HYST => 0,
       G_TIME_WIDTH => 20,
       G_ADDR_BITS => 12,
       G_DATA_BITS => 20
@@ -3802,9 +3930,9 @@ begin
       i_start           => '1',
       i_seq2_abs        => s_seq2_abs,
       i_seq2_valid      => s_seq_valid,
-      i_seq2_pickup_e1  => s_46_s1_vio_e1_i2pu,--REG_46_S1_E1_I2PU_U12,
-      i_seq2_pickup_e2  => s_46_s1_vio_e2_i2pu,--REG_46_S1_E2_I2PU_U12,
-      i_delay_e1_ms     => UNSIGNED(s_46_s1_vio_e1_dly),--UNSIGNED(REG_46_S1_E1_DLY_U20),
+      i_seq2_pickup_e1  => REG_46_S1_E1_I2PU_U12,-- s_46_s1_vio_e1_i2pu,
+      i_seq2_pickup_e2  => REG_46_S1_E2_I2PU_U12,-- s_46_s1_vio_e2_i2pu,
+      i_delay_e1_ms     => UNSIGNED(REG_46_S1_E1_DLY_U20),--  UNSIGNED(s_46_s1_vio_e1_dly),
       o_ram_addr        => s_46_s1_ram_addr,
       o_ram_rd_req      => s_46_s1_ram_rd_req,
       i_ram_data        => s_46_s1_bram_douta,
@@ -3819,7 +3947,7 @@ begin
       o_trip_46_e2      => s_46_s1_e2_trip,
       o_trip_46         => s_46_s1_trip
   );
-  s_46_s1_rst <= (sRst or s_46_s1_vio_e1_en(0)); -- or not REG_46_S1_EN);
+  s_46_s1_rst <= (sRst or (not REG_46_S1_EN)); -- or s_46_s1_vio_e1_en(0));
   REG_46_S1_E1_ALARM <=  s_46_s1_e1_alarm;
   REG_46_S1_E2_ALARM <=  s_46_s1_e2_alarm;
   REG_46_S1_E1_TRIP  <=  s_46_s1_e1_trip;
@@ -4444,19 +4572,22 @@ begin
   (
     i_clk        => s_clk1,
     i_rst        => s_rst_47_stg1,
-    i_seq2_abs   => std_logic_vector(s_seq2_abs),
-    i_seq1_abs   => std_logic_vector(s_seq1_abs),
-    i_valid_seq  => s_seq_valid,
-    i_pickup_vuf => REG_47_STG1_VPU_U11, -- core_regis
+    i_seq2_abs   => std_logic_vector(s_v2_abs),
+    i_seq1_abs   => std_logic_vector(s_v1_abs),
+    i_valid_seq  => s_vseq_valid,
+    i_pickup_vuf => s_47_s1_vio_vufp,--REG_47_STG1_VPU_U11, -- core_regis
     o_ram_addr   => s_47_ram_addr_stg1,
     o_ram_rd_req => s_47_ram_rd_req_stg1,
     i_ram_data   => s_47_stg1_bram_douta,
-    o_vuf        => REG_47_STG1_VUF_U11,
-    o_time_ms    => REG_47_STG1_TIME_MS,
+    o_vuf        => s_47_vuf,
+    o_time_ms    => s_47_time_ms,
     o_trip       => s_trip_47_stg1
   );
-  s_rst_47_stg1       <= (sRst or not(REG_47_STG1_EN(0)));
+  s_rst_47_stg1       <= (sRst or s_47_s1_vio_en(0)); --not(REG_47_STG1_EN(0))
   REG_47_STG1_TRIP(0) <= s_trip_47_stg1;
+  REG_47_STG1_VUF_U11 <= s_47_vuf;
+  REG_47_STG1_TIME_MS <= s_47_time_ms;
+  
 
   inst_bram0_47 : blk_mem_gen_0
   port map
