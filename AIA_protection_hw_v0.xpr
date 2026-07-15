@@ -146,10 +146,8 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/imports/vhd/ProtVoltageUmbalanceNegSeq_47.vhd">
-        <FileInfo RelPath="ProtVoltageUmbalanceNegSeq_47.vhd">
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../Users/Arthu/projetos_vivado/module_j_prototype/x14XC7C020Fasor_rev02/vhd/ProtVoltageUmbalanceNegSeq_47.vhd"/>
-          <Attr Name="ImportTime" Val="1772734779"/>
+      <File Path="$PSRCDIR/sources_1/imports/vhd/ProtVoltageUmbalanceNegSeq_47_59Q.vhd">
+        <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
@@ -250,6 +248,12 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhd/sequencial_divider.vhd">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sources_1/imports/vhd/siggen_dc_h3_lut.vhd">
         <FileInfo RelPath="siggen_dc_h3_lut.vhd">
           <Attr Name="ImportPath" Val="$PPRDIR/../../x14_XC7C020_Fasor_rev02_TimingILA/vhd/siggen_dc_h3_lut.vhd"/>
@@ -302,6 +306,15 @@
         <FileInfo RelPath="Top.vhd">
           <Attr Name="ImportPath" Val="$PPRDIR/../../../Users/Arthu/projetos_vivado/module_j_prototype/x14XC7C020Fasor_rev02/vhd/Top.vhd"/>
           <Attr Name="ImportTime" Val="1772730594"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhd/ProtVoltageUmbalanceNegSeq_47.vhd">
+        <FileInfo RelPath="ProtVoltageUmbalanceNegSeq_47.vhd">
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../Users/Arthu/projetos_vivado/module_j_prototype/x14XC7C020Fasor_rev02/vhd/ProtVoltageUmbalanceNegSeq_47.vhd"/>
+          <Attr Name="ImportTime" Val="1772734779"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>

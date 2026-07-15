@@ -748,37 +748,94 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
   -- ==========================================================================
   -- Component: Protection 47   
   -- ==========================================================================	
-  component ProtVoltageUmbalanceNegSeq_47 is
-    generic (
-      G_CLK_HZ    : natural := 100_000_000; -- Frequencia do clock (Hz)
-      G_HYST_VUF  : natural := 5; -- Histerese em unidades de 0.05% (5 = 0.25%)
-      G_ADDR_BITS : natural := 12; -- Bits de endereco da LUT (2^11=2048, igual ao blk_mem_gen_0)
-      G_DATA_BITS : natural := 20 -- Bits de dado da LUT (tempo em ms)
-    );
-    port (
-      -- Clock / Reset
-      i_clk : in std_logic;
-      i_rst : in std_logic; -- Reset sincrono, ativo alto
+  -- component ProtVoltageUmbalanceNegSeq_47 is
+  --   generic (
+  --     G_CLK_HZ    : natural := 100_000_000; -- Frequencia do clock (Hz)
+  --     G_HYST_VUF  : natural := 5; -- Histerese em unidades de 0.05% (5 = 0.25%)
+  --     G_ADDR_BITS : natural := 12; -- Bits de endereco da LUT (2^11=2048, igual ao blk_mem_gen_0)
+  --     G_DATA_BITS : natural := 20 -- Bits de dado da LUT (tempo em ms)
+  --   );
+  --   port (
+  --     -- Clock / Reset
+  --     i_clk : in std_logic;
+  --     i_rst : in std_logic; -- Reset sincrono, ativo alto
 
-      -- Entradas das componentes simetricas de tensao (saidas do inst_symcom_retpol)
-      i_seq2_abs  : in std_logic_vector(31 downto 0); -- |V2|, unsigned 32b
-      i_seq1_abs  : in std_logic_vector(31 downto 0); -- |V1|, unsigned 32b
-      i_valid_seq : in std_logic; -- Pulso ~60 Hz
+  --     -- Entradas das componentes simetricas de tensao (saidas do inst_symcom_retpol)
+  --     i_seq2_abs  : in std_logic_vector(31 downto 0); -- |V2|, unsigned 32b
+  --     i_seq1_abs  : in std_logic_vector(31 downto 0); -- |V1|, unsigned 32b
+  --     i_valid_seq : in std_logic; -- Pulso ~60 Hz
 
-      -- Setpoint configuravel via Core_Regs
-      -- Unidade: 1 = 0.05%  ->  Pickup 5.0% = 100 unidades
-      i_pickup_vuf : in std_logic_vector(G_ADDR_BITS - 1 downto 0);
+  --     -- Setpoint configuravel via Core_Regs
+  --     -- Unidade: 1 = 0.05%  ->  Pickup 5.0% = 100 unidades
+  --     i_pickup_vuf : in std_logic_vector(G_ADDR_BITS - 1 downto 0);
 
-      -- Interface RAM - mesmo padrao do Prot51_51N_Time
-      o_ram_addr   : out std_logic_vector(G_ADDR_BITS - 1 downto 0);
-      o_ram_rd_req : out std_logic;
-      i_ram_data   : in std_logic_vector(G_DATA_BITS - 1 downto 0);
+  --     -- Interface RAM - mesmo padrao do Prot51_51N_Time
+  --     o_ram_addr   : out std_logic_vector(G_ADDR_BITS - 1 downto 0);
+  --     o_ram_rd_req : out std_logic;
+  --     i_ram_data   : in std_logic_vector(G_DATA_BITS - 1 downto 0);
 
-      -- Saidas
-      o_vuf     : out std_logic_vector(G_ADDR_BITS - 1 downto 0); -- VUF calculado (debug)
-      o_time_ms : out std_logic_vector(G_DATA_BITS - 1 downto 0); -- Contador de ms (debug)
-      o_trip    : out std_logic
-    );
+  --     -- Saidas
+  --     o_vuf     : out std_logic_vector(G_ADDR_BITS - 1 downto 0); -- VUF calculado (debug)
+  --     o_time_ms : out std_logic_vector(G_DATA_BITS - 1 downto 0); -- Contador de ms (debug)
+  --     o_trip    : out std_logic
+  --   );
+  -- end component;
+  component ProtVoltageUmbalanceNegSeq_47_59Q is
+  generic (
+    -- Frequência de clock do sistema (Hz). Por padrão, 100 MHz.
+    G_CLK_HZ    : natural := 100_000_000;
+    -- Histerese em "contagens RMS" para evitar chatter (i_peakup - G_HYST).
+    -- Ex.: se G_HYST=10, sai do temporizado quando RMS <= (peakup-10)
+    G_HYST      : natural := 0;
+    G_TIME_WIDTH       : natural := 20;
+    -- Larguras da LUT (RAM) usadas para a curva temporizada.
+    G_ADDR_BITS : natural := 12; -- 2^12 = 4096 endereços (RMS 0..4095)
+    G_DATA_BITS : natural := 20  -- tempo em ms, até ~1.048.575 ms
+  );
+  port (
+    --------------------------
+    -- Clock / Reset / Start
+    --------------------------
+    i_clk_100MHz       : in  std_logic; -- usar 100 MHz (ou outro; ajuste G_CLK_HZ)
+    i_rst              : in  std_logic; -- reset síncrono (nível alto)
+
+    --------------------------
+    -- Medida seqNeg e limiar
+    --------------------------
+    i_v2_abs            : in  unsigned(31 downto 0); -- RMS 12b (0..*), usado addr[10:0]
+    i_v1_abs            : in  unsigned(31 downto 0); -- RMS 12b (0..*), usado addr[10:0]
+    i_valid_v_seq       : in  std_logic; -- '1' quando RMS atual é válido (amostras espaçadas)
+    i_v2_pickup_e1      : in  std_logic_vector(11 downto 0); -- limiar de atuação (contagens RMS)
+    i_vuf_pickup_e2     : in  std_logic_vector(11 downto 0); -- limiar de atuação (contagens RMS)
+    i_delay_e1_ms       : in unsigned(G_TIME_WIDTH-1 downto 0);
+
+    --------------------------
+    -- Interface RAM (LUT)
+    --------------------------
+    o_ram_addr         : out std_logic_vector(G_ADDR_BITS-1 downto 0);  -- endereço (RMS mapeado)
+    o_ram_rd_req       : out std_logic;                                 -- pulso de leitura (1 ciclo)
+    i_ram_data         : in  std_logic_vector(G_DATA_BITS-1 downto 0);  -- tempo-alvo em ms
+
+    --------------------------
+    -- Saídas de proteção / debug
+    --------------------------
+    -- debug
+    o_v2_abs_stable    : out unsigned(11 downto 0);
+    o_v2_abs_u12       : out UNSIGNED(11 downto 0);
+    o_v1_abs_stable    : out unsigned(11 downto 0);
+    o_v1_abs_u12       : out UNSIGNED(11 downto 0);
+    o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
+    o_target_ms_reg    : out unsigned(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
+    o_e1_time_cnt      : out unsigned(G_DATA_BITS-1 downto 0);
+    o_vuf              : out std_logic_vector(G_ADDR_BITS-1 downto 0);
+
+    -- saidas
+    o_alarm_e1             : out std_logic;
+    o_alarm_e2             : out std_logic;                        
+    o_trip_47_59Q_e1       : out std_logic;
+    o_trip_47_59Q_e2       : out std_logic;
+    o_trip_47_59Q          : out std_logic                                   
+  );
   end component;
   -- ========= 47 =========
   signal s_trip_47_stg1 : std_logic;
@@ -4561,27 +4618,61 @@ begin
   -- =========================
   -- 47 - STAGE 1
   -- =========================
-  inst_prot_47_stg1 : ProtVoltageUmbalanceNegSeq_47
-  generic map(
-    G_CLK_HZ    => 100_000_000,
-    G_HYST_VUF  => 5,
-    G_ADDR_BITS => 12,
-    G_DATA_BITS => 20
+  -- inst_prot_47_stg1 : ProtVoltageUmbalanceNegSeq_47
+  -- generic map(
+  --   G_CLK_HZ    => 100_000_000,
+  --   G_HYST_VUF  => 5,
+  --   G_ADDR_BITS => 12,
+  --   G_DATA_BITS => 20
+  -- )
+  -- port map
+  -- (
+  --   i_clk        => s_clk1,
+  --   i_rst        => s_rst_47_stg1,
+  --   i_seq2_abs   => std_logic_vector(s_v2_abs),
+  --   i_seq1_abs   => std_logic_vector(s_v1_abs),
+  --   i_valid_seq  => s_vseq_valid,
+  --   i_pickup_vuf => s_47_s1_vio_vufp,--REG_47_STG1_VPU_U11, -- core_regis
+  --   o_ram_addr   => s_47_ram_addr_stg1,
+  --   o_ram_rd_req => s_47_ram_rd_req_stg1,
+  --   i_ram_data   => s_47_stg1_bram_douta,
+  --   o_vuf        => s_47_vuf,
+  --   o_time_ms    => s_47_time_ms,
+  --   o_trip       => s_trip_47_stg1
+  -- );
+  ProtVoltageUmbalanceNegSeq_47_59Q_inst : ProtVoltageUmbalanceNegSeq_47_59Q
+   generic map(
+      G_CLK_HZ => G_CLK_HZ,
+      G_HYST => G_HYST,
+      G_TIME_WIDTH => G_TIME_WIDTH,
+      G_ADDR_BITS => G_ADDR_BITS,
+      G_DATA_BITS => G_DATA_BITS
   )
-  port map
-  (
-    i_clk        => s_clk1,
-    i_rst        => s_rst_47_stg1,
-    i_seq2_abs   => std_logic_vector(s_v2_abs),
-    i_seq1_abs   => std_logic_vector(s_v1_abs),
-    i_valid_seq  => s_vseq_valid,
-    i_pickup_vuf => s_47_s1_vio_vufp,--REG_47_STG1_VPU_U11, -- core_regis
-    o_ram_addr   => s_47_ram_addr_stg1,
-    o_ram_rd_req => s_47_ram_rd_req_stg1,
-    i_ram_data   => s_47_stg1_bram_douta,
-    o_vuf        => s_47_vuf,
-    o_time_ms    => s_47_time_ms,
-    o_trip       => s_trip_47_stg1
+   port map(
+      i_clk_100MHz => i_clk_100MHz,
+      i_rst => i_rst,
+      i_v2_abs => i_v2_abs,
+      i_v1_abs => i_v1_abs,
+      i_valid_v_seq => i_valid_v_seq,
+      i_v2_pickup_e1 => i_v2_pickup_e1,
+      i_vuf_pickup_e2 => i_vuf_pickup_e2,
+      i_delay_e1_ms => i_delay_e1_ms,
+      o_ram_addr => o_ram_addr,
+      o_ram_rd_req => o_ram_rd_req,
+      i_ram_data => i_ram_data,
+      o_v2_abs_stable => o_v2_abs_stable,
+      o_v2_abs_u12 => o_v2_abs_u12,
+      o_v1_abs_stable => o_v1_abs_stable,
+      o_v1_abs_u12 => o_v1_abs_u12,
+      o_time_ms => o_time_ms,
+      o_target_ms_reg => o_target_ms_reg,
+      o_e1_time_cnt => o_e1_time_cnt,
+      o_vuf => o_vuf,
+      o_alarm_e1 => o_alarm_e1,
+      o_alarm_e2 => o_alarm_e2,
+      o_trip_47_59Q_e1 => o_trip_47_59Q_e1,
+      o_trip_47_59Q_e2 => o_trip_47_59Q_e2,
+      o_trip_47_59Q => o_trip_47_59Q
   );
   s_rst_47_stg1       <= (sRst or s_47_s1_vio_en(0)); --not(REG_47_STG1_EN(0))
   REG_47_STG1_TRIP(0) <= s_trip_47_stg1;
