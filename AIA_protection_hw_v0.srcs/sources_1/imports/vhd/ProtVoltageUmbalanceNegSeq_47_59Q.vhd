@@ -100,7 +100,7 @@ architecture rtl of ProtVoltageUmbalanceNegSeq_47_59Q is
     signal s_div_ready   : std_logic;
     signal s_div_result  : unsigned(30 downto 0) := (others => '0'); 
     signal s_vuf_u12     : unsigned(11 downto 0) := (others => '0');
-    signal s_v2_mult_reg_u18 : unsigned(17 downto 0) := (others => '0');       
+    signal s_v2_mult_reg_u19 : unsigned(18 downto 0) := (others => '0');       
 
   --------------------------------------------------------------------
   -- Constantes internas
@@ -207,7 +207,7 @@ begin
       i_rst => i_rst,
       i_start => s_div_start,
       o_ready => s_div_ready,
-      i_num => s_v2_abs_stable,
+      i_num => s_v2_mult_reg_u19,
       i_den => s_v1_abs_stable,
       o_ratio => s_div_result
   );
@@ -220,6 +220,7 @@ begin
   peak_e2_u12       <= unsigned(i_vuf_pickup_e2);
   hyst_u12          <= to_unsigned(G_HYST, 12);
   s_vuf_u12 <= s_div_result(23 downto 12);
+  
   
 
 
@@ -363,12 +364,7 @@ begin
             alarm_e1_reg         <= '0'; 
             alarm_e2_reg         <= '0';
             time_cnt_en          <= '0';
-            s_v2_abs_stable      <= (others => '0'); 
-            s_v1_abs_stable      <= (others => '0');
-            s_v1_abs_u12         <= (others => '0');
-            s_v2_abs_u12         <= (others => '0');
             s_div_start       <= '0';
-            s_div_ready       <= '0';
         else
             s_rd_req_d       <= ram_rd_req_pulse;
             s_ram_data_valid <= s_rd_req_d;
@@ -382,13 +378,14 @@ begin
                     alarm_e1_reg         <= '0'; 
                     alarm_e2_reg         <= '0';
                     s_div_start          <= '0';
-                    s_div_ready          <= '0';
+                    s_v2_mult_reg_u19    <= (others => '0'); 
                     if i_valid_v_seq = '1' then
                         r_state <= S_MONITORING;
                     end if;
                 when S_MONITORING =>
                     time_cnt_en <= '0';
                     e1_ms_cnt   <= (others => '0');
+                    s_v2_mult_reg_u19 <= s_v2_abs_stable * TO_UNSIGNED(100, 7);
                     s_div_start <= '1';
                     if i_valid_v_seq = '1' then
                         if s_div_ready = '1' then
@@ -546,8 +543,8 @@ begin
   o_v1_abs_u12  <= s_v1_abs_u12;
   o_v2_abs_u12  <= s_v2_abs_u12;
   
-  o_alarm_e1 <= alarm_e1_reg;          
-  o_alarm_e2 <= alarm_e2_reg;         
+  o_alarm_e1        <= alarm_e1_reg;          
+  o_alarm_e2        <= alarm_e2_reg;         
 
   o_ram_addr        <= std_logic_vector(ram_addr_reg);
   o_ram_rd_req      <= ram_rd_req_pulse;

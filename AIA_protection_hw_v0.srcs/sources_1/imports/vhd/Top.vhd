@@ -193,7 +193,9 @@ architecture Behavioral of Top is
       probe_out42 : out std_logic_vector(11 downto 0);
       probe_out43 : out std_logic_vector(11 downto 0);
       probe_out44 : out std_logic_vector(11 downto 0);
-      probe_out45 : out std_logic_vector(0 downto 0)
+      probe_out45 : out std_logic_vector(0 downto 0);
+      probe_out46 : out std_logic_vector(11 downto 0);
+      probe_out47 : out std_logic_vector(19 downto 0)
 
     );
   end component;
@@ -243,8 +245,8 @@ architecture Behavioral of Top is
   signal s_46_s1_vio_e1_i2pu : std_logic_vector(11 downto 0);
   signal s_46_s1_vio_e2_i2pu : std_logic_vector(11 downto 0);
 
-  signal s_47_s1_vio_en   : std_logic_vector(0 downto 0) := (others => '0');
-  signal s_47_s1_vio_vufp : std_logic_vector(11 downto 0);
+  
+
 
   
 
@@ -838,10 +840,24 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
   );
   end component;
   -- ========= 47 =========
-  signal s_trip_47_stg1 : std_logic;
-  signal s_rst_47_stg1  : std_logic;
-  signal s_47_time_ms   : STD_LOGIC_VECTOR(19 downto 0);
-  signal s_47_vuf       : std_logic_vector(11 downto 0);      
+  signal s_trip_47_stg1        : std_logic;
+  signal s_rst_47_stg1         : std_logic;
+  signal s_47_time_ms          : STD_LOGIC_VECTOR(19 downto 0);
+  signal s_47_vuf              : std_logic_vector(11 downto 0);
+  signal s_47_v2_pickup_e1     : std_logic_vector(11 downto 0);
+  signal s_47_vuf_pickup_e2    : std_logic_vector(11 downto 0);  
+  signal s_47_delay_e1_ms      : std_logic_vector(19 downto 0);
+  signal s_47_v2_abs_stable    : unsigned(11 downto 0);  
+  signal s_47_v2_abs_u12       : UNSIGNED(11 downto 0);
+  signal s_47_v1_abs_stable    : unsigned(11 downto 0);
+  signal s_47_v1_abs_u12       : UNSIGNED(11 downto 0);
+  signal s_47_target_ms_reg    : unsigned(19 downto 0);  -- contador de ms (satura)
+  signal s_47_e1_time_cnt      : unsigned(19 downto 0);
+  signal s_47_alarm_e1         : std_logic;
+  signal s_47_alarm_e2         : std_logic;                        
+  signal s_47_trip_47_59Q_e1   : std_logic;
+  signal s_47_trip_47_59Q_e2   : std_logic;
+  signal s_47_s1_en   : std_logic_vector(0 downto 0) := (others => '0');
   -- Handshake BRAM porta A -> proteção 47
   signal s_47_ram_addr_stg1   : std_logic_vector(11 downto 0);
   signal s_47_ram_rd_req_stg1 : std_logic;
@@ -2767,6 +2783,27 @@ attribute KEEP of s_46_s1_i2_abs_u12 : signal is "true";
 attribute KEEP of s_46_s1_ram_target_ms : signal is "true";
 attribute KEEP of s_46_s1_seq_stable : signal is "true";
 
+attribute KEEP of s_trip_47_stg1        : signal is "true";
+attribute KEEP of s_rst_47_stg1         : signal is "true";
+attribute KEEP of s_47_time_ms          : signal is "true";
+attribute KEEP of s_47_vuf              : signal is "true";
+attribute KEEP of s_47_v2_pickup_e1     : signal is "true";
+attribute KEEP of s_47_vuf_pickup_e2    : signal is "true";  
+attribute KEEP of s_47_delay_e1_ms      : signal is "true";
+attribute KEEP of s_47_v2_abs_stable    : signal is "true";  
+attribute KEEP of s_47_v2_abs_u12       : signal is "true";
+attribute KEEP of s_47_v1_abs_stable    : signal is "true";
+attribute KEEP of s_47_v1_abs_u12       : signal is "true";
+attribute KEEP of s_47_target_ms_reg    : signal is "true";   
+attribute KEEP of s_47_e1_time_cnt      : signal is "true";
+attribute KEEP of s_47_alarm_e1         : signal is "true";
+attribute KEEP of s_47_alarm_e2         : signal is "true";                        
+attribute KEEP of s_47_trip_47_59Q_e1   : signal is "true";
+attribute KEEP of s_47_trip_47_59Q_e2   : signal is "true";
+attribute KEEP of s_47_s1_en            : signal is "true";
+attribute KEEP of s_47_ram_addr_stg1    : signal is "true";
+attribute KEEP of s_47_ram_rd_req_stg1  : signal is "true";
+
 
 attribute DONT_TOUCH of s_46_s1_rst : signal is "true";
 attribute DONT_TOUCH of s_seq2_abs : signal is "true";
@@ -3439,8 +3476,10 @@ begin
     probe_out41 => s_46_s1_vio_e1_en,
     probe_out42 => s_46_s1_vio_e1_i2pu,
     probe_out43 => s_46_s1_vio_e2_i2pu,
-    probe_out44 => s_47_s1_vio_vufp,
-    probe_out45 => s_47_s1_vio_en
+    probe_out44 => s_47_vuf_pickup_e2,
+    probe_out45 => s_47_s1_en,
+    probe_out46 => s_47_v2_pickup_e1,
+    probe_out47 => s_47_delay_e1_ms
   );
   ------------------------------------------------
   -- Bias removal and Decimation VAUX0 - Phase A
@@ -4642,39 +4681,39 @@ begin
   -- );
   ProtVoltageUmbalanceNegSeq_47_59Q_inst : ProtVoltageUmbalanceNegSeq_47_59Q
    generic map(
-      G_CLK_HZ => G_CLK_HZ,
-      G_HYST => G_HYST,
-      G_TIME_WIDTH => G_TIME_WIDTH,
-      G_ADDR_BITS => G_ADDR_BITS,
-      G_DATA_BITS => G_DATA_BITS
+      G_CLK_HZ => 100_000_000,
+      G_HYST => 0,
+      G_TIME_WIDTH => 20,
+      G_ADDR_BITS => 12,
+      G_DATA_BITS => 20
   )
    port map(
-      i_clk_100MHz => i_clk_100MHz,
-      i_rst => i_rst,
-      i_v2_abs => i_v2_abs,
-      i_v1_abs => i_v1_abs,
-      i_valid_v_seq => i_valid_v_seq,
-      i_v2_pickup_e1 => i_v2_pickup_e1,
-      i_vuf_pickup_e2 => i_vuf_pickup_e2,
-      i_delay_e1_ms => i_delay_e1_ms,
-      o_ram_addr => o_ram_addr,
-      o_ram_rd_req => o_ram_rd_req,
-      i_ram_data => i_ram_data,
-      o_v2_abs_stable => o_v2_abs_stable,
-      o_v2_abs_u12 => o_v2_abs_u12,
-      o_v1_abs_stable => o_v1_abs_stable,
-      o_v1_abs_u12 => o_v1_abs_u12,
-      o_time_ms => o_time_ms,
-      o_target_ms_reg => o_target_ms_reg,
-      o_e1_time_cnt => o_e1_time_cnt,
-      o_vuf => o_vuf,
-      o_alarm_e1 => o_alarm_e1,
-      o_alarm_e2 => o_alarm_e2,
-      o_trip_47_59Q_e1 => o_trip_47_59Q_e1,
-      o_trip_47_59Q_e2 => o_trip_47_59Q_e2,
-      o_trip_47_59Q => o_trip_47_59Q
+      i_clk_100MHz => s_clk1,
+      i_rst => s_rst_47_stg1,
+      i_v2_abs => s_v2_abs,
+      i_v1_abs => s_v1_abs,
+      i_valid_v_seq => s_vseq_valid,
+      i_v2_pickup_e1 => s_47_v2_pickup_e1,
+      i_vuf_pickup_e2 => s_47_vuf_pickup_e2,
+      i_delay_e1_ms => unsigned(s_47_delay_e1_ms),
+      o_ram_addr => s_47_ram_addr_stg1,
+      o_ram_rd_req => s_47_ram_rd_req_stg1,
+      i_ram_data => s_47_stg1_bram_douta,
+      o_v2_abs_stable => s_47_v2_abs_stable,
+      o_v2_abs_u12 => s_47_v2_abs_u12,
+      o_v1_abs_stable => s_47_v1_abs_stable,
+      o_v1_abs_u12 => s_47_v1_abs_u12,
+      o_time_ms => s_47_time_ms,
+      o_target_ms_reg => s_47_target_ms_reg,
+      o_e1_time_cnt => s_47_e1_time_cnt,
+      o_vuf => s_47_vuf,
+      o_alarm_e1 => s_47_alarm_e1,
+      o_alarm_e2 => s_47_alarm_e2,
+      o_trip_47_59Q_e1 => s_47_trip_47_59Q_e1,
+      o_trip_47_59Q_e2 => s_47_trip_47_59Q_e2,
+      o_trip_47_59Q => s_trip_47_stg1
   );
-  s_rst_47_stg1       <= (sRst or s_47_s1_vio_en(0)); --not(REG_47_STG1_EN(0))
+  s_rst_47_stg1       <= (sRst or s_47_s1_en(0)); --not(REG_47_STG1_EN(0))
   REG_47_STG1_TRIP(0) <= s_trip_47_stg1;
   REG_47_STG1_VUF_U11 <= s_47_vuf;
   REG_47_STG1_TIME_MS <= s_47_time_ms;
