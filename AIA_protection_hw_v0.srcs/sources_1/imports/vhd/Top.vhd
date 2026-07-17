@@ -2803,6 +2803,31 @@ attribute KEEP of s_47_trip_47_59Q_e2   : signal is "true";
 attribute KEEP of s_47_s1_en            : signal is "true";
 attribute KEEP of s_47_ram_addr_stg1    : signal is "true";
 attribute KEEP of s_47_ram_rd_req_stg1  : signal is "true";
+attribute KEEP of s_v1_abs  : signal is "true";
+attribute KEEP of s_v2_abs  : signal is "true";
+ 
+attribute DONT_TOUCH of s_trip_47_stg1        : signal is "true";
+attribute DONT_TOUCH of s_rst_47_stg1         : signal is "true";
+attribute DONT_TOUCH of s_47_time_ms          : signal is "true";
+attribute DONT_TOUCH of s_47_vuf              : signal is "true";
+attribute DONT_TOUCH of s_47_v2_pickup_e1     : signal is "true";
+attribute DONT_TOUCH of s_47_vuf_pickup_e2    : signal is "true";  
+attribute DONT_TOUCH of s_47_delay_e1_ms      : signal is "true";
+attribute DONT_TOUCH of s_47_v2_abs_stable    : signal is "true";  
+attribute DONT_TOUCH of s_47_v2_abs_u12       : signal is "true";
+attribute DONT_TOUCH of s_47_v1_abs_stable    : signal is "true";
+attribute DONT_TOUCH of s_47_v1_abs_u12       : signal is "true";
+attribute DONT_TOUCH of s_47_target_ms_reg    : signal is "true";   
+attribute DONT_TOUCH of s_47_e1_time_cnt      : signal is "true";
+attribute DONT_TOUCH of s_47_alarm_e1         : signal is "true";
+attribute DONT_TOUCH of s_47_alarm_e2         : signal is "true";                        
+attribute DONT_TOUCH of s_47_trip_47_59Q_e1   : signal is "true";
+attribute DONT_TOUCH of s_47_trip_47_59Q_e2   : signal is "true";
+attribute DONT_TOUCH of s_47_s1_en            : signal is "true";
+attribute DONT_TOUCH of s_47_ram_addr_stg1    : signal is "true";
+attribute DONT_TOUCH of s_47_ram_rd_req_stg1  : signal is "true";
+attribute DONT_TOUCH of s_v1_abs  : signal is "true";
+attribute DONT_TOUCH of s_v2_abs  : signal is "true";
 
 
 attribute DONT_TOUCH of s_46_s1_rst : signal is "true";
