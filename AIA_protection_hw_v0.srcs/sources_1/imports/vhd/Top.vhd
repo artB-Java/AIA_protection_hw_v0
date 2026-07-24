@@ -245,7 +245,36 @@ architecture Behavioral of Top is
   signal s_46_s1_vio_e1_i2pu : std_logic_vector(11 downto 0);
   signal s_46_s1_vio_e2_i2pu : std_logic_vector(11 downto 0);
 
-  
+  component signal_stabilizer is
+    generic (
+        DATA_WIDTH : integer := 12  -- Sinal de 12 bits (0 a 4095)
+    );
+    port (
+        clk             : in  std_logic;
+        reset           : in  std_logic;
+        sample_en       : in  std_logic; -- Pulso de alto quando uma nova amostra chega
+        data_in         : in  std_logic_vector(DATA_WIDTH-1 downto 0);
+        
+        -- Saídas simultâneas de 12 bits para comparação
+        out_media_movel : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        out_mediana     : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        out_exponencial : out std_logic_vector(DATA_WIDTH-1 downto 0);
+        
+        -- Sinalização de que os dados filtrados estão válidos
+        valid_out       : out std_logic
+    );
+end component;
+signal s_i_seq2_mm : std_logic_vector(11 downto 0);
+signal s_i_seq2_md : std_logic_vector(11 downto 0);
+signal s_i_seq2_ex : std_logic_vector(11 downto 0);
+signal s_v_seq2_mm : std_logic_vector(11 downto 0);
+signal s_v_seq2_md : std_logic_vector(11 downto 0);
+signal s_v_seq2_ex : std_logic_vector(11 downto 0);
+signal s_v_stabilizer_valid : std_logic;
+signal s_i_stabilizer_valid : std_logic;
+signal s_in_iseq2_u12 : UNSIGNED(11 downto 0);
+signal s_in_vseq2_u12 : UNSIGNED(11 downto 0);
+
 
 
   
@@ -785,58 +814,52 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
   component ProtVoltageUmbalanceNegSeq_47_59Q is
   generic (
     -- Frequência de clock do sistema (Hz). Por padrão, 100 MHz.
-    G_CLK_HZ    : natural := 100_000_000;
+    G_CLK_HZ     : natural := 100_000_000;
     -- Histerese em "contagens RMS" para evitar chatter (i_peakup - G_HYST).
-    -- Ex.: se G_HYST=10, sai do temporizado quando RMS <= (peakup-10)
-    G_HYST      : natural := 0;
-    G_TIME_WIDTH       : natural := 20;
+    G_HYST       : natural := 0;
+    G_TIME_WIDTH : natural := 20;
     -- Larguras da LUT (RAM) usadas para a curva temporizada.
-    G_ADDR_BITS : natural := 12; -- 2^12 = 4096 endereços (RMS 0..4095)
-    G_DATA_BITS : natural := 20  -- tempo em ms, até ~1.048.575 ms
+    G_ADDR_BITS  : natural := 12; -- 2^12 = 4096 endereços (RMS 0..4095)
+    G_DATA_BITS  : natural := 20  -- tempo em ms, até ~1.048.575 ms
   );
   port (
     --------------------------
     -- Clock / Reset / Start
     --------------------------
-    i_clk_100MHz       : in  std_logic; -- usar 100 MHz (ou outro; ajuste G_CLK_HZ)
-    i_rst              : in  std_logic; -- reset síncrono (nível alto)
+    i_clk_100MHz    : in  std_logic; -- usar 100 MHz
+    i_rst           : in  std_logic; -- reset síncrono (nível alto)
 
     --------------------------
     -- Medida seqNeg e limiar
     --------------------------
-    i_v2_abs            : in  unsigned(31 downto 0); -- RMS 12b (0..*), usado addr[10:0]
-    i_v1_abs            : in  unsigned(31 downto 0); -- RMS 12b (0..*), usado addr[10:0]
-    i_valid_v_seq       : in  std_logic; -- '1' quando RMS atual é válido (amostras espaçadas)
-    i_v2_pickup_e1      : in  std_logic_vector(11 downto 0); -- limiar de atuação (contagens RMS)
-    i_vuf_pickup_e2     : in  std_logic_vector(11 downto 0); -- limiar de atuação (contagens RMS)
-    i_delay_e1_ms       : in unsigned(G_TIME_WIDTH-1 downto 0);
+    i_v2_abs        : in  unsigned(31 downto 0); -- RMS 12b (0..*) de sequência negativa
+    i_valid_v_seq   : in  std_logic;             -- '1' quando RMS atual é válido (pulso amostra)
+    i_v2_pickup_e1  : in  std_logic_vector(11 downto 0); -- limiar tempo definido (E1)
+    i_v2_pickup_e2  : in  std_logic_vector(11 downto 0); -- limiar curva temporizada (E2)
+    i_delay_e1_ms   : in  unsigned(G_TIME_WIDTH - 1 downto 0);
 
     --------------------------
     -- Interface RAM (LUT)
     --------------------------
-    o_ram_addr         : out std_logic_vector(G_ADDR_BITS-1 downto 0);  -- endereço (RMS mapeado)
-    o_ram_rd_req       : out std_logic;                                 -- pulso de leitura (1 ciclo)
-    i_ram_data         : in  std_logic_vector(G_DATA_BITS-1 downto 0);  -- tempo-alvo em ms
+    o_ram_addr      : out std_logic_vector(G_ADDR_BITS - 1 downto 0);
+    o_ram_rd_req    : out std_logic;
+    i_ram_data      : in  std_logic_vector(G_DATA_BITS - 1 downto 0);
 
     --------------------------
     -- Saídas de proteção / debug
     --------------------------
-    -- debug
-    o_v2_abs_stable    : out unsigned(11 downto 0);
-    o_v2_abs_u12       : out UNSIGNED(11 downto 0);
-    o_v1_abs_stable    : out unsigned(11 downto 0);
-    o_v1_abs_u12       : out UNSIGNED(11 downto 0);
-    o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
-    o_target_ms_reg    : out unsigned(G_DATA_BITS-1 downto 0);  -- contador de ms (satura)
-    o_e1_time_cnt      : out unsigned(G_DATA_BITS-1 downto 0);
-    o_vuf              : out std_logic_vector(G_ADDR_BITS-1 downto 0);
+    o_v2_abs_stable : out unsigned(11 downto 0);
+    o_v2_abs_u12    : out unsigned(11 downto 0);
+    o_time_ms       : out std_logic_vector(G_DATA_BITS - 1 downto 0);
+    o_target_ms_reg : out unsigned(G_DATA_BITS - 1 downto 0);
+    o_e1_time_cnt   : out unsigned(G_TIME_WIDTH - 1 downto 0);
 
-    -- saidas
-    o_alarm_e1             : out std_logic;
-    o_alarm_e2             : out std_logic;                        
-    o_trip_47_59Q_e1       : out std_logic;
-    o_trip_47_59Q_e2       : out std_logic;
-    o_trip_47_59Q          : out std_logic                                   
+    -- saídas
+    o_alarm_e1       : out std_logic;
+    o_alarm_e2       : out std_logic;
+    o_trip_47_59Q_e1 : out std_logic;
+    o_trip_47_59Q_e2 : out std_logic;
+    o_trip_47_59Q    : out std_logic
   );
   end component;
   -- ========= 47 =========
@@ -845,12 +868,10 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
   signal s_47_time_ms          : STD_LOGIC_VECTOR(19 downto 0);
   signal s_47_vuf              : std_logic_vector(11 downto 0);
   signal s_47_v2_pickup_e1     : std_logic_vector(11 downto 0);
-  signal s_47_vuf_pickup_e2    : std_logic_vector(11 downto 0);  
+  signal s_47_v2_pickup_e2    : std_logic_vector(11 downto 0);  
   signal s_47_delay_e1_ms      : std_logic_vector(19 downto 0);
   signal s_47_v2_abs_stable    : unsigned(11 downto 0);  
   signal s_47_v2_abs_u12       : UNSIGNED(11 downto 0);
-  signal s_47_v1_abs_stable    : unsigned(11 downto 0);
-  signal s_47_v1_abs_u12       : UNSIGNED(11 downto 0);
   signal s_47_target_ms_reg    : unsigned(19 downto 0);  -- contador de ms (satura)
   signal s_47_e1_time_cnt      : unsigned(19 downto 0);
   signal s_47_alarm_e1         : std_logic;
@@ -2730,7 +2751,7 @@ signal s_46_s1_seq_stable      : unsigned(11 downto 0) := (others => '0') ;
   ------------------------------------------------------------------------------
 -- Atributos para não remover registros e componentes na parte de otimizacaao
 ------------------------------------------------------------------------------
-  
+     
   attribute  DONT_TOUCH : string;
   attribute  KEEP       : string;
   --
@@ -2782,18 +2803,22 @@ attribute KEEP of REG_46_S1_LUT_DOUTB : signal is "true";
 attribute KEEP of s_46_s1_i2_abs_u12 : signal is "true";
 attribute KEEP of s_46_s1_ram_target_ms : signal is "true";
 attribute KEEP of s_46_s1_seq_stable : signal is "true";
+attribute KEEP of s_i_seq2_mm : signal is "true";
+attribute KEEP of s_i_seq2_md : signal is "true";
+attribute KEEP of s_i_seq2_ex : signal is "true";
+attribute KEEP of s_v_seq2_mm : signal is "true";
+attribute KEEP of s_v_seq2_md : signal is "true";
+attribute KEEP of s_v_seq2_ex : signal is "true";
+
 
 attribute KEEP of s_trip_47_stg1        : signal is "true";
 attribute KEEP of s_rst_47_stg1         : signal is "true";
 attribute KEEP of s_47_time_ms          : signal is "true";
-attribute KEEP of s_47_vuf              : signal is "true";
 attribute KEEP of s_47_v2_pickup_e1     : signal is "true";
-attribute KEEP of s_47_vuf_pickup_e2    : signal is "true";  
+attribute KEEP of s_47_v2_pickup_e2    : signal is "true";  
 attribute KEEP of s_47_delay_e1_ms      : signal is "true";
 attribute KEEP of s_47_v2_abs_stable    : signal is "true";  
 attribute KEEP of s_47_v2_abs_u12       : signal is "true";
-attribute KEEP of s_47_v1_abs_stable    : signal is "true";
-attribute KEEP of s_47_v1_abs_u12       : signal is "true";
 attribute KEEP of s_47_target_ms_reg    : signal is "true";   
 attribute KEEP of s_47_e1_time_cnt      : signal is "true";
 attribute KEEP of s_47_alarm_e1         : signal is "true";
@@ -2803,20 +2828,49 @@ attribute KEEP of s_47_trip_47_59Q_e2   : signal is "true";
 attribute KEEP of s_47_s1_en            : signal is "true";
 attribute KEEP of s_47_ram_addr_stg1    : signal is "true";
 attribute KEEP of s_47_ram_rd_req_stg1  : signal is "true";
-attribute KEEP of s_v1_abs  : signal is "true";
 attribute KEEP of s_v2_abs  : signal is "true";
+
+
+  attribute KEEP of s_vseq_valid  : signal is "true";
+  attribute KEEP of s_v0_re       : signal is "true";
+  attribute KEEP of s_v0_im       : signal is "true";
+  attribute KEEP of s_v0_abs      : signal is "true";
+  attribute KEEP of s_v0_phase    : signal is "true";
+  attribute KEEP of s_v0_rms      : signal is "true";
+  attribute KEEP of s_v1_abs      : signal is "true";
+  attribute KEEP of s_v1_phase    : signal is "true";
+  attribute KEEP of s_v1_rms      : signal is "true";
+  attribute KEEP of s_v1_re       : signal is "true";
+  attribute KEEP of s_v1_im       : signal is "true";
+  attribute KEEP of s_v2_re       : signal is "true";
+  attribute KEEP of s_v2_im       : signal is "true";
+  attribute KEEP of s_v2_phase    : signal is "true";
+  attribute KEEP of s_v2_rms      : signal is "true";
+
+  attribute DONT_TOUCH of s_vseq_valid  : signal is "true";
+  attribute DONT_TOUCH of s_v0_re       : signal is "true";
+  attribute DONT_TOUCH of s_v0_im       : signal is "true";
+  attribute DONT_TOUCH of s_v0_abs      : signal is "true";
+  attribute DONT_TOUCH of s_v0_phase    : signal is "true";
+  attribute DONT_TOUCH of s_v0_rms      : signal is "true";
+  attribute DONT_TOUCH of s_v1_abs      : signal is "true";
+  attribute DONT_TOUCH of s_v1_phase    : signal is "true";
+  attribute DONT_TOUCH of s_v1_rms      : signal is "true";
+  attribute DONT_TOUCH of s_v1_re       : signal is "true";
+  attribute DONT_TOUCH of s_v1_im       : signal is "true";
+  attribute DONT_TOUCH of s_v2_re       : signal is "true";
+  attribute DONT_TOUCH of s_v2_im       : signal is "true";
+  attribute DONT_TOUCH of s_v2_phase    : signal is "true";
+  attribute DONT_TOUCH of s_v2_rms      : signal is "true";
  
 attribute DONT_TOUCH of s_trip_47_stg1        : signal is "true";
 attribute DONT_TOUCH of s_rst_47_stg1         : signal is "true";
 attribute DONT_TOUCH of s_47_time_ms          : signal is "true";
-attribute DONT_TOUCH of s_47_vuf              : signal is "true";
 attribute DONT_TOUCH of s_47_v2_pickup_e1     : signal is "true";
-attribute DONT_TOUCH of s_47_vuf_pickup_e2    : signal is "true";  
+attribute DONT_TOUCH of s_47_v2_pickup_e2    : signal is "true";  
 attribute DONT_TOUCH of s_47_delay_e1_ms      : signal is "true";
 attribute DONT_TOUCH of s_47_v2_abs_stable    : signal is "true";  
 attribute DONT_TOUCH of s_47_v2_abs_u12       : signal is "true";
-attribute DONT_TOUCH of s_47_v1_abs_stable    : signal is "true";
-attribute DONT_TOUCH of s_47_v1_abs_u12       : signal is "true";
 attribute DONT_TOUCH of s_47_target_ms_reg    : signal is "true";   
 attribute DONT_TOUCH of s_47_e1_time_cnt      : signal is "true";
 attribute DONT_TOUCH of s_47_alarm_e1         : signal is "true";
@@ -2826,8 +2880,8 @@ attribute DONT_TOUCH of s_47_trip_47_59Q_e2   : signal is "true";
 attribute DONT_TOUCH of s_47_s1_en            : signal is "true";
 attribute DONT_TOUCH of s_47_ram_addr_stg1    : signal is "true";
 attribute DONT_TOUCH of s_47_ram_rd_req_stg1  : signal is "true";
-attribute DONT_TOUCH of s_v1_abs  : signal is "true";
 attribute DONT_TOUCH of s_v2_abs  : signal is "true";
+
 
 
 attribute DONT_TOUCH of s_46_s1_rst : signal is "true";
@@ -2854,6 +2908,21 @@ attribute DONT_TOUCH of REG_46_S1_LUT_DOUTB : signal is "true";
 attribute DONT_TOUCH of s_46_s1_i2_abs_u12 : signal is "true";
 attribute DONT_TOUCH of s_46_s1_ram_target_ms : signal is "true";
 attribute DONT_TOUCH of s_46_s1_seq_stable : signal is "true";
+
+attribute DONT_TOUCH of s_i_seq2_mm : signal is "true";
+attribute DONT_TOUCH of s_i_seq2_md : signal is "true";
+attribute DONT_TOUCH of s_i_seq2_ex : signal is "true";
+attribute DONT_TOUCH of s_v_seq2_mm : signal is "true";
+attribute DONT_TOUCH of s_v_seq2_md : signal is "true";
+attribute DONT_TOUCH of s_v_seq2_ex : signal is "true";
+attribute DONT_TOUCH of s_i_stabilizer_valid : signal is "true";
+attribute DONT_TOUCH of s_v_stabilizer_valid : signal is "true";
+attribute KEEP of s_i_stabilizer_valid : signal is "true";
+attribute KEEP of s_v_stabilizer_valid : signal is "true";
+
+
+
+
 
   
   attribute KEEP of s_vaux0_decim_s12_valid : signal is "true";
@@ -3223,7 +3292,40 @@ begin
   -- sRst active 1 or by VIO software reset (probe 24)
   ----------------------------------------------------
 
-  sRst <= not(sRstn) or sRstVio(0) or REG_SOFTRESET(0) or not(s_Locked) ;
+  sRst <= not(sRstn) or sRstVio(0) or REG_SOFTRESET(0) or not(s_Locked);
+
+  signal_stabilizer_inst_v: signal_stabilizer
+   generic map(
+      DATA_WIDTH => 12
+  )
+   port map(
+      clk => s_clk1,
+      reset => sRst,
+      sample_en => s_vseq_valid,
+      data_in => std_logic_vector(s_in_vseq2_u12),
+      out_media_movel => s_v_seq2_mm,
+      out_mediana => s_v_seq2_md,
+      out_exponencial => s_v_seq2_ex,
+      valid_out => s_v_stabilizer_valid
+  );
+  s_in_vseq2_u12 <= resize(shift_right(s_v2_abs, 19), 12);
+  
+
+  signal_stabilizer_inst_i: signal_stabilizer
+   generic map(
+      DATA_WIDTH => 12
+  )
+   port map(
+      clk => s_clk1,
+      reset => sRst,
+      sample_en => s_seq_valid,
+      data_in => std_logic_vector(s_in_iseq2_u12),
+      out_media_movel => s_i_seq2_mm,
+      out_mediana => s_i_seq2_md,
+      out_exponencial => s_i_seq2_ex,
+      valid_out => s_i_stabilizer_valid
+  );
+  s_in_iseq2_u12 <= resize(shift_right(s_seq2_abs, 19), 12);
   
 
   -------------------
@@ -3501,7 +3603,7 @@ begin
     probe_out41 => s_46_s1_vio_e1_en,
     probe_out42 => s_46_s1_vio_e1_i2pu,
     probe_out43 => s_46_s1_vio_e2_i2pu,
-    probe_out44 => s_47_vuf_pickup_e2,
+    probe_out44 => s_47_v2_pickup_e2,
     probe_out45 => s_47_s1_en,
     probe_out46 => s_47_v2_pickup_e1,
     probe_out47 => s_47_delay_e1_ms
@@ -3961,7 +4063,7 @@ begin
   generic map(
     ACC_WIDTH => 36
   )
-  port map
+  port map  
   (
     i_clk => s_clk1,
     i_rst => sRst,
@@ -4716,22 +4818,18 @@ begin
       i_clk_100MHz => s_clk1,
       i_rst => s_rst_47_stg1,
       i_v2_abs => s_v2_abs,
-      i_v1_abs => s_v1_abs,
       i_valid_v_seq => s_vseq_valid,
       i_v2_pickup_e1 => s_47_v2_pickup_e1,
-      i_vuf_pickup_e2 => s_47_vuf_pickup_e2,
+      i_v2_pickup_e2 => s_47_v2_pickup_e2,
       i_delay_e1_ms => unsigned(s_47_delay_e1_ms),
       o_ram_addr => s_47_ram_addr_stg1,
       o_ram_rd_req => s_47_ram_rd_req_stg1,
       i_ram_data => s_47_stg1_bram_douta,
       o_v2_abs_stable => s_47_v2_abs_stable,
       o_v2_abs_u12 => s_47_v2_abs_u12,
-      o_v1_abs_stable => s_47_v1_abs_stable,
-      o_v1_abs_u12 => s_47_v1_abs_u12,
       o_time_ms => s_47_time_ms,
       o_target_ms_reg => s_47_target_ms_reg,
       o_e1_time_cnt => s_47_e1_time_cnt,
-      o_vuf => s_47_vuf,
       o_alarm_e1 => s_47_alarm_e1,
       o_alarm_e2 => s_47_alarm_e2,
       o_trip_47_59Q_e1 => s_47_trip_47_59Q_e1,
@@ -4740,8 +4838,8 @@ begin
   );
   s_rst_47_stg1       <= (sRst or s_47_s1_en(0)); --not(REG_47_STG1_EN(0))
   REG_47_STG1_TRIP(0) <= s_trip_47_stg1;
-  REG_47_STG1_VUF_U11 <= s_47_vuf;
-  REG_47_STG1_TIME_MS <= s_47_time_ms;
+  -- REG_47_STG1_VUF_U11 <= s_47_vuf;
+  -- REG_47_STG1_TIME_MS <= s_47_time_ms;
   
 
   inst_bram0_47 : blk_mem_gen_0
@@ -5388,7 +5486,7 @@ begin
   ---------------------------------------
   s_GlobalTrip <= (s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
     s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or
-    s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 or s_46_s1_trip);
+    s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 or s_46_s1_trip or s_trip_47_stg1);
 
     -- s_GlobalTrip <= (s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
     -- s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or

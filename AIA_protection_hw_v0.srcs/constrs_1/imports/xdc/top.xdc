@@ -394,6 +394,19 @@ set_property SLEW FAST [get_ports o_relay_ch6]
 
 
 
+
+
+#connect_debug_port u_ila_0/probe1 [get_nets [list {s_47_vuf_pickup_e2[0]} {s_47_vuf_pickup_e2[1]} {s_47_vuf_pickup_e2[2]} {s_47_vuf_pickup_e2[3]} {s_47_vuf_pickup_e2[4]} {s_47_vuf_pickup_e2[5]} {s_47_vuf_pickup_e2[6]} {s_47_vuf_pickup_e2[7]} {s_47_vuf_pickup_e2[8]} {s_47_vuf_pickup_e2[9]} {s_47_vuf_pickup_e2[10]} {s_47_vuf_pickup_e2[11]}]]
+
+
+
+
+
+
+
+
+
+
 create_debug_core u_ila_0 ila
 set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
 set_property ALL_PROBE_SAME_MU_CNT 4 [get_debug_cores u_ila_0]
@@ -407,71 +420,59 @@ set_property port_width 1 [get_debug_ports u_ila_0/clk]
 connect_debug_port u_ila_0/clk [get_nets [list inst_pll/inst/clk_out1]]
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
 set_property port_width 12 [get_debug_ports u_ila_0/probe0]
-connect_debug_port u_ila_0/probe0 [get_nets [list {s_47_v2_abs_stable[0]} {s_47_v2_abs_stable[1]} {s_47_v2_abs_stable[2]} {s_47_v2_abs_stable[3]} {s_47_v2_abs_stable[4]} {s_47_v2_abs_stable[5]} {s_47_v2_abs_stable[6]} {s_47_v2_abs_stable[7]} {s_47_v2_abs_stable[8]} {s_47_v2_abs_stable[9]} {s_47_v2_abs_stable[10]} {s_47_v2_abs_stable[11]}]]
+connect_debug_port u_ila_0/probe0 [get_nets [list {s_i_seq2_ex[0]} {s_i_seq2_ex[1]} {s_i_seq2_ex[2]} {s_i_seq2_ex[3]} {s_i_seq2_ex[4]} {s_i_seq2_ex[5]} {s_i_seq2_ex[6]} {s_i_seq2_ex[7]} {s_i_seq2_ex[8]} {s_i_seq2_ex[9]} {s_i_seq2_ex[10]} {s_i_seq2_ex[11]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe1]
-set_property port_width 20 [get_debug_ports u_ila_0/probe1]
-connect_debug_port u_ila_0/probe1 [get_nets [list {s_47_target_ms_reg[0]} {s_47_target_ms_reg[1]} {s_47_target_ms_reg[2]} {s_47_target_ms_reg[3]} {s_47_target_ms_reg[4]} {s_47_target_ms_reg[5]} {s_47_target_ms_reg[6]} {s_47_target_ms_reg[7]} {s_47_target_ms_reg[8]} {s_47_target_ms_reg[9]} {s_47_target_ms_reg[10]} {s_47_target_ms_reg[11]} {s_47_target_ms_reg[12]} {s_47_target_ms_reg[13]} {s_47_target_ms_reg[14]} {s_47_target_ms_reg[15]} {s_47_target_ms_reg[16]} {s_47_target_ms_reg[17]} {s_47_target_ms_reg[18]} {s_47_target_ms_reg[19]}]]
+set_property port_width 12 [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {s_i_seq2_mm[0]} {s_i_seq2_mm[1]} {s_i_seq2_mm[2]} {s_i_seq2_mm[3]} {s_i_seq2_mm[4]} {s_i_seq2_mm[5]} {s_i_seq2_mm[6]} {s_i_seq2_mm[7]} {s_i_seq2_mm[8]} {s_i_seq2_mm[9]} {s_i_seq2_mm[10]} {s_i_seq2_mm[11]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe2]
 set_property port_width 12 [get_debug_ports u_ila_0/probe2]
-connect_debug_port u_ila_0/probe2 [get_nets [list {s_47_vuf_pickup_e2[0]} {s_47_vuf_pickup_e2[1]} {s_47_vuf_pickup_e2[2]} {s_47_vuf_pickup_e2[3]} {s_47_vuf_pickup_e2[4]} {s_47_vuf_pickup_e2[5]} {s_47_vuf_pickup_e2[6]} {s_47_vuf_pickup_e2[7]} {s_47_vuf_pickup_e2[8]} {s_47_vuf_pickup_e2[9]} {s_47_vuf_pickup_e2[10]} {s_47_vuf_pickup_e2[11]}]]
+connect_debug_port u_ila_0/probe2 [get_nets [list {s_i_seq2_md[0]} {s_i_seq2_md[1]} {s_i_seq2_md[2]} {s_i_seq2_md[3]} {s_i_seq2_md[4]} {s_i_seq2_md[5]} {s_i_seq2_md[6]} {s_i_seq2_md[7]} {s_i_seq2_md[8]} {s_i_seq2_md[9]} {s_i_seq2_md[10]} {s_i_seq2_md[11]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe3]
-set_property port_width 20 [get_debug_ports u_ila_0/probe3]
-connect_debug_port u_ila_0/probe3 [get_nets [list {s_47_delay_e1_ms[0]} {s_47_delay_e1_ms[1]} {s_47_delay_e1_ms[2]} {s_47_delay_e1_ms[3]} {s_47_delay_e1_ms[4]} {s_47_delay_e1_ms[5]} {s_47_delay_e1_ms[6]} {s_47_delay_e1_ms[7]} {s_47_delay_e1_ms[8]} {s_47_delay_e1_ms[9]} {s_47_delay_e1_ms[10]} {s_47_delay_e1_ms[11]} {s_47_delay_e1_ms[12]} {s_47_delay_e1_ms[13]} {s_47_delay_e1_ms[14]} {s_47_delay_e1_ms[15]} {s_47_delay_e1_ms[16]} {s_47_delay_e1_ms[17]} {s_47_delay_e1_ms[18]} {s_47_delay_e1_ms[19]}]]
+set_property port_width 32 [get_debug_ports u_ila_0/probe3]
+connect_debug_port u_ila_0/probe3 [get_nets [list {s_seq1_abs[0]} {s_seq1_abs[1]} {s_seq1_abs[2]} {s_seq1_abs[3]} {s_seq1_abs[4]} {s_seq1_abs[5]} {s_seq1_abs[6]} {s_seq1_abs[7]} {s_seq1_abs[8]} {s_seq1_abs[9]} {s_seq1_abs[10]} {s_seq1_abs[11]} {s_seq1_abs[12]} {s_seq1_abs[13]} {s_seq1_abs[14]} {s_seq1_abs[15]} {s_seq1_abs[16]} {s_seq1_abs[17]} {s_seq1_abs[18]} {s_seq1_abs[19]} {s_seq1_abs[20]} {s_seq1_abs[21]} {s_seq1_abs[22]} {s_seq1_abs[23]} {s_seq1_abs[24]} {s_seq1_abs[25]} {s_seq1_abs[26]} {s_seq1_abs[27]} {s_seq1_abs[28]} {s_seq1_abs[29]} {s_seq1_abs[30]} {s_seq1_abs[31]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe4]
-set_property port_width 12 [get_debug_ports u_ila_0/probe4]
-connect_debug_port u_ila_0/probe4 [get_nets [list {s_47_v2_abs_u12[0]} {s_47_v2_abs_u12[1]} {s_47_v2_abs_u12[2]} {s_47_v2_abs_u12[3]} {s_47_v2_abs_u12[4]} {s_47_v2_abs_u12[5]} {s_47_v2_abs_u12[6]} {s_47_v2_abs_u12[7]} {s_47_v2_abs_u12[8]} {s_47_v2_abs_u12[9]} {s_47_v2_abs_u12[10]} {s_47_v2_abs_u12[11]}]]
+set_property port_width 32 [get_debug_ports u_ila_0/probe4]
+connect_debug_port u_ila_0/probe4 [get_nets [list {s_seq2_abs[0]} {s_seq2_abs[1]} {s_seq2_abs[2]} {s_seq2_abs[3]} {s_seq2_abs[4]} {s_seq2_abs[5]} {s_seq2_abs[6]} {s_seq2_abs[7]} {s_seq2_abs[8]} {s_seq2_abs[9]} {s_seq2_abs[10]} {s_seq2_abs[11]} {s_seq2_abs[12]} {s_seq2_abs[13]} {s_seq2_abs[14]} {s_seq2_abs[15]} {s_seq2_abs[16]} {s_seq2_abs[17]} {s_seq2_abs[18]} {s_seq2_abs[19]} {s_seq2_abs[20]} {s_seq2_abs[21]} {s_seq2_abs[22]} {s_seq2_abs[23]} {s_seq2_abs[24]} {s_seq2_abs[25]} {s_seq2_abs[26]} {s_seq2_abs[27]} {s_seq2_abs[28]} {s_seq2_abs[29]} {s_seq2_abs[30]} {s_seq2_abs[31]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe5]
 set_property port_width 12 [get_debug_ports u_ila_0/probe5]
-connect_debug_port u_ila_0/probe5 [get_nets [list {s_47_v1_abs_u12[0]} {s_47_v1_abs_u12[1]} {s_47_v1_abs_u12[2]} {s_47_v1_abs_u12[3]} {s_47_v1_abs_u12[4]} {s_47_v1_abs_u12[5]} {s_47_v1_abs_u12[6]} {s_47_v1_abs_u12[7]} {s_47_v1_abs_u12[8]} {s_47_v1_abs_u12[9]} {s_47_v1_abs_u12[10]} {s_47_v1_abs_u12[11]}]]
+connect_debug_port u_ila_0/probe5 [get_nets [list {s_v_seq2_mm[0]} {s_v_seq2_mm[1]} {s_v_seq2_mm[2]} {s_v_seq2_mm[3]} {s_v_seq2_mm[4]} {s_v_seq2_mm[5]} {s_v_seq2_mm[6]} {s_v_seq2_mm[7]} {s_v_seq2_mm[8]} {s_v_seq2_mm[9]} {s_v_seq2_mm[10]} {s_v_seq2_mm[11]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe6]
-set_property port_width 20 [get_debug_ports u_ila_0/probe6]
-connect_debug_port u_ila_0/probe6 [get_nets [list {s_47_time_ms[0]} {s_47_time_ms[1]} {s_47_time_ms[2]} {s_47_time_ms[3]} {s_47_time_ms[4]} {s_47_time_ms[5]} {s_47_time_ms[6]} {s_47_time_ms[7]} {s_47_time_ms[8]} {s_47_time_ms[9]} {s_47_time_ms[10]} {s_47_time_ms[11]} {s_47_time_ms[12]} {s_47_time_ms[13]} {s_47_time_ms[14]} {s_47_time_ms[15]} {s_47_time_ms[16]} {s_47_time_ms[17]} {s_47_time_ms[18]} {s_47_time_ms[19]}]]
+set_property port_width 32 [get_debug_ports u_ila_0/probe6]
+connect_debug_port u_ila_0/probe6 [get_nets [list {s_v1_abs[0]} {s_v1_abs[1]} {s_v1_abs[2]} {s_v1_abs[3]} {s_v1_abs[4]} {s_v1_abs[5]} {s_v1_abs[6]} {s_v1_abs[7]} {s_v1_abs[8]} {s_v1_abs[9]} {s_v1_abs[10]} {s_v1_abs[11]} {s_v1_abs[12]} {s_v1_abs[13]} {s_v1_abs[14]} {s_v1_abs[15]} {s_v1_abs[16]} {s_v1_abs[17]} {s_v1_abs[18]} {s_v1_abs[19]} {s_v1_abs[20]} {s_v1_abs[21]} {s_v1_abs[22]} {s_v1_abs[23]} {s_v1_abs[24]} {s_v1_abs[25]} {s_v1_abs[26]} {s_v1_abs[27]} {s_v1_abs[28]} {s_v1_abs[29]} {s_v1_abs[30]} {s_v1_abs[31]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe7]
-set_property port_width 20 [get_debug_ports u_ila_0/probe7]
-connect_debug_port u_ila_0/probe7 [get_nets [list {s_47_stg1_bram_douta[0]} {s_47_stg1_bram_douta[1]} {s_47_stg1_bram_douta[2]} {s_47_stg1_bram_douta[3]} {s_47_stg1_bram_douta[4]} {s_47_stg1_bram_douta[5]} {s_47_stg1_bram_douta[6]} {s_47_stg1_bram_douta[7]} {s_47_stg1_bram_douta[8]} {s_47_stg1_bram_douta[9]} {s_47_stg1_bram_douta[10]} {s_47_stg1_bram_douta[11]} {s_47_stg1_bram_douta[12]} {s_47_stg1_bram_douta[13]} {s_47_stg1_bram_douta[14]} {s_47_stg1_bram_douta[15]} {s_47_stg1_bram_douta[16]} {s_47_stg1_bram_douta[17]} {s_47_stg1_bram_douta[18]} {s_47_stg1_bram_douta[19]}]]
+set_property port_width 12 [get_debug_ports u_ila_0/probe7]
+connect_debug_port u_ila_0/probe7 [get_nets [list {s_v_seq2_md[0]} {s_v_seq2_md[1]} {s_v_seq2_md[2]} {s_v_seq2_md[3]} {s_v_seq2_md[4]} {s_v_seq2_md[5]} {s_v_seq2_md[6]} {s_v_seq2_md[7]} {s_v_seq2_md[8]} {s_v_seq2_md[9]} {s_v_seq2_md[10]} {s_v_seq2_md[11]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe8]
 set_property port_width 12 [get_debug_ports u_ila_0/probe8]
-connect_debug_port u_ila_0/probe8 [get_nets [list {s_47_v2_pickup_e1[0]} {s_47_v2_pickup_e1[1]} {s_47_v2_pickup_e1[2]} {s_47_v2_pickup_e1[3]} {s_47_v2_pickup_e1[4]} {s_47_v2_pickup_e1[5]} {s_47_v2_pickup_e1[6]} {s_47_v2_pickup_e1[7]} {s_47_v2_pickup_e1[8]} {s_47_v2_pickup_e1[9]} {s_47_v2_pickup_e1[10]} {s_47_v2_pickup_e1[11]}]]
+connect_debug_port u_ila_0/probe8 [get_nets [list {s_v_seq2_ex[0]} {s_v_seq2_ex[1]} {s_v_seq2_ex[2]} {s_v_seq2_ex[3]} {s_v_seq2_ex[4]} {s_v_seq2_ex[5]} {s_v_seq2_ex[6]} {s_v_seq2_ex[7]} {s_v_seq2_ex[8]} {s_v_seq2_ex[9]} {s_v_seq2_ex[10]} {s_v_seq2_ex[11]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe9]
-set_property port_width 12 [get_debug_ports u_ila_0/probe9]
-connect_debug_port u_ila_0/probe9 [get_nets [list {s_47_ram_addr_stg1[0]} {s_47_ram_addr_stg1[1]} {s_47_ram_addr_stg1[2]} {s_47_ram_addr_stg1[3]} {s_47_ram_addr_stg1[4]} {s_47_ram_addr_stg1[5]} {s_47_ram_addr_stg1[6]} {s_47_ram_addr_stg1[7]} {s_47_ram_addr_stg1[8]} {s_47_ram_addr_stg1[9]} {s_47_ram_addr_stg1[10]} {s_47_ram_addr_stg1[11]}]]
+set_property port_width 32 [get_debug_ports u_ila_0/probe9]
+connect_debug_port u_ila_0/probe9 [get_nets [list {s_v2_abs[0]} {s_v2_abs[1]} {s_v2_abs[2]} {s_v2_abs[3]} {s_v2_abs[4]} {s_v2_abs[5]} {s_v2_abs[6]} {s_v2_abs[7]} {s_v2_abs[8]} {s_v2_abs[9]} {s_v2_abs[10]} {s_v2_abs[11]} {s_v2_abs[12]} {s_v2_abs[13]} {s_v2_abs[14]} {s_v2_abs[15]} {s_v2_abs[16]} {s_v2_abs[17]} {s_v2_abs[18]} {s_v2_abs[19]} {s_v2_abs[20]} {s_v2_abs[21]} {s_v2_abs[22]} {s_v2_abs[23]} {s_v2_abs[24]} {s_v2_abs[25]} {s_v2_abs[26]} {s_v2_abs[27]} {s_v2_abs[28]} {s_v2_abs[29]} {s_v2_abs[30]} {s_v2_abs[31]}]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe10]
-set_property port_width 12 [get_debug_ports u_ila_0/probe10]
-connect_debug_port u_ila_0/probe10 [get_nets [list {s_47_vuf[0]} {s_47_vuf[1]} {s_47_vuf[2]} {s_47_vuf[3]} {s_47_vuf[4]} {s_47_vuf[5]} {s_47_vuf[6]} {s_47_vuf[7]} {s_47_vuf[8]} {s_47_vuf[9]} {s_47_vuf[10]} {s_47_vuf[11]}]]
+set_property port_width 1 [get_debug_ports u_ila_0/probe10]
+connect_debug_port u_ila_0/probe10 [get_nets [list s_seq_valid]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe11]
-set_property port_width 32 [get_debug_ports u_ila_0/probe11]
-connect_debug_port u_ila_0/probe11 [get_nets [list {s_seq2_abs[0]} {s_seq2_abs[1]} {s_seq2_abs[2]} {s_seq2_abs[3]} {s_seq2_abs[4]} {s_seq2_abs[5]} {s_seq2_abs[6]} {s_seq2_abs[7]} {s_seq2_abs[8]} {s_seq2_abs[9]} {s_seq2_abs[10]} {s_seq2_abs[11]} {s_seq2_abs[12]} {s_seq2_abs[13]} {s_seq2_abs[14]} {s_seq2_abs[15]} {s_seq2_abs[16]} {s_seq2_abs[17]} {s_seq2_abs[18]} {s_seq2_abs[19]} {s_seq2_abs[20]} {s_seq2_abs[21]} {s_seq2_abs[22]} {s_seq2_abs[23]} {s_seq2_abs[24]} {s_seq2_abs[25]} {s_seq2_abs[26]} {s_seq2_abs[27]} {s_seq2_abs[28]} {s_seq2_abs[29]} {s_seq2_abs[30]} {s_seq2_abs[31]}]]
+set_property port_width 1 [get_debug_ports u_ila_0/probe11]
+connect_debug_port u_ila_0/probe11 [get_nets [list s_vseq_valid]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe12]
-set_property port_width 32 [get_debug_ports u_ila_0/probe12]
-connect_debug_port u_ila_0/probe12 [get_nets [list {s_v1_abs[0]} {s_v1_abs[1]} {s_v1_abs[2]} {s_v1_abs[3]} {s_v1_abs[4]} {s_v1_abs[5]} {s_v1_abs[6]} {s_v1_abs[7]} {s_v1_abs[8]} {s_v1_abs[9]} {s_v1_abs[10]} {s_v1_abs[11]} {s_v1_abs[12]} {s_v1_abs[13]} {s_v1_abs[14]} {s_v1_abs[15]} {s_v1_abs[16]} {s_v1_abs[17]} {s_v1_abs[18]} {s_v1_abs[19]} {s_v1_abs[20]} {s_v1_abs[21]} {s_v1_abs[22]} {s_v1_abs[23]} {s_v1_abs[24]} {s_v1_abs[25]} {s_v1_abs[26]} {s_v1_abs[27]} {s_v1_abs[28]} {s_v1_abs[29]} {s_v1_abs[30]} {s_v1_abs[31]}]]
+set_property port_width 1 [get_debug_ports u_ila_0/probe12]
+connect_debug_port u_ila_0/probe12 [get_nets [list s_i_stabilizer_valid]]
 create_debug_port u_ila_0 probe
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe13]
-set_property port_width 32 [get_debug_ports u_ila_0/probe13]
-connect_debug_port u_ila_0/probe13 [get_nets [list {s_v2_abs[0]} {s_v2_abs[1]} {s_v2_abs[2]} {s_v2_abs[3]} {s_v2_abs[4]} {s_v2_abs[5]} {s_v2_abs[6]} {s_v2_abs[7]} {s_v2_abs[8]} {s_v2_abs[9]} {s_v2_abs[10]} {s_v2_abs[11]} {s_v2_abs[12]} {s_v2_abs[13]} {s_v2_abs[14]} {s_v2_abs[15]} {s_v2_abs[16]} {s_v2_abs[17]} {s_v2_abs[18]} {s_v2_abs[19]} {s_v2_abs[20]} {s_v2_abs[21]} {s_v2_abs[22]} {s_v2_abs[23]} {s_v2_abs[24]} {s_v2_abs[25]} {s_v2_abs[26]} {s_v2_abs[27]} {s_v2_abs[28]} {s_v2_abs[29]} {s_v2_abs[30]} {s_v2_abs[31]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe14]
-set_property port_width 1 [get_debug_ports u_ila_0/probe14]
-connect_debug_port u_ila_0/probe14 [get_nets [list s_47_s1_en]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe15]
-set_property port_width 1 [get_debug_ports u_ila_0/probe15]
-connect_debug_port u_ila_0/probe15 [get_nets [list s_trip_47_stg1]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe16]
-set_property port_width 1 [get_debug_ports u_ila_0/probe16]
-connect_debug_port u_ila_0/probe16 [get_nets [list s_vseq_valid]]
+set_property port_width 1 [get_debug_ports u_ila_0/probe13]
+connect_debug_port u_ila_0/probe13 [get_nets [list s_v_stabilizer_valid]]
 set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
 set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
 set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]

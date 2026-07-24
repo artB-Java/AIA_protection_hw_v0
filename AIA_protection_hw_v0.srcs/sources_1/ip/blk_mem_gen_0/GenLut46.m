@@ -7,7 +7,7 @@ clear; close all; clc;
 
 %% --------- ENTRADAS DO USUÁRIO ---------------------------------
 Tp_s    = 0.100;     % Time dial (segundos)
-Ip      = 120;       % Pickup em contagens RMS (0..4095)
+Ip      = 12;       % Pickup em contagens RMS (0..4095)
 curva   = 'IEEE_MI';      % 'NI' | 'VI' | 'EI' | 'LTI'
 tmin_ms = 1;        % limite inferior (ms)
 tmax_ms = 30000;     % limite superior (ms)
