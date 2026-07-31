@@ -120,26 +120,13 @@ architecture rtl of ProtVoltageUmbalanceNegSeq_47_59Q is
   signal trip_e2_reg     : std_logic := '0';
   signal s_v2_abs_stable : unsigned(11 downto 0) := (others => '0');
 
-  -- Utilitário de remoção de ganho para adequar aos 12 bits
-  -- function gain_removal (x : unsigned(31 downto 0)) return unsigned is
-  --   variable mult_reg : unsigned(35 downto 0);
-  --   variable y        : unsigned(31 downto 0);
-  -- begin
-  --   mult_reg := x * to_unsigned(10, 4);
-  --   y        := resize(shift_right(mult_reg, 19), 32);
-  --   return resize(y, 12);
-  -- end function;
-
 begin
 
   -----------------------------------------------------------------------------
   -- Conversões e limiares (combinacionais)
   -----------------------------------------------------------------------------
-  --s_v2_mult_temp  <= i_v2_abs * to_unsigned(10, 4);
-  -- s_v2_u32_temp   <= RESIZE(SHIFT_RIGHT(i_v2_abs, 19),32);
   s_v2_abs_u12   <= resize(shift_right(i_v2_abs, 19), 12);
 
-  -- s_v2_abs_u12 <= gain_removal(i_v2_abs);
   peak_e1_u12  <= unsigned(i_v2_pickup_e1);
   peak_e2_u12  <= unsigned(i_v2_pickup_e2);
   hyst_u12     <= to_unsigned(G_HYST, 12);

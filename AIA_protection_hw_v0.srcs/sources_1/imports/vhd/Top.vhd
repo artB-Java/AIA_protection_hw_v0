@@ -245,36 +245,40 @@ architecture Behavioral of Top is
   signal s_46_s1_vio_e1_i2pu : std_logic_vector(11 downto 0);
   signal s_46_s1_vio_e2_i2pu : std_logic_vector(11 downto 0);
 
-  component signal_stabilizer is
-    generic (
-        DATA_WIDTH : integer := 12  -- Sinal de 12 bits (0 a 4095)
-    );
-    port (
-        clk             : in  std_logic;
-        reset           : in  std_logic;
-        sample_en       : in  std_logic; -- Pulso de alto quando uma nova amostra chega
-        data_in         : in  std_logic_vector(DATA_WIDTH-1 downto 0);
+--   component signal_stabilizer is
+--     generic (
+--         DATA_WIDTH : integer := 12;  -- Sinal de 12 bits (0 a 4095)
+--         FIR_WINDOW : integer := 5;
+--         IIR_WEIGHT : integer := 5
+--     );
+--     port (
+--         clk             : in  std_logic;
+--         reset           : in  std_logic;
+--         sample_en       : in  std_logic; -- Pulso de alto quando uma nova amostra chega
+--         data_in         : in  std_logic_vector(DATA_WIDTH-1 downto 0);
         
-        -- Saídas simultâneas de 12 bits para comparação
-        out_media_movel : out std_logic_vector(DATA_WIDTH-1 downto 0);
-        out_mediana     : out std_logic_vector(DATA_WIDTH-1 downto 0);
-        out_exponencial : out std_logic_vector(DATA_WIDTH-1 downto 0);
+--         -- Saídas simultâneas de 12 bits para comparação
+--         out_media_movel : out std_logic_vector(DATA_WIDTH-1 downto 0);
+--         out_exponencial : out std_logic_vector(DATA_WIDTH-1 downto 0);
         
-        -- Sinalização de que os dados filtrados estão válidos
-        valid_out       : out std_logic
-    );
-end component;
-signal s_i_seq2_mm : std_logic_vector(11 downto 0);
-signal s_i_seq2_md : std_logic_vector(11 downto 0);
-signal s_i_seq2_ex : std_logic_vector(11 downto 0);
-signal s_v_seq2_mm : std_logic_vector(11 downto 0);
-signal s_v_seq2_md : std_logic_vector(11 downto 0);
-signal s_v_seq2_ex : std_logic_vector(11 downto 0);
-signal s_v_stabilizer_valid : std_logic;
-signal s_i_stabilizer_valid : std_logic;
-signal s_in_iseq2_u12 : UNSIGNED(11 downto 0);
-signal s_in_vseq2_u12 : UNSIGNED(11 downto 0);
-
+--         -- Sinalização de que os dados filtrados estão válidos
+--         valid_out       : out std_logic
+--     );
+-- end component;
+-- signal s_i_seq2_mm : std_logic_vector(31 downto 0);
+-- signal s_i_seq2_md : std_logic_vector(11 downto 0);
+-- signal s_i_seq2_ex : std_logic_vector(31 downto 0);
+-- signal s_v_seq2_mm : std_logic_vector(31 downto 0);
+-- signal s_v_seq2_md : std_logic_vector(11 downto 0);
+-- signal s_v_seq2_ex : std_logic_vector(31 downto 0);
+-- signal s_v_stabilizer_valid : std_logic;
+-- signal s_i_stabilizer_valid : std_logic;
+-- signal s_in_iseq2_u12 : UNSIGNED(11 downto 0);
+-- signal s_in_vseq2_u12 : UNSIGNED(11 downto 0);
+-- signal s_out_iseq2_fir_u12 : UNSIGNED(11 downto 0);
+-- signal s_out_vseq2_fir_u12 : UNSIGNED(11 downto 0);
+-- signal s_out_iseq2_irr_u12 : UNSIGNED(11 downto 0);
+-- signal s_out_vseq2_irr_u12 : UNSIGNED(11 downto 0);
 
 
   
@@ -849,7 +853,7 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
     -- Saídas de proteção / debug
     --------------------------
     o_v2_abs_stable : out unsigned(11 downto 0);
-    o_v2_abs_u12    : out unsigned(11 downto 0);
+    o_v2_abs_u12    : out std_logic_vector(11 downto 0);
     o_time_ms       : out std_logic_vector(G_DATA_BITS - 1 downto 0);
     o_target_ms_reg : out unsigned(G_DATA_BITS - 1 downto 0);
     o_e1_time_cnt   : out unsigned(G_TIME_WIDTH - 1 downto 0);
@@ -871,7 +875,7 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
   signal s_47_v2_pickup_e2    : std_logic_vector(11 downto 0);  
   signal s_47_delay_e1_ms      : std_logic_vector(19 downto 0);
   signal s_47_v2_abs_stable    : unsigned(11 downto 0);  
-  signal s_47_v2_abs_u12       : UNSIGNED(11 downto 0);
+  signal s_47_v2_abs_u12       : std_logic_vector(11 downto 0);
   signal s_47_target_ms_reg    : unsigned(19 downto 0);  -- contador de ms (satura)
   signal s_47_e1_time_cnt      : unsigned(19 downto 0);
   signal s_47_alarm_e1         : std_logic;
@@ -2447,6 +2451,17 @@ signal s_46_s1_seq_stable      : unsigned(11 downto 0) := (others => '0') ;
   signal s_in_Port_164 : std_logic_vector(31 downto 0) := (others => '0');
   signal s_in_Port_165 : std_logic_vector(31 downto 0) := (others => '0');
 
+  -- componentes simetricas de tensao
+  signal s_in_Port_166 : std_logic_vector(31 downto 0) := (others => '0');
+  signal s_in_Port_167 : std_logic_vector(31 downto 0) := (others => '0');
+  signal s_in_Port_168 : std_logic_vector(31 downto 0) := (others => '0');
+  signal s_in_Port_169 : std_logic_vector(31 downto 0) := (others => '0');
+  signal s_in_Port_170 : std_logic_vector(31 downto 0) := (others => '0');
+  signal s_in_Port_171 : std_logic_vector(31 downto 0) := (others => '0');
+  signal s_in_Port_172 : std_logic_vector(31 downto 0) := (others => '0');
+  signal s_in_Port_173 : std_logic_vector(31 downto 0) := (others => '0');
+  signal s_in_Port_174 : std_logic_vector(31 downto 0) := (others => '0');
+
 
 	-- ============================================================
 	-- Aliases legíveis para os registradores do CoreRegs (0x00..1F)
@@ -2617,17 +2632,32 @@ signal s_46_s1_seq_stable      : unsigned(11 downto 0) := (others => '0') ;
   alias REG_47_STG1_LUT_ADDR  : std_logic_vector(11 downto 0) is s_out_Port_084(11 downto 0);
   alias REG_47_STG1_LUT_DATA  : std_logic_vector(19 downto 0) is s_out_Port_086(19 downto 0);
 
-  alias REG_SEQ0_ABS   : std_logic_vector(31 downto 0) is s_in_Port_089(31 downto 0);
-  alias REG_SEQ0_PHASE : std_logic_vector(15 downto 0) is s_in_Port_090(15 downto 0);
-  alias REG_SEQ0_RMS   : std_logic_vector(31 downto 0) is s_in_Port_091(31 downto 0);
+  alias REG_I_SEQ0_ABS   : std_logic_vector(31 downto 0) is s_in_Port_089(31 downto 0);
+  alias REG_I_SEQ0_PHASE : std_logic_vector(15 downto 0) is s_in_Port_090(15 downto 0);
+  alias REG_I_SEQ0_RMS   : std_logic_vector(31 downto 0) is s_in_Port_091(31 downto 0);
 
-  alias REG_SEQ1_ABS   : std_logic_vector(31 downto 0) is s_in_Port_092(31 downto 0);
-  alias REG_SEQ1_PHASE : std_logic_vector(15 downto 0) is s_in_Port_093(15 downto 0);
-  alias REG_SEQ1_RMS   : std_logic_vector(31 downto 0) is s_in_Port_094(31 downto 0);
+  alias REG_I_SEQ1_ABS   : std_logic_vector(31 downto 0) is s_in_Port_092(31 downto 0);
+  alias REG_I_SEQ1_PHASE : std_logic_vector(15 downto 0) is s_in_Port_093(15 downto 0);
+  alias REG_I_SEQ1_RMS   : std_logic_vector(31 downto 0) is s_in_Port_094(31 downto 0);
 
-  alias REG_SEQ2_ABS   : std_logic_vector(31 downto 0) is s_in_Port_095(31 downto 0);
-  alias REG_SEQ2_PHASE : std_logic_vector(15 downto 0) is s_in_Port_096(15 downto 0);
-  alias REG_SEQ2_RMS   : std_logic_vector(31 downto 0) is s_in_Port_097(31 downto 0);
+  alias REG_I_SEQ2_ABS   : std_logic_vector(31 downto 0) is s_in_Port_095(31 downto 0);
+  alias REG_I_SEQ2_PHASE : std_logic_vector(15 downto 0) is s_in_Port_096(15 downto 0);
+  alias REG_I_SEQ2_RMS   : std_logic_vector(31 downto 0) is s_in_Port_097(31 downto 0);
+
+
+  alias REG_V_SEQ1_ABS   : std_logic_vector(31 downto 0) is s_in_Port_166(31 downto 0);
+  alias REG_V_SEQ1_PHASE : std_logic_vector(15 downto 0) is s_in_Port_167(15 downto 0);
+  alias REG_V_SEQ1_RMS   : std_logic_vector(31 downto 0) is s_in_Port_168(31 downto 0);
+
+  alias REG_V_SEQ2_ABS   : std_logic_vector(31 downto 0) is s_in_Port_169(31 downto 0);
+  alias REG_V_SEQ2_PHASE : std_logic_vector(15 downto 0) is s_in_Port_170(15 downto 0);
+  alias REG_V_SEQ2_RMS   : std_logic_vector(31 downto 0) is s_in_Port_171(31 downto 0);
+
+  alias REG_V_SEQ0_ABS   : std_logic_vector(31 downto 0) is s_in_Port_172(31 downto 0);
+  alias REG_V_SEQ0_PHASE : std_logic_vector(15 downto 0) is s_in_Port_173(15 downto 0);
+  alias REG_V_SEQ0_RMS   : std_logic_vector(31 downto 0) is s_in_Port_174(31 downto 0);
+
+  
 
   alias REG_GLOBAL_TRIP : std_logic is s_in_Port_125(0);
   alias REG_BOOL_TRIP   : std_logic is s_in_Port_126(0);
@@ -2803,12 +2833,18 @@ attribute KEEP of REG_46_S1_LUT_DOUTB : signal is "true";
 attribute KEEP of s_46_s1_i2_abs_u12 : signal is "true";
 attribute KEEP of s_46_s1_ram_target_ms : signal is "true";
 attribute KEEP of s_46_s1_seq_stable : signal is "true";
-attribute KEEP of s_i_seq2_mm : signal is "true";
-attribute KEEP of s_i_seq2_md : signal is "true";
-attribute KEEP of s_i_seq2_ex : signal is "true";
-attribute KEEP of s_v_seq2_mm : signal is "true";
-attribute KEEP of s_v_seq2_md : signal is "true";
-attribute KEEP of s_v_seq2_ex : signal is "true";
+-- attribute KEEP of s_i_seq2_mm : signal is "true";
+-- attribute KEEP of s_i_seq2_md : signal is "true";
+-- attribute KEEP of s_i_seq2_ex : signal is "true";
+-- attribute KEEP of s_v_seq2_mm : signal is "true";
+-- attribute KEEP of s_v_seq2_md : signal is "true";
+-- attribute KEEP of s_v_seq2_ex : signal is "true";
+-- attribute KEEP of s_out_iseq2_fir_u12 : signal is "true";
+-- attribute KEEP of s_out_vseq2_fir_u12 : signal is "true";
+-- attribute KEEP of s_out_iseq2_irr_u12 : signal is "true";
+-- attribute KEEP of s_out_vseq2_irr_u12 : signal is "true";
+
+
 
 
 attribute KEEP of s_trip_47_stg1        : signal is "true";
@@ -2862,6 +2898,11 @@ attribute KEEP of s_v2_abs  : signal is "true";
   attribute DONT_TOUCH of s_v2_im       : signal is "true";
   attribute DONT_TOUCH of s_v2_phase    : signal is "true";
   attribute DONT_TOUCH of s_v2_rms      : signal is "true";
+
+-- attribute DONT_TOUCH of s_out_iseq2_fir_u12 : signal is "true";
+-- attribute DONT_TOUCH of s_out_vseq2_fir_u12 : signal is "true";
+-- attribute DONT_TOUCH of s_out_iseq2_irr_u12 : signal is "true";
+-- attribute DONT_TOUCH of s_out_vseq2_irr_u12 : signal is "true";
  
 attribute DONT_TOUCH of s_trip_47_stg1        : signal is "true";
 attribute DONT_TOUCH of s_rst_47_stg1         : signal is "true";
@@ -2909,16 +2950,16 @@ attribute DONT_TOUCH of s_46_s1_i2_abs_u12 : signal is "true";
 attribute DONT_TOUCH of s_46_s1_ram_target_ms : signal is "true";
 attribute DONT_TOUCH of s_46_s1_seq_stable : signal is "true";
 
-attribute DONT_TOUCH of s_i_seq2_mm : signal is "true";
-attribute DONT_TOUCH of s_i_seq2_md : signal is "true";
-attribute DONT_TOUCH of s_i_seq2_ex : signal is "true";
-attribute DONT_TOUCH of s_v_seq2_mm : signal is "true";
-attribute DONT_TOUCH of s_v_seq2_md : signal is "true";
-attribute DONT_TOUCH of s_v_seq2_ex : signal is "true";
-attribute DONT_TOUCH of s_i_stabilizer_valid : signal is "true";
-attribute DONT_TOUCH of s_v_stabilizer_valid : signal is "true";
-attribute KEEP of s_i_stabilizer_valid : signal is "true";
-attribute KEEP of s_v_stabilizer_valid : signal is "true";
+-- attribute DONT_TOUCH of s_i_seq2_mm : signal is "true";
+-- attribute DONT_TOUCH of s_i_seq2_md : signal is "true";
+-- attribute DONT_TOUCH of s_i_seq2_ex : signal is "true";
+-- attribute DONT_TOUCH of s_v_seq2_mm : signal is "true";
+-- attribute DONT_TOUCH of s_v_seq2_md : signal is "true";
+-- attribute DONT_TOUCH of s_v_seq2_ex : signal is "true";
+-- attribute DONT_TOUCH of s_i_stabilizer_valid : signal is "true";
+-- attribute DONT_TOUCH of s_v_stabilizer_valid : signal is "true";
+-- attribute KEEP of s_i_stabilizer_valid : signal is "true";
+-- attribute KEEP of s_v_stabilizer_valid : signal is "true";
 
 
 
@@ -3294,39 +3335,44 @@ begin
 
   sRst <= not(sRstn) or sRstVio(0) or REG_SOFTRESET(0) or not(s_Locked);
 
-  signal_stabilizer_inst_v: signal_stabilizer
-   generic map(
-      DATA_WIDTH => 12
-  )
-   port map(
-      clk => s_clk1,
-      reset => sRst,
-      sample_en => s_vseq_valid,
-      data_in => std_logic_vector(s_in_vseq2_u12),
-      out_media_movel => s_v_seq2_mm,
-      out_mediana => s_v_seq2_md,
-      out_exponencial => s_v_seq2_ex,
-      valid_out => s_v_stabilizer_valid
-  );
-  s_in_vseq2_u12 <= resize(shift_right(s_v2_abs, 19), 12);
+  -- signal_stabilizer_inst_v: signal_stabilizer
+  --  generic map(
+  --     DATA_WIDTH => 32,  -- Sinal de 12 bits (0 a 4095)
+  --     FIR_WINDOW => 6,
+  --     IIR_WEIGHT => 6
+  -- )
+  --  port map(
+  --     clk => s_clk1,
+  --     reset => sRst,
+  --     sample_en => s_vseq_valid,
+  --     data_in => std_logic_vector(s_v2_rms),
+  --     out_media_movel => s_v_seq2_mm,
+  --     out_exponencial => s_v_seq2_ex,
+  --     valid_out => s_v_stabilizer_valid
+  -- );
+  -- --s_in_vseq2_u12 <= resize(shift_right(s_v2_rms, 19), 12);
+  -- s_out_vseq2_fir_u12 <= RESIZE((shift_right(unsigned(s_v_seq2_mm) , 19)), 12);
+  -- s_out_vseq2_irr_u12 <= RESIZE((shift_right(unsigned(s_v_seq2_ex) , 19)), 12);
   
 
-  signal_stabilizer_inst_i: signal_stabilizer
-   generic map(
-      DATA_WIDTH => 12
-  )
-   port map(
-      clk => s_clk1,
-      reset => sRst,
-      sample_en => s_seq_valid,
-      data_in => std_logic_vector(s_in_iseq2_u12),
-      out_media_movel => s_i_seq2_mm,
-      out_mediana => s_i_seq2_md,
-      out_exponencial => s_i_seq2_ex,
-      valid_out => s_i_stabilizer_valid
-  );
-  s_in_iseq2_u12 <= resize(shift_right(s_seq2_abs, 19), 12);
-  
+  -- signal_stabilizer_inst_i: signal_stabilizer
+  --  generic map(
+  --   DATA_WIDTH => 32,  -- Sinal de 12 bits (0 a 4095)
+  --   FIR_WINDOW => 6,
+  --   IIR_WEIGHT => 6
+  -- )
+  --  port map(
+  --     clk => s_clk1,
+  --     reset => sRst,
+  --     sample_en => s_seq_valid,
+  --     data_in => std_logic_vector(s_seq2_rms),
+  --     out_media_movel => s_i_seq2_mm,
+  --     out_exponencial => s_i_seq2_ex,
+  --     valid_out => s_i_stabilizer_valid
+  -- );
+  -- --s_in_iseq2_u12 <= resize(shift_right(s_seq2_rms, 19), 12);
+  -- s_out_iseq2_fir_u12 <= RESIZE((shift_right(unsigned(s_i_seq2_mm) , 19)), 12);
+  -- s_out_iseq2_irr_u12 <= RESIZE((shift_right(unsigned(s_i_seq2_ex) , 19)), 12);
 
   -------------------
   -- Instancia do PLL
@@ -3654,7 +3700,7 @@ begin
     i_rst               => sRst,
     i_data              => s_vaux2_data,
     i_valid             => s_vaux2_valid,
-    i_offset            => s_aux0_calib_offset,--REG_C_OFFSET_U12, --x"800",--REG_C_OFFSET_U12,
+    i_offset            => s_aux2_calib_offset,--REG_C_OFFSET_U12, --x"800",--REG_C_OFFSET_U12,
     i_decimation_factor => REG_C_DECIM_U8, --x"0B",--REG_C_DECIM_U8,
     o_data_decim        => s_vaux2_decim_s12,
     o_valid_decim       => s_vaux2_decim_s12_valid,
@@ -4047,17 +4093,17 @@ begin
     o_seq2_rms   => s_seq2_rms
 
   );
-  REG_SEQ0_ABS   <= std_logic_vector(s_seq0_abs);
-  REG_SEQ0_PHASE <= std_logic_vector(s_seq0_phase);
-  REG_SEQ0_RMS   <= std_logic_vector(s_seq0_rms);
+  REG_I_SEQ0_ABS   <= std_logic_vector(s_seq0_abs);
+  REG_I_SEQ0_PHASE <= std_logic_vector(s_seq0_phase);
+  REG_I_SEQ0_RMS   <= std_logic_vector(s_seq0_rms);
 
-  REG_SEQ1_ABS   <= std_logic_vector(s_seq1_abs);
-  REG_SEQ1_PHASE <= std_logic_vector(s_seq1_phase);
-  REG_SEQ1_RMS   <= std_logic_vector(s_seq1_rms); 
+  REG_I_SEQ1_ABS   <= std_logic_vector(s_seq1_abs);
+  REG_I_SEQ1_PHASE <= std_logic_vector(s_seq1_phase);
+  REG_I_SEQ1_RMS   <= std_logic_vector(s_seq1_rms); 
 
-  REG_SEQ2_ABS   <= std_logic_vector(s_seq2_abs);
-  REG_SEQ2_PHASE <= std_logic_vector(s_seq2_phase);
-  REG_SEQ2_RMS   <= std_logic_vector(s_seq2_rms);
+  REG_I_SEQ2_ABS   <= std_logic_vector(s_seq2_abs);
+  REG_I_SEQ2_PHASE <= std_logic_vector(s_seq2_phase);
+  REG_I_SEQ2_RMS   <= std_logic_vector(s_seq2_rms);
 
   inst_V_symcom_retpol : symcomp_3ph_from_phasors_fsm_retpol
   generic map(
@@ -4106,6 +4152,15 @@ begin
     o_seq2_rms   => s_v2_rms
 
   );
+
+  REG_V_SEQ1_ABS   <= std_logic_vector(s_v1_abs);
+  REG_V_SEQ1_PHASE <= std_logic_vector(s_v1_phase);
+  REG_V_SEQ1_RMS   <= std_logic_vector(s_v1_rms); 
+
+  --REG_V_SEQ2_ABS   <= std_logic_vector(s_v2_abs);
+  REG_V_SEQ2_ABS   <= x"01AAB000";
+  REG_V_SEQ2_PHASE <= std_logic_vector(s_v2_phase);
+  REG_V_SEQ2_RMS   <= std_logic_vector(s_v2_rms);
 
   
 
@@ -4238,7 +4293,7 @@ begin
     --------------------------
     i_clk => s_clk1,
     i_rst => sRst,
-
+   
     --------------------------
     -- Amostra de entrada
     --------------------------
@@ -5486,7 +5541,7 @@ begin
   ---------------------------------------
   s_GlobalTrip <= (s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
     s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or
-    s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 or s_46_s1_trip or s_trip_47_stg1);
+    s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 or s_46_s1_trip); --or s_trip_47_stg1);
 
     -- s_GlobalTrip <= (s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
     -- s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or
@@ -5747,15 +5802,15 @@ begin
     in_Port_163 => s_in_Port_163, -- RDO
     in_Port_164 => s_in_Port_164, -- RDO
     in_Port_165 => s_in_Port_165, -- RDO
-    in_Port_166 => (others => '0'),
-    in_Port_167 => (others => '0'),
-    in_Port_168 => (others => '0'),
-    in_Port_169 => (others => '0'),
-    in_Port_170 => (others => '0'),
-    in_Port_171 => (others => '0'),
-    in_Port_172 => (others => '0'),
-    in_Port_173 => (others => '0'),
-    in_Port_174 => (others => '0'),
+    in_Port_166 => s_in_Port_166, -- RDO
+    in_Port_167 => s_in_Port_167, -- RDO
+    in_Port_168 => s_in_Port_168, -- RDO
+    in_Port_169 => s_in_Port_169, -- RDO
+    in_Port_170 => s_in_Port_170, -- RDO
+    in_Port_171 => s_in_Port_171, -- RDO
+    in_Port_172 => s_in_Port_172, -- RDO
+    in_Port_173 => s_in_Port_173, -- RDO
+    in_Port_174 => s_in_Port_174, -- RDO
     in_Port_175 => (others => '0'),
     in_Port_176 => (others => '0'),
     in_Port_177 => (others => '0'),
@@ -6005,15 +6060,15 @@ begin
     out_Port_163 => open, -- RDO
     out_Port_164 => open, -- RDO
     out_Port_165 => open, -- RDO
-    out_Port_166 => open,
-    out_Port_167 => open,
-    out_Port_168 => open,
-    out_Port_169 => open,
-    out_Port_170 => open,
-    out_Port_171 => open,
-    out_Port_172 => open,
-    out_Port_173 => open,
-    out_Port_174 => open,
+    out_Port_166 => open, -- RDO
+    out_Port_167 => open, -- RDO
+    out_Port_168 => open, -- RDO
+    out_Port_169 => open, -- RDO
+    out_Port_170 => open, -- RDO
+    out_Port_171 => open, -- RDO
+    out_Port_172 => open, -- RDO
+    out_Port_173 => open, -- RDO
+    out_Port_174 => open, -- RDO
     out_Port_175 => open,
     out_Port_176 => open,
     out_Port_177 => open,
