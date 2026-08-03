@@ -454,7 +454,7 @@ begin
     -- ==========================================
     -- CONFIGURAÇÃO INICIAL
     -- ==========================================
-    i_v2_pickup_e2 <= std_logic_vector(to_unsigned(50, 12)); -- Pickup 100 para T. Inverso
+    i_v2_pickup_e2 <= std_logic_vector(to_unsigned(40, 12)); -- Pickup 100 para T. Inverso
     i_v2_pickup_e1 <= x"FFF"; -- Desabilita Tempo Definido E1
     i_delay_e1_ms  <= (others => '1');
 

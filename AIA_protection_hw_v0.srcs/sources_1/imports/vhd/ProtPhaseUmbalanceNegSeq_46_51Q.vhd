@@ -87,8 +87,6 @@ architecture rtl of ProtPhaseUmbalanceNegSeq_46_51Q is
 
   -- comparações e limiares
   signal seq_abs_u12                    : unsigned(11 downto 0);
-  signal seq_abs_mult                   : unsigned(35 downto 0);
-  signal seq_abs_reg                    : unsigned(31 downto 0);
   signal peak_e1_u12                    : unsigned(11 downto 0);
   signal peak_e2_u12                    : unsigned(11 downto 0);
   signal hyst_u12                       : unsigned(11 downto 0);
@@ -154,9 +152,7 @@ begin
   -----------------------------------------------------------------------------
   -- Conversões e limiares (combinacionais)
   -----------------------------------------------------------------------------
-  seq_abs_mult  <= i_seq2_abs * to_unsigned(10, 4);
-  seq_abs_reg   <= RESIZE(SHIFT_RIGHT(seq_abs_mult, 19),32);
-  seq_abs_u12   <= RESIZE(seq_abs_reg, seq_abs_u12'length);
+  seq_abs_u12   <= RESIZE(SHIFT_RIGHT(i_seq2_abs, 19),seq_abs_u12'length);
   peak_e1_u12   <= unsigned(i_seq2_pickup_e1);
   peak_e2_u12   <= unsigned(i_seq2_pickup_e2);
   hyst_u12      <= to_unsigned(G_HYST, 12);

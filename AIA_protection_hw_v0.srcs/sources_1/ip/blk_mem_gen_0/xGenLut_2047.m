@@ -7,8 +7,8 @@ clear; close all; clc;
 
 %% --------- ENTRADAS DO USUÁRIO ---------------------------------
 Tp_s    = 0.100;     % Time dial (segundos)
-Ip      = 100;       % Pickup em contagens RMS (0..2047)
-curva   = 'LTI';      % 'NI' | 'VI' | 'EI' | 'LTI'
+Ip      = 40;       % Pickup em contagens RMS (0..2047)
+curva   = 'NI';      % 'NI' | 'VI' | 'EI' | 'LTI'
 tmin_ms = 10;        % limite inferior (ms)
 tmax_ms = 30000;     % limite superior (ms)
 
@@ -66,7 +66,7 @@ title(sprintf('LUT 0..2047 (ms) | zeros até Ip=%d | Curva %s', Ip, upper(curva)
 
 %% --------- (Opcional) Exibir alguns valores --------------------
 fprintf('Exemplos:\n');
-for val = [406 426, 435,445,493, 554,581,637]
+for val = [50, 53, 54, 143, 406, 426, 435,445,493, 554,581,637]
     if val >= 0 && val <= 2047
         fprintf('Irms=%4d -> LUT=%5d ms\n', val, lut_ms(val+1));
     end

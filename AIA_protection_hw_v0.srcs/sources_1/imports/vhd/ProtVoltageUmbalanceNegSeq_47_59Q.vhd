@@ -82,8 +82,8 @@ architecture rtl of ProtVoltageUmbalanceNegSeq_47_59Q is
   -- Comparações e limiares baseados em V2
   --------------------------------------------------------------------
   signal s_v2_abs_u12    : unsigned(11 downto 0);
-  signal s_v2_mult_temp  : unsigned(35 downto 0);
-  signal s_v2_u32_temp   : unsigned(31 downto 0);
+  -- signal s_v2_mult_temp  : unsigned(35 downto 0);
+  -- signal s_v2_u32_temp   : unsigned(31 downto 0);
   signal peak_e1_u12     : unsigned(11 downto 0);
   signal peak_e2_u12     : unsigned(11 downto 0);
   signal hyst_u12        : unsigned(11 downto 0);
