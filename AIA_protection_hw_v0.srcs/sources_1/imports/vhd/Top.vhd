@@ -1698,6 +1698,19 @@ signal s_46_s1_e2_alarm        : std_logic;
 signal s_46_s1_seq_stable      : unsigned(11 downto 0) := (others => '0') ;
 
 
+component sync_signal is
+    generic (
+        DATA_WIDTH : integer := 12  -- Sinal de 12 bits (0 a 4095)
+    );
+    port (
+        i_clk             : in  std_logic;
+        i_rst             : in  std_logic;
+        i_valid           : in  std_logic; -- Pulso de alto quando uma nova amostra chega
+        i_data            : in  std_logic_vector(DATA_WIDTH-1 downto 0);
+        o_data            : out std_logic_vector(DATA_WIDTH-1 downto 0)
+    );
+end component;
+signal s_sync_signal_out : std_logic_vector(31 downto 0);
 
   -- =========================
   -- Core Regs
@@ -5587,7 +5600,19 @@ begin
     REG_81_C_TRIP_E2  <= s_prot_81_faseC_trip_e2;
     REG_81_C_TRIP     <= s_trip_81_C;
 
-  REG_81_A_FREQ_DIFF_MHZ <= std_logic_vector(s_freq_diff_dfreq_mHz_A);
+  sync_signal_inst: sync_signal
+   generic map(
+      DATA_WIDTH => 32
+  )
+   port map(
+      i_clk => s_clk1,
+      i_rst => sRst,
+      i_valid => s_freq_diff_valid_A,
+      i_data => std_logic_vector(s_freq_diff_dfreq_mHz_A),
+      o_data => s_sync_signal_out
+  );
+
+  REG_81_A_FREQ_DIFF_MHZ <= s_sync_signal_out;
   REG_81_B_FREQ_DIFF_MHZ <= std_logic_vector(s_freq_diff_dfreq_mHz_B);
   REG_81_C_FREQ_DIFF_MHZ <= std_logic_vector(s_freq_diff_dfreq_mHz_C);
   
