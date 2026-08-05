@@ -2395,9 +2395,7 @@ signal s_sync_signal_out : std_logic_vector(31 downto 0);
   signal s_out_Port_121  : std_logic_vector(31 downto 0) := (others => '0');
   signal s_out_Port_122  : std_logic_vector(31 downto 0) := (others => '0');
   signal s_out_Port_123  : std_logic_vector(31 downto 0) := (others => '0');
-
-  -- sem nada
-  signal s_in_Port_124 : std_logic_vector(31 downto 0) := (others => '0');
+  signal s_out_Port_124  : std_logic_vector(31 downto 0) := (others => '0'); 
 
   -- globlar trip e boolean trip
   signal s_in_Port_125  : std_logic_vector(31 downto 0) := (others => '0'); -- RDO
@@ -2405,8 +2403,6 @@ signal s_sync_signal_out : std_logic_vector(31 downto 0);
 
   -- Force trip
   signal s_out_Port_127 : std_logic_vector(31 downto 0) := (others => '0');
-
-  -- Not used
   
   signal s_out_Port_129 : std_logic_vector(31 downto 0) := (others => '0');
   signal s_out_Port_130 : std_logic_vector(31 downto 0) := (others => '0');
@@ -2691,8 +2687,8 @@ signal s_sync_signal_out : std_logic_vector(31 downto 0);
 	alias REG_81_HYST_MHZ            : std_logic_vector(31 downto 0) is s_out_Port_140;
 	alias REG_81_DELAY_E1_MS         : std_logic_vector(19 downto 0) is s_out_Port_141(19 downto 0);
 	alias REG_81_DELAY_E2_MS         : std_logic_vector(19 downto 0) is s_out_Port_142(19 downto 0);
-	alias REG_81_INIT_TIME_MS 		 : std_logic_vector(19 downto 0) is s_out_Port_143(19 downto 0);
-  alias REG_81_EN                  : std_logic_vector(0 downto 0)  is s_out_Port_143(20 downto 20);
+	alias REG_81_INIT_TIME_MS 		   : std_logic_vector(19 downto 0) is s_out_Port_143(19 downto 0);
+  alias REG_81_EN                  : std_logic_vector(0 downto 0)  is s_out_Port_124(0 downto 0);
 
   -- Aliases de Monitoramento 81
   -- Fase A
@@ -5240,20 +5236,20 @@ begin
 	  i_rst                  => s_rst_81, ----LEMBRAR DE VOLTAR QUANDO TIVER COM O PROCESSADOR
 	  i_valid                => s_freq_diff_valid_A,   -- freq fase A
 	  i_dfreq_mHz            => s_freq_diff_dfreq_mHz_A,
-      -- i_pickup_under_e1_mHz  => to_signed(1500, 32), -- 58.5 Hz
-      -- i_pickup_over_e1_mHz   => to_signed(1500, 32), -- 61.5 Hz
-      -- i_margin_e2_mHz        => to_signed(1000, 32), -- +1 Hz para E2
-      -- i_hyst_mHz             => to_signed(200, 32),  -- histerese (200 mHz)
-      -- i_delay_e1_ms          => to_unsigned(1000, 20), -- 1 segundo
-      -- i_delay_e2_ms          => to_unsigned(50, 20),   -- 50 ms
-      -- i_init_time_ms         => to_unsigned(20, 20),   -- 20 ms
-	  i_pickup_under_e1_mHz  => signed(REG_81_PICKUP_UNDER_E1_MHZ), -- Com o processador tem que trabalhar dessa forma
-	  i_pickup_over_e1_mHz   => signed(REG_81_PICKUP_OVER_E1_MHZ),
-	  i_margin_e2_mHz        => signed(REG_81_MARGIN_E2_MHZ),
-	  i_hyst_mHz             => signed(REG_81_HYST_MHZ),
-	  i_delay_e1_ms          => unsigned(REG_81_DELAY_E1_MS),
-	  i_delay_e2_ms          => unsigned(REG_81_DELAY_E2_MS),
-	  i_init_time_ms         => unsigned(REG_81_INIT_TIME_MS),
+      i_pickup_under_e1_mHz  => to_signed(6500, 32), -- 58.5 Hz
+      i_pickup_over_e1_mHz   => to_signed(6500, 32), -- 61.5 Hz
+      i_margin_e2_mHz        => to_signed(6000, 32), -- +1 Hz para E2
+      i_hyst_mHz             => to_signed(200, 32),  -- histerese (200 mHz)
+      i_delay_e1_ms          => to_unsigned(1000, 20), -- 1 segundo
+      i_delay_e2_ms          => to_unsigned(50, 20),   -- 50 ms
+      i_init_time_ms         => to_unsigned(20, 20),   -- 20 ms
+	  -- i_pickup_under_e1_mHz  => signed(REG_81_PICKUP_UNDER_E1_MHZ), -- Com o processador tem que trabalhar dessa forma
+	  -- i_pickup_over_e1_mHz   => signed(REG_81_PICKUP_OVER_E1_MHZ),
+	  -- i_margin_e2_mHz        => signed(REG_81_MARGIN_E2_MHZ),
+	  -- i_hyst_mHz             => signed(REG_81_HYST_MHZ),
+	  -- i_delay_e1_ms          => unsigned(REG_81_DELAY_E1_MS),
+	  -- i_delay_e2_ms          => unsigned(REG_81_DELAY_E2_MS),
+	  -- i_init_time_ms         => unsigned(REG_81_INIT_TIME_MS),
 	  o_alarm_e1             => s_prot_81_faseA_alarm_e1,
 	  o_alarm_e2             => s_prot_81_faseA_alarm_e2,
 	  o_trip_e1              => s_prot_81_faseA_trip_e1,
@@ -5785,7 +5781,7 @@ begin
     in_Port_121 => s_out_Port_121,
     in_Port_122 => s_out_Port_122,
     in_Port_123 => s_out_Port_123,
-    in_Port_124 => s_in_Port_124, -- RDO
+    in_Port_124 => s_out_Port_124,
     in_Port_125 => s_in_Port_125, --RDO
     in_Port_126 => s_in_Port_126, --RDO
     in_Port_127 => s_out_Port_127,
@@ -6043,7 +6039,7 @@ begin
     out_Port_121 => s_out_Port_121,
     out_Port_122 => s_out_Port_122,
     out_Port_123 => s_out_Port_123,
-    out_Port_124 => open, -- rod
+    out_Port_124 => s_out_Port_124, 
     out_Port_125 => open, -- rod
     out_Port_126 => open, -- rod
     out_Port_127 => s_out_Port_127,
