@@ -1543,7 +1543,7 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
 	end Component;
 	signal s_prot_81_faseA_alarm_e1 : std_logic;
 	signal s_prot_81_faseA_alarm_e2 : std_logic;
-	signal s_prot_81_faseA_trip_e1  : std_logic;
+	signal s_prot_81_faseA_trip_e1  : std_logic := '0';
 	signal s_prot_81_faseA_trip_e2  : std_logic;
 	signal s_trip_81_A              : std_logic;
   signal s_rst_81               : std_logic;
@@ -4166,8 +4166,7 @@ begin
   REG_V_SEQ1_PHASE <= std_logic_vector(s_v1_phase);
   REG_V_SEQ1_RMS   <= std_logic_vector(s_v1_rms); 
 
-  --REG_V_SEQ2_ABS   <= std_logic_vector(s_v2_abs);
-  REG_V_SEQ2_ABS   <= x"01AAB000";
+  REG_V_SEQ2_ABS   <= std_logic_vector(s_v2_abs);
   REG_V_SEQ2_PHASE <= std_logic_vector(s_v2_phase);
   REG_V_SEQ2_RMS   <= std_logic_vector(s_v2_rms);
 
@@ -5236,20 +5235,20 @@ begin
 	  i_rst                  => s_rst_81, ----LEMBRAR DE VOLTAR QUANDO TIVER COM O PROCESSADOR
 	  i_valid                => s_freq_diff_valid_A,   -- freq fase A
 	  i_dfreq_mHz            => s_freq_diff_dfreq_mHz_A,
-      i_pickup_under_e1_mHz  => to_signed(6500, 32), -- 58.5 Hz
-      i_pickup_over_e1_mHz   => to_signed(6500, 32), -- 61.5 Hz
-      i_margin_e2_mHz        => to_signed(6000, 32), -- +1 Hz para E2
-      i_hyst_mHz             => to_signed(200, 32),  -- histerese (200 mHz)
-      i_delay_e1_ms          => to_unsigned(1000, 20), -- 1 segundo
-      i_delay_e2_ms          => to_unsigned(50, 20),   -- 50 ms
-      i_init_time_ms         => to_unsigned(20, 20),   -- 20 ms
-	  -- i_pickup_under_e1_mHz  => signed(REG_81_PICKUP_UNDER_E1_MHZ), -- Com o processador tem que trabalhar dessa forma
-	  -- i_pickup_over_e1_mHz   => signed(REG_81_PICKUP_OVER_E1_MHZ),
-	  -- i_margin_e2_mHz        => signed(REG_81_MARGIN_E2_MHZ),
-	  -- i_hyst_mHz             => signed(REG_81_HYST_MHZ),
-	  -- i_delay_e1_ms          => unsigned(REG_81_DELAY_E1_MS),
-	  -- i_delay_e2_ms          => unsigned(REG_81_DELAY_E2_MS),
-	  -- i_init_time_ms         => unsigned(REG_81_INIT_TIME_MS),
+      -- i_pickup_under_e1_mHz  => to_signed(6500, 32), -- 58.5 Hz
+      -- i_pickup_over_e1_mHz   => to_signed(6500, 32), -- 61.5 Hz
+      -- i_margin_e2_mHz        => to_signed(6000, 32), -- +1 Hz para E2
+      -- i_hyst_mHz             => to_signed(200, 32),  -- histerese (200 mHz)
+      -- i_delay_e1_ms          => to_unsigned(1000, 20), -- 1 segundo
+      -- i_delay_e2_ms          => to_unsigned(50, 20),   -- 50 ms
+      -- i_init_time_ms         => to_unsigned(30000, 20),   -- 20 ms
+	  i_pickup_under_e1_mHz  => signed(REG_81_PICKUP_UNDER_E1_MHZ), -- Com o processador tem que trabalhar dessa forma
+	  i_pickup_over_e1_mHz   => signed(REG_81_PICKUP_OVER_E1_MHZ),
+	  i_margin_e2_mHz        => signed(REG_81_MARGIN_E2_MHZ),
+	  i_hyst_mHz             => signed(REG_81_HYST_MHZ),
+	  i_delay_e1_ms          => unsigned(REG_81_DELAY_E1_MS),
+	  i_delay_e2_ms          => unsigned(REG_81_DELAY_E2_MS),
+	  i_init_time_ms         => unsigned(REG_81_INIT_TIME_MS),
 	  o_alarm_e1             => s_prot_81_faseA_alarm_e1,
 	  o_alarm_e2             => s_prot_81_faseA_alarm_e2,
 	  o_trip_e1              => s_prot_81_faseA_trip_e1,
