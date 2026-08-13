@@ -297,12 +297,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/imports/vhd/sync_signal.vhd">
-        <FileInfo>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PSRCDIR/sources_1/imports/vhd/trip_logic_lut8.vhd">
         <FileInfo RelPath="trip_logic_lut8.vhd">
           <Attr Name="ImportPath" Val="$PPRDIR/../../x14_XC7C020_Fasor_rev02_TimingILA/vhd/trip_logic_lut8.vhd"/>
@@ -315,6 +309,13 @@
         <FileInfo RelPath="Top.vhd">
           <Attr Name="ImportPath" Val="$PPRDIR/../../../Users/Arthu/projetos_vivado/module_j_prototype/x14XC7C020Fasor_rev02/vhd/Top.vhd"/>
           <Attr Name="ImportTime" Val="1772730594"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/imports/vhd/sync_signal.vhd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>

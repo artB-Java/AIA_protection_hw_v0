@@ -1698,19 +1698,19 @@ signal s_46_s1_e2_alarm        : std_logic;
 signal s_46_s1_seq_stable      : unsigned(11 downto 0) := (others => '0') ;
 
 
-component sync_signal is
-    generic (
-        DATA_WIDTH : integer := 12  -- Sinal de 12 bits (0 a 4095)
-    );
-    port (
-        i_clk             : in  std_logic;
-        i_rst             : in  std_logic;
-        i_valid           : in  std_logic; -- Pulso de alto quando uma nova amostra chega
-        i_data            : in  std_logic_vector(DATA_WIDTH-1 downto 0);
-        o_data            : out std_logic_vector(DATA_WIDTH-1 downto 0)
-    );
-end component;
-signal s_sync_signal_out : std_logic_vector(31 downto 0);
+-- component sync_signal is
+--     generic (
+--         DATA_WIDTH : integer := 12  -- Sinal de 12 bits (0 a 4095)
+--     );
+--     port (
+--         i_clk             : in  std_logic;
+--         i_rst             : in  std_logic;
+--         i_valid           : in  std_logic; -- Pulso de alto quando uma nova amostra chega
+--         i_data            : in  std_logic_vector(DATA_WIDTH-1 downto 0);
+--         o_data            : out std_logic_vector(DATA_WIDTH-1 downto 0)
+--     );
+-- end component;
+-- signal s_sync_signal_out : std_logic_vector(31 downto 0);
 
   -- =========================
   -- Core Regs
@@ -5547,14 +5547,14 @@ begin
   ---------------------------------------
   ----- Atuação do Trip Global
   ---------------------------------------
-  s_GlobalTrip <= (s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
-    s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or
-    s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 or s_46_s1_trip); --or s_trip_47_stg1);
+  -- s_GlobalTrip <= (s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
+  --   s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or
+  --   s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 or s_46_s1_trip or s_trip_47_stg1);
 
-    -- s_GlobalTrip <= (s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
-    -- s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or
-    -- s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 or 
-    -- s_trip_46_stg1 or s_trip_46Temp_stg1 or s_trip_47_stg1 or s_trip_81_A or s_trip_81_B or s_trip_81_C or s_trip_81R_A or s_trip_81R_B or s_trip_81R_C or REG_FORCE_GLOBAL_TRIP);
+  s_GlobalTrip <= (s_trip_50_A or s_trip_50_B or s_trip_50_C or s_trip_50N or s_trip_51_A or s_trip_51_B or s_trip_51_C or s_trip_51N or
+  s_trip_27_A_stg1 or s_trip_27_A_stg2 or s_trip_27_B_stg1 or s_trip_27_B_stg2 or s_trip_27_C_stg1 or s_trip_27_C_stg2 or
+  s_trip_59_A_stg1 or s_trip_59_A_stg2 or s_trip_59_B_stg1 or s_trip_59_B_stg2 or s_trip_59_C_stg1 or s_trip_59_C_stg2 or 
+  s_46_s1_trip or s_trip_47_stg1 or s_trip_81_A or s_trip_81_B or s_trip_81_C or s_trip_81R_A or s_trip_81R_B or s_trip_81R_C or REG_FORCE_GLOBAL_TRIP);
 
   ------------------------------------
   ---- Leitura para monitoramento
@@ -5595,19 +5595,9 @@ begin
     REG_81_C_TRIP_E2  <= s_prot_81_faseC_trip_e2;
     REG_81_C_TRIP     <= s_trip_81_C;
 
-  sync_signal_inst: sync_signal
-   generic map(
-      DATA_WIDTH => 32
-  )
-   port map(
-      i_clk => s_clk1,
-      i_rst => sRst,
-      i_valid => s_freq_diff_valid_A,
-      i_data => std_logic_vector(s_freq_diff_dfreq_mHz_A),
-      o_data => s_sync_signal_out
-  );
 
-  REG_81_A_FREQ_DIFF_MHZ <= s_sync_signal_out;
+
+  REG_81_A_FREQ_DIFF_MHZ <= std_logic_vector(s_freq_diff_dfreq_mHz_A);
   REG_81_B_FREQ_DIFF_MHZ <= std_logic_vector(s_freq_diff_dfreq_mHz_B);
   REG_81_C_FREQ_DIFF_MHZ <= std_logic_vector(s_freq_diff_dfreq_mHz_C);
   
