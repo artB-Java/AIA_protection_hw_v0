@@ -680,46 +680,46 @@ signal s_aux6_calib_offset : STD_LOGIC_VECTOR(11 downto 0);
   -- ==========================================================================
   -- -- Component: Prot51_51N_ACC TESTE
   -- ==========================================================================
-  component Prot51_51N_ACC is
-    generic (
-      -- Frequência de clock do sistema (Hz). Por padrão, 100 MHz.
-      G_CLK_HZ    : natural := 100_000_000;
-      -- Histerese em "contagens RMS" para evitar chatter (i_peakup - G_HYST).
-      G_HYST      : natural := 0;
-      -- Larguras da LUT (RAM) usadas para a curva temporizada.
-      G_ADDR_BITS : natural := 11; -- 2^11 = 2048 endereços (RMS 0..2047)
-      G_DATA_BITS : natural := 20  -- Taxa de incremento (velocidade), máximo 20 bits
-    );
-    port (
-      --------------------------
-      -- Clock / Reset / Start
-      --------------------------
-      i_clk_100MHz       : in  std_logic; 
-      i_rst              : in  std_logic; 
-      i_start_51_51N     : in  std_logic; 
+  -- component Prot51_51N_ACC is
+  --   generic (
+  --     -- Frequência de clock do sistema (Hz). Por padrão, 100 MHz.
+  --     G_CLK_HZ    : natural := 100_000_000;
+  --     -- Histerese em "contagens RMS" para evitar chatter (i_peakup - G_HYST).
+  --     G_HYST      : natural := 0;
+  --     -- Larguras da LUT (RAM) usadas para a curva temporizada.
+  --     G_ADDR_BITS : natural := 11; -- 2^11 = 2048 endereços (RMS 0..2047)
+  --     G_DATA_BITS : natural := 20  -- Taxa de incremento (velocidade), máximo 20 bits
+  --   );
+  --   port (
+  --     --------------------------
+  --     -- Clock / Reset / Start
+  --     --------------------------
+  --     i_clk_100MHz       : in  std_logic; 
+  --     i_rst              : in  std_logic; 
+  --     i_start_51_51N     : in  std_logic; 
 
-      --------------------------
-      -- Medida RMS e limiar
-      --------------------------
-      i_rms_51_51N       : in  std_logic_vector(11 downto 0); 
-      i_rms_51_51N_valid : in  std_logic; 
-      i_peakup           : in  std_logic_vector(11 downto 0); 
+  --     --------------------------
+  --     -- Medida RMS e limiar
+  --     --------------------------
+  --     i_rms_51_51N       : in  std_logic_vector(11 downto 0); 
+  --     i_rms_51_51N_valid : in  std_logic; 
+  --     i_peakup           : in  std_logic_vector(11 downto 0); 
 
-      --------------------------
-      -- Interface RAM (LUT curva 51/51N)
-      --------------------------
-      o_ram_addr         : out std_logic_vector(G_ADDR_BITS-1 downto 0); 
-      o_ram_rd_req       : out std_logic;                                
-      i_ram_data         : in  std_logic_vector(G_DATA_BITS-1 downto 0);  
+  --     --------------------------
+  --     -- Interface RAM (LUT curva 51/51N)
+  --     --------------------------
+  --     o_ram_addr         : out std_logic_vector(G_ADDR_BITS-1 downto 0); 
+  --     o_ram_rd_req       : out std_logic;                                
+  --     i_ram_data         : in  std_logic_vector(G_DATA_BITS-1 downto 0);  
 
-      --------------------------
-      -- Saídas de proteção / debug
-      --------------------------
-      o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  
-      o_start_trip_time  : out std_logic;                                 
-      o_trip_51_51N      : out std_logic                                  
-    );
-  end component;
+  --     --------------------------
+  --     -- Saídas de proteção / debug
+  --     --------------------------
+  --     o_time_ms          : out std_logic_vector(G_DATA_BITS-1 downto 0);  
+  --     o_start_trip_time  : out std_logic;                                 
+  --     o_trip_51_51N      : out std_logic                                  
+  --   );
+  -- end component;
 
 
   -- ============================================================================
@@ -4640,7 +4640,7 @@ begin
   -- 51 (fase, usa VAUX0-AUX2 for A/B/C)
   -- =========================
 
-  inst_prot_51_time_A : Prot51_51N_ACC
+  inst_prot_51_time_A : Prot51_51N_Time
   generic map(
     G_CLK_HZ    => 100_000_000, -- ajuste se s_clk1 ≠ 100 MHz
     G_HYST      => 10, -- histerese (ex.: 10 contagens RMS)
@@ -4737,7 +4737,7 @@ begin
     dinb  => REG_LUT_DATA, -- 20 bits
     doutb => s_51_B_bram_doutb -- 20 bits
   );
-  inst_prot_51_time_C : Prot51_51N_ACC
+  inst_prot_51_time_C : Prot51_51N_Time
   generic map(
     G_CLK_HZ    => 100_000_000, -- ajuste se s_clk1 ≠ 100 MHz
     G_HYST      => 10, -- histerese (ex.: 10 contagens RMS)
@@ -4789,7 +4789,7 @@ begin
   -- =========================
   -- 51N (fase, usa VAUX3)
   -- =========================	
-  inst_prot_51N_time : Prot51_51N_ACC
+  inst_prot_51N_time : Prot51_51N_Time
   generic map(
     G_CLK_HZ    => 100_000_000, -- ajuste se s_clk1 ≠ 100 MHz
     G_HYST      => 10, -- histerese (ex.: 10 contagens RMS)
