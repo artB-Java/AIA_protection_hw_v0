@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x1D59E3FCEBDB3DD1",
+      "boundary_crc": "0x3ECA506D7C84BA6C",
       "device": "xc7z020clg400-1",
       "gen_directory": "../../../../AIA_protection_hw_v0.gen/sources_1/bd/GOD",
       "name": "GOD",
@@ -87,135 +87,6 @@
           }
         }
       },
-      "DDR": {
-        "mode": "Master",
-        "vlnv_bus_definition": "xilinx.com:interface:ddrx:1.0",
-        "vlnv": "xilinx.com:interface:ddrx_rtl:1.0",
-        "parameters": {
-          "AXI_ARBITRATION_SCHEME": {
-            "value": "TDM",
-            "value_src": "default"
-          },
-          "BURST_LENGTH": {
-            "value": "8",
-            "value_src": "default"
-          },
-          "CAN_DEBUG": {
-            "value": "false",
-            "value_src": "default"
-          },
-          "CAS_LATENCY": {
-            "value": "11",
-            "value_src": "default"
-          },
-          "CAS_WRITE_LATENCY": {
-            "value": "11",
-            "value_src": "default"
-          },
-          "CS_ENABLED": {
-            "value": "true",
-            "value_src": "default"
-          },
-          "DATA_MASK_ENABLED": {
-            "value": "true",
-            "value_src": "default"
-          },
-          "DATA_WIDTH": {
-            "value": "8",
-            "value_src": "default"
-          },
-          "MEMORY_TYPE": {
-            "value": "COMPONENTS",
-            "value_src": "default"
-          },
-          "MEM_ADDR_MAP": {
-            "value": "ROW_COLUMN_BANK",
-            "value_src": "default"
-          },
-          "SLOT": {
-            "value": "Single",
-            "value_src": "default"
-          },
-          "TIMEPERIOD_PS": {
-            "value": "1250",
-            "value_src": "default"
-          }
-        },
-        "port_maps": {
-          "CAS_N": {
-            "physical_name": "DDR_cas_n",
-            "direction": "IO"
-          },
-          "CKE": {
-            "physical_name": "DDR_cke",
-            "direction": "IO"
-          },
-          "CK_N": {
-            "physical_name": "DDR_ck_n",
-            "direction": "IO"
-          },
-          "CK_P": {
-            "physical_name": "DDR_ck_p",
-            "direction": "IO"
-          },
-          "CS_N": {
-            "physical_name": "DDR_cs_n",
-            "direction": "IO"
-          },
-          "RESET_N": {
-            "physical_name": "DDR_reset_n",
-            "direction": "IO"
-          },
-          "ODT": {
-            "physical_name": "DDR_odt",
-            "direction": "IO"
-          },
-          "RAS_N": {
-            "physical_name": "DDR_ras_n",
-            "direction": "IO"
-          },
-          "WE_N": {
-            "physical_name": "DDR_we_n",
-            "direction": "IO"
-          },
-          "BA": {
-            "physical_name": "DDR_ba",
-            "direction": "IO",
-            "left": "2",
-            "right": "0"
-          },
-          "ADDR": {
-            "physical_name": "DDR_addr",
-            "direction": "IO",
-            "left": "14",
-            "right": "0"
-          },
-          "DM": {
-            "physical_name": "DDR_dm",
-            "direction": "IO",
-            "left": "3",
-            "right": "0"
-          },
-          "DQ": {
-            "physical_name": "DDR_dq",
-            "direction": "IO",
-            "left": "31",
-            "right": "0"
-          },
-          "DQS_N": {
-            "physical_name": "DDR_dqs_n",
-            "direction": "IO",
-            "left": "3",
-            "right": "0"
-          },
-          "DQS_P": {
-            "physical_name": "DDR_dqs_p",
-            "direction": "IO",
-            "left": "3",
-            "right": "0"
-          }
-        }
-      },
       "FIXED_IO": {
         "mode": "Master",
         "vlnv_bus_definition": "xilinx.com:display_processing_system7:fixedio:1.0",
@@ -232,14 +103,6 @@
             "direction": "IO",
             "left": "53",
             "right": "0"
-          },
-          "DDR_VRN": {
-            "physical_name": "FIXED_IO_ddr_vrn",
-            "direction": "IO"
-          },
-          "DDR_VRP": {
-            "physical_name": "FIXED_IO_ddr_vrp",
-            "direction": "IO"
           },
           "PS_SRSTB": {
             "physical_name": "FIXED_IO_ps_srstb",
@@ -596,6 +459,12 @@
           "PCW_CLK3_FREQ": {
             "value": "10000000"
           },
+          "PCW_CORE0_FIQ_INTR": {
+            "value": "0"
+          },
+          "PCW_CORE0_IRQ_INTR": {
+            "value": "0"
+          },
           "PCW_CPU_CPU_6X4X_MAX_RANGE": {
             "value": "667"
           },
@@ -613,12 +482,6 @@
           },
           "PCW_DDR_PERIPHERAL_CLKSRC": {
             "value": "DDR PLL"
-          },
-          "PCW_DDR_RAM_BASEADDR": {
-            "value": "0x00100000"
-          },
-          "PCW_DDR_RAM_HIGHADDR": {
-            "value": "0x3FFFFFFF"
           },
           "PCW_DM_WIDTH": {
             "value": "4"
@@ -705,7 +568,7 @@
             "value": "0"
           },
           "PCW_EN_DDR": {
-            "value": "1"
+            "value": "0"
           },
           "PCW_EN_EMIO_CAN0": {
             "value": "0"
@@ -1871,27 +1734,6 @@
           "PCW_UIPARAM_DDR_ADV_ENABLE": {
             "value": "0"
           },
-          "PCW_UIPARAM_DDR_AL": {
-            "value": "0"
-          },
-          "PCW_UIPARAM_DDR_BL": {
-            "value": "8"
-          },
-          "PCW_UIPARAM_DDR_BOARD_DELAY0": {
-            "value": "0.271"
-          },
-          "PCW_UIPARAM_DDR_BOARD_DELAY1": {
-            "value": "0.259"
-          },
-          "PCW_UIPARAM_DDR_BOARD_DELAY2": {
-            "value": "0.219"
-          },
-          "PCW_UIPARAM_DDR_BOARD_DELAY3": {
-            "value": "0.207"
-          },
-          "PCW_UIPARAM_DDR_BUS_WIDTH": {
-            "value": "32 Bit"
-          },
           "PCW_UIPARAM_DDR_CLOCK_0_LENGTH_MM": {
             "value": "0"
           },
@@ -1928,9 +1770,6 @@
           "PCW_UIPARAM_DDR_CLOCK_3_PROPOGATION_DELAY": {
             "value": "160"
           },
-          "PCW_UIPARAM_DDR_CLOCK_STOP_EN": {
-            "value": "0"
-          },
           "PCW_UIPARAM_DDR_DQS_0_LENGTH_MM": {
             "value": "0"
           },
@@ -1966,18 +1805,6 @@
           },
           "PCW_UIPARAM_DDR_DQS_3_PROPOGATION_DELAY": {
             "value": "160"
-          },
-          "PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_0": {
-            "value": "0.229"
-          },
-          "PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_1": {
-            "value": "0.250"
-          },
-          "PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_2": {
-            "value": "0.121"
-          },
-          "PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_3": {
-            "value": "0.146"
           },
           "PCW_UIPARAM_DDR_DQ_0_LENGTH_MM": {
             "value": "0"
@@ -2016,30 +1843,6 @@
             "value": "160"
           },
           "PCW_UIPARAM_DDR_ENABLE": {
-            "value": "1"
-          },
-          "PCW_UIPARAM_DDR_FREQ_MHZ": {
-            "value": "533.333333"
-          },
-          "PCW_UIPARAM_DDR_HIGH_TEMP": {
-            "value": "Normal (0-85)"
-          },
-          "PCW_UIPARAM_DDR_MEMORY_TYPE": {
-            "value": "DDR 3"
-          },
-          "PCW_UIPARAM_DDR_PARTNO": {
-            "value": "MT41J256M16 RE-125"
-          },
-          "PCW_UIPARAM_DDR_TRAIN_DATA_EYE": {
-            "value": "1"
-          },
-          "PCW_UIPARAM_DDR_TRAIN_READ_GATE": {
-            "value": "1"
-          },
-          "PCW_UIPARAM_DDR_TRAIN_WRITE_LEVEL": {
-            "value": "1"
-          },
-          "PCW_UIPARAM_DDR_USE_INTERNAL_VREF": {
             "value": "0"
           },
           "PCW_UIPARAM_GENERATE_SUMMARY": {
@@ -2112,7 +1915,7 @@
             "value": "0"
           },
           "PCW_USE_FABRIC_INTERRUPT": {
-            "value": "0"
+            "value": "1"
           },
           "PCW_USE_HIGH_OCM": {
             "value": "0"
@@ -2640,12 +2443,6 @@
         "interface_ports": [
           "axi_smc/M05_AXI",
           "axi_iic_0/S_AXI"
-        ]
-      },
-      "processing_system7_0_DDR": {
-        "interface_ports": [
-          "DDR",
-          "processing_system7_0/DDR"
         ]
       },
       "processing_system7_0_FIXED_IO": {
